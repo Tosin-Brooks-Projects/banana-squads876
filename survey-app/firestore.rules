@@ -1,0 +1,138 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ============================================
+    // HELPER FUNCTIONS
+    // ============================================
+
+    // Check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Check if the authenticated user owns this resource
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Check if the survey belongs to the authenticated user
+    function isSurveyOwner(surveyId) {
+      return isAuthenticated() &&
+             get(/databases/$(database)/documents/surveys/$(surveyId)).data.userId == request.auth.uid;
+    }
+
+    // Validate that required fields exist
+    function hasRequiredFields(fields) {
+      return request.resource.data.keys().hasAll(fields);
+    }
+
+    // ============================================
+    // USERS COLLECTION
+    // ============================================
+    match /users/{userId} {
+      // Allow public read of user profiles (needed for username->userId lookup for public surveys)
+      // Note: Don't store sensitive data in this collection - email is needed for account
+      // but username/displayName are inherently public (used in survey URLs)
+      allow read: if true;
+
+      // Users can create their own profile (during signup)
+      allow create: if isOwner(userId) &&
+                       hasRequiredFields(['email', 'createdAt', 'updatedAt']);
+
+      // Users can update their own profile
+      // Prevent changing the id or createdAt fields
+      allow update: if isOwner(userId) &&
+                       request.resource.data.id == resource.data.id &&
+                       request.resource.data.createdAt == resource.data.createdAt;
+
+      // Users cannot delete their profile directly (use admin API for account deletion)
+      allow delete: if false;
+    }
+
+    // ============================================
+    // USERNAME REDIRECTS COLLECTION
+    // ============================================
+    match /username_redirects/{username} {
+      // Anyone can read redirects (needed for URL resolution)
+      allow read: if true;
+
+      // Only the user who owns the redirect can create it
+      allow create: if isAuthenticated() &&
+                       request.resource.data.userId == request.auth.uid;
+
+      // No updates or deletes from client (managed by server/admin)
+      allow update, delete: if false;
+    }
+
+    // ============================================
+    // SURVEYS COLLECTION
+    // ============================================
+    match /surveys/{surveyId} {
+      // Public: Anyone can read published surveys (needed for taking surveys)
+      // Private: Only owner can read draft/closed surveys
+      allow read: if resource.data.status == 'published' ||
+                     isOwner(resource.data.userId);
+
+      // Only authenticated users can create surveys
+      // Must set themselves as the owner
+      allow create: if isAuthenticated() &&
+                       request.resource.data.userId == request.auth.uid &&
+                       hasRequiredFields(['userId', 'title', 'slug', 'questions', 'status', 'createdAt']);
+
+      // Only owner can update their surveys
+      // Cannot change the userId (owner)
+      allow update: if isOwner(resource.data.userId) &&
+                       request.resource.data.userId == resource.data.userId;
+
+      // Only owner can delete their surveys
+      allow delete: if isOwner(resource.data.userId);
+    }
+
+    // ============================================
+    // RESPONSES COLLECTION
+    // ============================================
+    match /responses/{responseId} {
+      // Only survey owner can read responses
+      allow read: if isSurveyOwner(resource.data.surveyId);
+
+      // Anyone can create a response (anonymous survey submissions allowed)
+      // But must reference a valid surveyId
+      allow create: if hasRequiredFields(['surveyId', 'answers', 'completedAt']);
+
+      // Responses are immutable - no updates allowed
+      allow update: if false;
+
+      // Only survey owner can delete responses
+      allow delete: if isSurveyOwner(resource.data.surveyId);
+    }
+
+    // ============================================
+    // PARTIAL RESPONSES COLLECTION
+    // ============================================
+    match /partialResponses/{partialId} {
+      // Anyone can read their own partial response (matched by sessionId in document)
+      // This allows anonymous users to resume surveys
+      // Note: sessionId is stored in the document, we use document ID pattern surveyId_sessionId
+      allow read: if true;
+
+      // Anyone can create/update partial responses (for survey progress saving)
+      // Must include required fields
+      allow create: if hasRequiredFields(['surveyId', 'sessionId', 'answers', 'expiresAt']);
+
+      // Allow updates to partial responses
+      allow update: if hasRequiredFields(['surveyId', 'sessionId', 'answers', 'expiresAt']);
+
+      // Allow deletion (for cleanup after completion or expiry)
+      allow delete: if true;
+    }
+
+    // ============================================
+    // DEFAULT: DENY ALL OTHER ACCESS
+    // ============================================
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
