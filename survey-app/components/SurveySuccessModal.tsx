@@ -16,11 +16,13 @@ interface SurveySuccessModalProps {
 export default function SurveySuccessModal({
   isOpen,
   surveyUrl,
-  surveyId,
+  surveyId: _surveyId,
   onClose,
-  onCreateAnother,
+  onCreateAnother: _onCreateAnother,
   onGoToDashboard,
 }: SurveySuccessModalProps) {
+  void _surveyId;
+  void _onCreateAnother;
   const [copied, setCopied] = useState(false);
 
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://unboringsurveys.com';
@@ -31,7 +33,7 @@ export default function SurveySuccessModal({
       await navigator.clipboard.writeText(fullUrl);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
+    } catch {
       // Fallback for older browsers
       const textArea = document.createElement('textarea');
       textArea.value = fullUrl;
@@ -155,39 +157,26 @@ export default function SurveySuccessModal({
 
                 {/* Action buttons */}
                 <div className="space-y-3">
-                  <Button
-                    onClick={openSurvey}
-                    variant="primary"
-                    className="w-full"
-                  >
-                    <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                    </svg>
-                    View Survey
-                  </Button>
-
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="flex justify-center gap-3">
                     <Button
-                      onClick={onCreateAnother}
+                      onClick={openSurvey}
                       variant="outline"
-                      className="w-full"
                     >
-                      Create Another
+                      <span className="inline-flex items-center gap-1.5">
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                        View
+                      </span>
                     </Button>
                     <Button
                       onClick={onGoToDashboard}
-                      variant="secondary"
-                      className="w-full"
+                      variant="primary"
                     >
                       Go to Dashboard
                     </Button>
                   </div>
                 </div>
-
-                {/* Share options hint */}
-                <p className="text-center text-sm text-gray-500">
-                  Share this link with your audience to start collecting responses
-                </p>
               </div>
             </div>
           </motion.div>

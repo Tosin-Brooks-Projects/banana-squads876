@@ -29,7 +29,7 @@ export default function VerifyEmailPage() {
       }
 
       // Try to get email from localStorage
-      let storedEmail = window.localStorage.getItem('emailForSignIn');
+      const storedEmail = window.localStorage.getItem('emailForSignIn');
 
       if (!storedEmail) {
         // User opened link on different device/browser

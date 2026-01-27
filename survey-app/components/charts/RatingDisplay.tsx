@@ -111,7 +111,8 @@ export default function RatingDisplay({
       {/* Star visualization */}
       <div className="flex justify-center gap-1 mb-4">
         {Array.from({ length: maxRating }, (_, i) => {
-          const starValue = i + 1;
+          const _starValue = i + 1;
+          void _starValue;
           const fillPercentage = Math.min(1, Math.max(0, average - i));
 
           return (

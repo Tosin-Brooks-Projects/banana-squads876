@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Question, Answer, OnProgressCallback } from '@/lib/types';
+import { Question, Answer, OnProgressCallback, isMultipleChoiceQuestion } from '@/lib/types';
 
 interface CoffeeBrewerInitialState {
   currentStage: number;
@@ -27,7 +27,7 @@ interface SelectedChoices {
   beans: string;
   grind: string;
   method: string;
-  finishing: string;
+  finishing: string | string[]; // Can be array if allowMultiple is true
 }
 
 interface AnswerMap {
@@ -43,12 +43,12 @@ const stageVariants = {
   visible: {
     opacity: 1,
     x: 0,
-    transition: { duration: 0.4, ease: 'easeOut' }
+    transition: { duration: 0.4, ease: 'easeOut' as const }
   },
   exit: {
     opacity: 0,
     x: -50,
-    transition: { duration: 0.3, ease: 'easeIn' }
+    transition: { duration: 0.3, ease: 'easeIn' as const }
   }
 };
 
@@ -81,10 +81,10 @@ const methodOptions = [
 ];
 
 const finishingOptions = [
-  { id: 'black', name: 'Black', hasCreamer: false, hasSugar: false },
-  { id: 'cream', name: 'Cream', hasCreamer: true, hasSugar: false },
-  { id: 'sugar', name: 'Sugar', hasCreamer: false, hasSugar: true },
-  { id: 'both', name: 'Both', hasCreamer: true, hasSugar: true },
+  { id: 'option1', name: 'Option 1' },
+  { id: 'option2', name: 'Option 2' },
+  { id: 'option3', name: 'Option 3' },
+  { id: 'option4', name: 'Option 4' },
 ];
 
 const confettiColors = ['#92400e', '#d97706', '#fbbf24', '#f59e0b', '#b45309', '#78350f'];
@@ -114,7 +114,7 @@ function getQuestionOptions(question: Question | undefined): string[] {
 function mapQuestionToVisualOptions<T extends { id: string; name: string }>(
   question: Question | undefined,
   visualOptions: T[]
-): Array<T & { answerValue: string }> {
+): Array<T & { answerValue: string; id: string }> {
   const questionOptions = getQuestionOptions(question);
 
   // If no question options, return empty - don't use visual names as answers
@@ -123,10 +123,12 @@ function mapQuestionToVisualOptions<T extends { id: string; name: string }>(
   }
 
   // Map question options to visual options, cycling through visuals if needed
+  // IMPORTANT: Use unique index-based IDs to prevent duplicate selection bugs
   return questionOptions.map((option, index) => {
     const visualOption = visualOptions[index % visualOptions.length];
     return {
       ...visualOption,
+      id: `option-${index}`, // Unique ID based on index, not visual option
       answerValue: option,
     };
   });
@@ -257,13 +259,11 @@ function CoffeeDisplay({
   const beans = beanOptions.find(b => b.id === selectedChoices.beans);
   const grind = grindOptions.find(g => g.id === selectedChoices.grind);
   const method = methodOptions.find(m => m.id === selectedChoices.method);
-  const finishing = finishingOptions.find(f => f.id === selectedChoices.finishing);
+  const _finishing = finishingOptions.find(f => f.id === selectedChoices.finishing);
+  void _finishing;
 
-  // Get coffee color based on roast
+  // Get coffee color based on roast (toppings don't change coffee color)
   const getCoffeeColor = () => {
-    if (finishing?.hasCreamer) {
-      return beans?.id === 'light' ? 'bg-amber-300' : beans?.id === 'medium' ? 'bg-amber-400' : 'bg-amber-500';
-    }
     return beans?.color || 'bg-amber-700';
   };
 
@@ -434,8 +434,20 @@ function CoffeeDisplay({
         {currentStage >= 2 && (
           <motion.div
             initial={{ y: 50, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ type: 'spring', stiffness: 200, damping: 20, delay: 0.2 }}
+            animate={{
+              y: 0,
+              opacity: 1,
+              scale: showLatteArt ? [1, 1.1, 1] : 1,
+              rotate: showLatteArt ? [0, -5, 5, -3, 3, 0] : 0,
+            }}
+            transition={{
+              type: 'spring',
+              stiffness: 200,
+              damping: 20,
+              delay: 0.2,
+              scale: { duration: 0.5, delay: 0 },
+              rotate: { duration: 0.6, delay: 0.1 },
+            }}
             className="absolute right-8 bottom-20"
           >
             <div className="relative">
@@ -450,38 +462,30 @@ function CoffeeDisplay({
                       transition={{ duration: 1.5, ease: 'easeOut' }}
                       className={`absolute bottom-0 w-full ${getCoffeeColor()}`}
                     >
-                      {/* Cream swirl animation */}
-                      {finishing?.hasCreamer && showLatteArt && (
+                      {/* Whipped cream topping - shows on completion */}
+                      {showLatteArt && (
                         <motion.div
-                          className="absolute inset-0 flex items-center justify-center"
-                          initial={{ opacity: 0, rotate: 0 }}
-                          animate={{ opacity: 1, rotate: 360 }}
-                          transition={{ duration: 1, delay: 0.5 }}
+                          className="absolute -top-6 left-1/2 -translate-x-1/2"
+                          initial={{ opacity: 0, scale: 0, y: 20 }}
+                          animate={{ opacity: 1, scale: 1, y: 0 }}
+                          transition={{ duration: 0.6, delay: 0.3, type: 'spring', stiffness: 200 }}
                         >
-                          <div className="w-6 h-6 border-2 border-white/60 rounded-full" />
-                          <motion.div
-                            className="absolute w-3 h-3 bg-white/40 rounded-full"
-                            animate={{ scale: [1, 1.2, 1] }}
-                            transition={{ duration: 2, repeat: Infinity }}
-                          />
-                        </motion.div>
-                      )}
-                      {/* Sugar sparkles */}
-                      {finishing?.hasSugar && showLatteArt && (
-                        <div className="absolute inset-0">
-                          {[0, 1, 2, 3].map((i) => (
+                          {/* Main whipped cream swirl */}
+                          <div className="relative">
+                            <div className="w-10 h-5 bg-white rounded-t-full shadow-md" />
+                            <div className="w-8 h-4 bg-white rounded-t-full mx-auto -mt-2 shadow-sm" />
+                            <div className="w-5 h-3 bg-white rounded-t-full mx-auto -mt-1" />
+                            {/* Cherry on top */}
                             <motion.div
-                              key={i}
-                              className="absolute w-1 h-1 bg-white rounded-full"
-                              style={{
-                                left: `${20 + i * 20}%`,
-                                top: `${30 + (i % 2) * 20}%`,
-                              }}
-                              animate={{ opacity: [0.3, 1, 0.3] }}
-                              transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.2 }}
-                            />
-                          ))}
-                        </div>
+                              className="absolute -top-2 left-1/2 -translate-x-1/2 w-3 h-3 bg-red-500 rounded-full shadow-sm"
+                              initial={{ scale: 0 }}
+                              animate={{ scale: 1 }}
+                              transition={{ delay: 0.8, type: 'spring', stiffness: 300 }}
+                            >
+                              <div className="absolute -top-1 left-1/2 w-0.5 h-2 bg-green-600 rounded-full" />
+                            </motion.div>
+                          </div>
+                        </motion.div>
                       )}
                     </motion.div>
                   )}
@@ -646,13 +650,55 @@ export default function CoffeeBrewer({ questions, onComplete, onProgress, initia
     }
   };
 
+  // Check if the finishing question allows multiple selections
+  const finishingQuestion = questions[3];
+  const allowMultipleFinishing = finishingQuestion &&
+    isMultipleChoiceQuestion(finishingQuestion) &&
+    finishingQuestion.allowMultiple === true;
+
   const handleFinishingSelect = (visualId: string, answerValue: string) => {
-    setSelectedChoices(prev => ({ ...prev, finishing: visualId }));
-    if (questions[3]) {
-      setAnswerMap(prev => ({
-        ...prev,
-        [questions[3].id]: { visualId, answerValue },
-      }));
+    if (allowMultipleFinishing) {
+      // Multi-select mode: toggle the selection
+      setSelectedChoices(prev => {
+        const currentFinishing = Array.isArray(prev.finishing) ? prev.finishing :
+          (prev.finishing ? [prev.finishing] : []);
+        const isSelected = currentFinishing.includes(visualId);
+        const newFinishing = isSelected
+          ? currentFinishing.filter(id => id !== visualId)
+          : [...currentFinishing, visualId];
+        return { ...prev, finishing: newFinishing };
+      });
+      if (questions[3]) {
+        setAnswerMap(prev => {
+          const currentEntry = prev[questions[3].id];
+          const currentIds = Array.isArray(currentEntry?.visualId) ? currentEntry.visualId :
+            (currentEntry?.visualId ? [currentEntry.visualId] : []);
+          const currentValues = Array.isArray(currentEntry?.answerValue) ? currentEntry.answerValue :
+            (currentEntry?.answerValue ? [currentEntry.answerValue] : []);
+
+          const isSelected = currentIds.includes(visualId);
+          const newIds = isSelected
+            ? currentIds.filter(id => id !== visualId)
+            : [...currentIds, visualId];
+          const newValues = isSelected
+            ? currentValues.filter(v => v !== answerValue)
+            : [...currentValues, answerValue];
+
+          return {
+            ...prev,
+            [questions[3].id]: { visualId: newIds, answerValue: newValues },
+          };
+        });
+      }
+    } else {
+      // Single-select mode: replace the selection
+      setSelectedChoices(prev => ({ ...prev, finishing: visualId }));
+      if (questions[3]) {
+        setAnswerMap(prev => ({
+          ...prev,
+          [questions[3].id]: { visualId, answerValue },
+        }));
+      }
     }
   };
 
@@ -730,6 +776,7 @@ export default function CoffeeBrewer({ questions, onComplete, onProgress, initia
             question={questions[3]}
             options={mappedFinishingOptions}
             selectedFinishing={selectedChoices.finishing}
+            allowMultiple={allowMultipleFinishing}
             onSelect={handleFinishingSelect}
             onComplete={handleComplete}
             onBack={handleBack}
@@ -1199,26 +1246,31 @@ function FinishingSelection({
   question,
   options,
   selectedFinishing,
+  allowMultiple = false,
   onSelect,
   onComplete,
   onBack,
 }: {
   question?: Question;
-  options: Array<typeof finishingOptions[0] & { answerValue: string }>;
-  selectedFinishing: string;
+  options: Array<typeof finishingOptions[0] & { answerValue: string; id: string }>;
+  selectedFinishing: string | string[];
+  allowMultiple?: boolean;
   onSelect: (visualId: string, answerValue: string) => void;
   onComplete: () => void;
   onBack?: () => void;
 }) {
-  const getIcon = (id: string) => {
-    switch (id) {
-      case 'black': return '☕';
-      case 'cream': return '🥛';
-      case 'sugar': return '🧂';
-      case 'both': return '✨';
-      default: return '☕';
+  // Helper to check if an option is selected (works for both single and multi-select)
+  const isOptionSelected = (optionId: string) => {
+    if (Array.isArray(selectedFinishing)) {
+      return selectedFinishing.includes(optionId);
     }
+    return selectedFinishing === optionId;
   };
+
+  // Check if at least one option is selected
+  const hasSelection = Array.isArray(selectedFinishing)
+    ? selectedFinishing.length > 0
+    : Boolean(selectedFinishing);
 
   return (
     <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8">
@@ -1233,41 +1285,61 @@ function FinishingSelection({
           Back
         </button>
       )}
-      <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4 sm:mb-6">
-        {question?.question || 'Add Finishing Touches'}
+      <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-1">
+        {question?.question || 'One last question...'}
       </h2>
+      {allowMultiple && (
+        <p className="text-sm text-gray-500 mb-4">Select all that apply</p>
+      )}
+      {!allowMultiple && <div className="mb-4" />}
 
       <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-6">
-        {options.map((option, index) => (
-          <motion.button
-            key={option.id}
-            onClick={() => onSelect(option.id, option.answerValue)}
-            className={`p-4 rounded-xl border-2 transition-colors focus:outline-none cursor-pointer
-              ${selectedFinishing === option.id
-                ? 'border-amber-500 bg-amber-50'
-                : 'border-gray-200 [@media(hover:hover)]:hover:border-amber-300'
-              }`}
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.05 }}
-          >
-            <div className="text-2xl mb-2">{getIcon(option.id)}</div>
-            <div className="text-sm font-medium text-gray-700">{option.answerValue}</div>
-          </motion.button>
-        ))}
+        {options.map((option, index) => {
+          const isSelected = isOptionSelected(option.id);
+          return (
+            <motion.button
+              key={option.id}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onSelect(option.id, option.answerValue);
+              }}
+              className={`relative p-4 rounded-xl border-2 transition-all focus:outline-none cursor-pointer
+                ${isSelected
+                  ? 'border-amber-500 bg-amber-50 ring-2 ring-amber-300'
+                  : 'border-gray-200 bg-white [@media(hover:hover)]:hover:border-amber-300'
+                }`}
+              whileTap={{ scale: 0.97 }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.05 }}
+            >
+              <div className="text-sm font-medium text-gray-700 py-2">{option.answerValue}</div>
+              {isSelected && (
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className="absolute top-2 right-2 w-5 h-5 bg-amber-500 rounded-full flex items-center justify-center"
+                >
+                  <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                  </svg>
+                </motion.div>
+              )}
+            </motion.button>
+          );
+        })}
       </div>
 
       <motion.button
         onClick={onComplete}
-        disabled={!selectedFinishing}
+        disabled={!hasSelection}
         className="w-full py-3 px-6 min-h-[48px] bg-amber-600 text-white font-semibold rounded-lg
           transition-colors focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2
           flex items-center justify-center gap-2 cursor-pointer touch-manipulation
           disabled:bg-gray-300 disabled:cursor-not-allowed
           active:bg-amber-800 [@media(hover:hover)]:hover:bg-amber-700"
-        whileHover={{ scale: selectedFinishing ? 1.02 : 1, boxShadow: selectedFinishing ? '0 10px 25px -5px rgba(217, 119, 6, 0.4)' : 'none' }}
+        whileHover={{ scale: hasSelection ? 1.02 : 1, boxShadow: hasSelection ? '0 10px 25px -5px rgba(217, 119, 6, 0.4)' : 'none' }}
         whileTap={{ scale: 0.98 }}
       >
         <motion.span

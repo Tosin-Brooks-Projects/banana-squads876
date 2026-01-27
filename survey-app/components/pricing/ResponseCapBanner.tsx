@@ -73,9 +73,10 @@ export default function ResponseCapBanner({
 
   const nextTierConfig = nextTier ? PRICING_TIERS[nextTier] : null;
   const currentTierConfig = PRICING_TIERS[currentTier];
-  const upgradeCost = nextTierConfig
+  const _upgradeCost = nextTierConfig
     ? nextTierConfig.price - currentTierConfig.price
     : 0;
+  void _upgradeCost;
 
   return (
     <AnimatePresence>

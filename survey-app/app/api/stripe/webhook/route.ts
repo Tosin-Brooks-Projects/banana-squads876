@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
       if (surveyId && tier && PRICING_TIERS[tier]) {
         const paymentId = typeof session.payment_intent === 'string'
           ? session.payment_intent
-          : session.payment_intent?.id ?? null;
+          : session.payment_intent?.id ?? undefined;
 
         try {
           // Check if this payment has already been processed (idempotency)

@@ -81,7 +81,7 @@ export default function AboutPage() {
             <div className="prose prose-neutral max-w-none">
               <p className="text-neutral-600 text-lg leading-relaxed mb-6">
                 Unboring Surveys was born from a hackathon competition where businesses
-                present real problems they're facing and participants have two weeks to build actual solutions.
+                present real problems they&apos;re facing and participants have two weeks to build actual solutions.
               </p>
               <p className="text-neutral-600 text-lg leading-relaxed mb-6">
                 As a business owner myself, I knew that reducing friction and making it easier for people
@@ -164,7 +164,7 @@ export default function AboutPage() {
               Have Questions or Ideas?
             </h2>
             <p className="text-neutral-600 mb-6">
-              I'd love to hear from you! Whether you have feedback, feature requests,
+              I&apos;d love to hear from you! Whether you have feedback, feature requests,
               or just want to say hi, feel free to reach out on X.
             </p>
             <a
@@ -189,7 +189,7 @@ export default function AboutPage() {
             Ready to Try It Out?
           </h2>
           <p className="text-neutral-600 mb-8">
-            Create your first unboring survey in minutes. It's free to start.
+            Create your first unboring survey in minutes. It&apos;s free to start.
           </p>
           <Link
             href="/login"

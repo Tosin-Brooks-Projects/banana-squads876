@@ -10,7 +10,7 @@ import Card from '@/components/ui/Card';
 import { Spinner } from '@/components/ui/LoadingStates';
 import QuestionEditor, { isQuestionValid } from '@/components/QuestionEditor';
 import SurveySuccessModal from '@/components/SurveySuccessModal';
-import { AdventureType, Question, MultipleChoiceQuestion, PricingTier, PRICING_TIERS, FREE_TIER_THEMES } from '@/lib/types';
+import { AdventureType, Question, MultipleChoiceQuestion, PricingTier, PRICING_TIERS, FREE_TIER_THEMES, SurveySettings } from '@/lib/types';
 import {
   createSurvey as createSurveyInFirestore,
   createFreeSurveyAtomic,
@@ -516,7 +516,7 @@ export default function CreateSurveyPage() {
           showProgressBar: true,
           randomizeQuestions: false,
           thankYouMessage: formData.thankYouMessage.trim() || '',
-        } as any, // Extended settings
+        } as SurveySettings, // Extended settings
         status: (isFree ? 'published' : 'draft') as 'published' | 'draft' | 'closed',
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -767,7 +767,6 @@ export default function CreateSurveyPage() {
                   {THEMES.map((theme) => {
                     const isFreeTheme = FREE_TIER_THEMES.includes(theme.value);
                     const isSelected = formData.theme === theme.value;
-                    const isPremiumLocked = theme.isPremium && formData.pricingTier === 'free';
 
                     return (
                       <div key={theme.value} className="relative group">

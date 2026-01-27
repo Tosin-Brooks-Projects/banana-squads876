@@ -292,7 +292,7 @@ export default function SurveyDetailPage() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [updatingStatus, setUpdatingStatus] = useState(false);
   const [updatingExpiration, setUpdatingExpiration] = useState(false);
-  const [verifyingPayment, setVerifyingPayment] = useState(false);
+  const [, setVerifyingPayment] = useState(false);
   const [processingPayment, setProcessingPayment] = useState(false);
   const [selectedPaymentTier, setSelectedPaymentTier] = useState<PricingTier | null>(null);
   const [showWinnerModal, setShowWinnerModal] = useState(false);
@@ -300,6 +300,7 @@ export default function SurveyDetailPage() {
   const [isPickingWinner, setIsPickingWinner] = useState(false);
   const [isSavingWinnerImage, setIsSavingWinnerImage] = useState(false);
   const winnerCardRef = useRef<HTMLDivElement>(null);
+  const expirationInputRef = useRef<HTMLInputElement>(null);
 
   // Define fetchData early so it can be used in payment verification
   const fetchData = useCallback(async () => {
@@ -427,6 +428,36 @@ export default function SurveyDetailPage() {
       console.error('Error updating expiration:', err);
       setSurvey({ ...survey, settings: previousSettings });
       setToastMessage('Failed to update expiration date');
+      setShowToast(true);
+    } finally {
+      setUpdatingExpiration(false);
+    }
+  };
+
+  const handleClearExpiration = async () => {
+    if (!survey || updatingExpiration) return;
+
+    const previousSettings = survey.settings;
+    // Create new settings without expiresAt (use destructuring to exclude it)
+    const { expiresAt: _expiresAt, ...settingsWithoutExpiration } = survey.settings || {};
+    void _expiresAt;
+    const updatedSettings = settingsWithoutExpiration;
+
+    setUpdatingExpiration(true);
+    setSurvey({ ...survey, settings: updatedSettings });
+
+    try {
+      // Pass null to Firestore to delete the field (undefined doesn't work)
+      // Type assertion needed since Firestore accepts null to delete fields
+      await updateSurvey(surveyId, {
+        settings: { ...updatedSettings, expiresAt: null as unknown as undefined }
+      });
+      setToastMessage('Expiration date removed');
+      setShowToast(true);
+    } catch (err) {
+      console.error('Error clearing expiration:', err);
+      setSurvey({ ...survey, settings: previousSettings });
+      setToastMessage('Failed to clear expiration date');
       setShowToast(true);
     } finally {
       setUpdatingExpiration(false);
@@ -637,7 +668,7 @@ export default function SurveyDetailPage() {
               {error || 'Survey not found'}
             </h2>
             <p className="text-gray-600 mb-6">
-              The survey you're looking for doesn't exist or you don't have access to it.
+              The survey you&apos;re looking for doesn&apos;t exist or you don&apos;t have access to it.
             </p>
             <Link href="/dashboard">
               <Button>Back to Dashboard</Button>
@@ -678,24 +709,28 @@ export default function SurveyDetailPage() {
                 loadingText="Refreshing..."
                 className="relative"
               >
-                <svg
-                  className="w-4 h-4 mr-1.5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                </svg>
-                <span className="hidden sm:inline">Refresh</span>
+                <span className="inline-flex items-center">
+                  <svg
+                    className="w-4 h-4 mr-1.5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                  <span className="hidden sm:inline">Refresh</span>
+                </span>
               </Button>
               {responses.length > 0 && (
                 <>
                   <Button variant="outline" size="sm" onClick={handlePickWinner}>
-                    <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
-                    </svg>
-                    <span className="hidden sm:inline">Pick Winner</span>
-                    <span className="sm:hidden">Winner</span>
+                    <span className="inline-flex items-center">
+                      <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
+                      </svg>
+                      <span className="hidden sm:inline">Pick Winner</span>
+                      <span className="sm:hidden">Winner</span>
+                    </span>
                   </Button>
                   {CSV_EXPORT_TIERS.includes(survey.pricingTier || 'free') ? (
                     <CSVLink
@@ -708,23 +743,27 @@ export default function SurveyDetailPage() {
                       className="inline-flex"
                     >
                       <Button variant="outline" size="sm">
-                        <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                        </svg>
-                        <span className="hidden sm:inline">Download CSV</span>
-                        <span className="sm:hidden">CSV</span>
+                        <span className="inline-flex items-center">
+                          <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                          </svg>
+                          <span className="hidden sm:inline">Download CSV</span>
+                          <span className="sm:hidden">CSV</span>
+                        </span>
                       </Button>
                     </CSVLink>
                   ) : (
                     <div className="relative group">
                       <Button variant="outline" size="sm" disabled className="opacity-60">
-                        <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                        </svg>
-                        <span className="hidden sm:inline">CSV</span>
-                        <svg className="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                        </svg>
+                        <span className="inline-flex items-center">
+                          <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                          </svg>
+                          <span className="hidden sm:inline">CSV</span>
+                          <svg className="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                          </svg>
+                        </span>
                       </Button>
                       <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-neutral-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
                         CSV export requires a paid plan
@@ -924,10 +963,12 @@ export default function SurveyDetailPage() {
               </div>
               <Link href={surveyUrl} target="_blank">
                 <Button variant="outline" size="sm">
-                  <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                  </svg>
-                  Open
+                  <span className="inline-flex items-center">
+                    <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                    Open
+                  </span>
                 </Button>
               </Link>
             </div>
@@ -943,12 +984,12 @@ export default function SurveyDetailPage() {
         >
           <Card>
             <h3 className="text-sm font-semibold text-gray-900 mb-4">Link Controls</h3>
-            <div className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Active/Inactive Toggle */}
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                 <div>
                   <p className="text-sm font-medium text-gray-700">Survey Active</p>
-                  <p className="text-xs text-gray-500">When inactive, the survey link will not work</p>
+                  <p className="text-xs text-gray-500">When inactive, link won&apos;t work</p>
                 </div>
                 <button
                   onClick={handleStatusToggle}
@@ -969,44 +1010,61 @@ export default function SurveyDetailPage() {
               </div>
 
               {/* Expiration Date */}
-              <div className="flex items-center justify-between">
-                <div>
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-gray-700">Expiration Date</p>
-                  <p className="text-xs text-gray-500">Survey will automatically close after this date</p>
+                  <p className="text-xs text-gray-500 truncate">
+                    {survey.settings?.expiresAt
+                      ? (new Date(survey.settings.expiresAt) < new Date()
+                          ? `Expired ${formatDateTime(new Date(survey.settings.expiresAt))}`
+                          : `Expires ${formatDateTime(new Date(survey.settings.expiresAt))}`)
+                      : 'No expiration set'}
+                  </p>
                 </div>
-                <input
-                  type="datetime-local"
-                  value={survey.settings?.expiresAt
-                    ? (() => {
-                        const d = new Date(survey.settings.expiresAt);
-                        const offset = d.getTimezoneOffset();
-                        const local = new Date(d.getTime() - offset * 60000);
-                        return local.toISOString().slice(0, 16);
-                      })()
-                    : ''
-                  }
-                  onChange={handleExpirationChange}
-                  disabled={updatingExpiration}
-                  min={new Date().toISOString().slice(0, 16)}
-                  className={`px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent ${
-                    updatingExpiration ? 'opacity-50 cursor-not-allowed' : ''
-                  }`}
-                />
+                <div className="flex items-center gap-2">
+                  <input
+                    ref={expirationInputRef}
+                    type="datetime-local"
+                    value={survey.settings?.expiresAt
+                      ? (() => {
+                          const d = new Date(survey.settings.expiresAt);
+                          const offset = d.getTimezoneOffset();
+                          const local = new Date(d.getTime() - offset * 60000);
+                          return local.toISOString().slice(0, 16);
+                        })()
+                      : ''
+                    }
+                    onChange={handleExpirationChange}
+                    disabled={updatingExpiration}
+                    min={new Date().toISOString().slice(0, 16)}
+                    className="sr-only"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => expirationInputRef.current?.showPicker()}
+                    disabled={updatingExpiration}
+                    className={`w-9 h-9 flex items-center justify-center bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer ${updatingExpiration ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    title="Set expiration date"
+                  >
+                    <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                  </button>
+                  {survey.settings?.expiresAt && (
+                    <button
+                      type="button"
+                      onClick={handleClearExpiration}
+                      disabled={updatingExpiration}
+                      className={`w-9 h-9 flex items-center justify-center bg-white border border-gray-300 rounded-lg hover:bg-red-50 hover:border-red-300 transition-colors cursor-pointer ${updatingExpiration ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      title="Clear expiration date"
+                    >
+                      <svg className="w-5 h-5 text-gray-600 hover:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  )}
+                </div>
               </div>
-
-              {/* Show expiration status if set */}
-              {survey.settings?.expiresAt && (
-                <div className={`text-xs px-3 py-2 rounded-lg ${
-                  new Date(survey.settings.expiresAt) < new Date()
-                    ? 'bg-red-50 text-red-700'
-                    : 'bg-yellow-50 text-yellow-700'
-                }`}>
-                  {new Date(survey.settings.expiresAt) < new Date()
-                    ? `Expired on ${formatDateTime(new Date(survey.settings.expiresAt))}`
-                    : `Expires on ${formatDateTime(new Date(survey.settings.expiresAt))}`
-                  }
-                </div>
-              )}
             </div>
           </Card>
         </motion.div>
@@ -1059,7 +1117,7 @@ export default function SurveyDetailPage() {
                 <div className="mt-8">
                   <h3 className="text-sm font-medium text-gray-700 mb-4">Responses Over Time</h3>
                   <LineChartComponent
-                    data={responsesOverTime}
+                    data={responsesOverTime.map(({ name, value }) => ({ name, value }))}
                     height={200}
                   />
                 </div>
@@ -1181,17 +1239,21 @@ export default function SurveyDetailPage() {
                       setShowToast(true);
                     }}
                   >
-                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                    </svg>
-                    Copy Survey Link
+                    <span className="inline-flex items-center">
+                      <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                      </svg>
+                      Copy Survey Link
+                    </span>
                   </Button>
                   <Link href={surveyUrl} target="_blank">
                     <Button variant="outline">
-                      <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                      </svg>
-                      Preview Survey
+                      <span className="inline-flex items-center">
+                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                        Preview Survey
+                      </span>
                     </Button>
                   </Link>
                 </div>
@@ -1377,9 +1439,15 @@ export default function SurveyDetailPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                   </svg>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Delete Survey</h3>
-                <p className="text-gray-600 mb-6">
-                  Are you sure you want to delete "{survey.title}"? This action cannot be undone and all responses will be lost.
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">Delete Survey</h3>
+                <p className="text-gray-600 mb-2">
+                  Are you sure you want to delete this survey?
+                </p>
+                <p className="font-medium text-gray-800 mb-3 break-words">
+                  &quot;{survey.title}&quot;
+                </p>
+                <p className="text-sm text-red-600 mb-6">
+                  This cannot be undone. All responses will be permanently lost.
                 </p>
                 <div className="flex items-center gap-3 justify-center">
                   <Button variant="outline" onClick={() => setShowDeleteModal(false)} disabled={deleting}>
@@ -1460,7 +1528,7 @@ export default function SurveyDetailPage() {
                         transition={{ delay: 0.2 }}
                       >
                         <h3 className="text-xl font-bold text-gray-900 mb-1">We Have a Winner!</h3>
-                        <p className="text-sm text-gray-500 mb-3">from "{survey?.title}"</p>
+                        <p className="text-sm text-gray-500 mb-3">from &quot;{survey?.title}&quot;</p>
                       </motion.div>
                       <motion.div
                         initial={{ opacity: 0, scale: 0.9 }}
@@ -1521,10 +1589,12 @@ export default function SurveyDetailPage() {
                         Close
                       </Button>
                       <Button onClick={handlePickWinner}>
-                        <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                        </svg>
-                        Pick Again
+                        <span className="inline-flex items-center">
+                          <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                          </svg>
+                          Pick Again
+                        </span>
                       </Button>
                     </div>
                   </>

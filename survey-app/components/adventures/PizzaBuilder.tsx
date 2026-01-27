@@ -43,12 +43,12 @@ const stageVariants = {
   visible: {
     opacity: 1,
     x: 0,
-    transition: { duration: 0.4, ease: 'easeOut' }
+    transition: { duration: 0.4, ease: 'easeOut' as const }
   },
   exit: {
     opacity: 0,
     x: -50,
-    transition: { duration: 0.3, ease: 'easeIn' }
+    transition: { duration: 0.3, ease: 'easeIn' as const }
   }
 };
 
@@ -67,7 +67,7 @@ const pizzaBaseVariants = {
     scale: 1,
     rotate: 0,
     transition: {
-      type: 'spring',
+      type: 'spring' as const,
       stiffness: 200,
       damping: 20
     }
@@ -81,7 +81,7 @@ const sauceSpreadVariants = {
     opacity: 1,
     transition: {
       duration: 0.6,
-      ease: 'easeOut'
+      ease: 'easeOut' as const
     }
   }
 };
@@ -93,7 +93,7 @@ const cheeseVariants = {
     scale: 1,
     transition: {
       duration: 0.5,
-      ease: 'easeOut'
+      ease: 'easeOut' as const
     }
   }
 };
@@ -105,7 +105,7 @@ const toppingVariants = {
     opacity: 1,
     y: 0,
     transition: {
-      type: 'spring',
+      type: 'spring' as const,
       stiffness: 400,
       damping: 15,
       delay: i * 0.08
@@ -121,7 +121,7 @@ const steamVariants = {
     transition: {
       duration: 2,
       repeat: Infinity,
-      ease: 'easeOut'
+      ease: 'easeOut' as const
     }
   }
 };
@@ -137,21 +137,22 @@ const crustOptions = [
 
 const sauceOptions = [
   { id: 'tomato', name: 'Tomato', color: 'bg-red-500' },
-  { id: 'white', name: 'White', color: 'bg-amber-100' },
-  { id: 'pesto', name: 'Pesto', color: 'bg-green-600' },
+  { id: 'white', name: 'White', color: 'bg-red-500' },
+  { id: 'pesto', name: 'Pesto', color: 'bg-red-500' },
 ];
 
 const cheeseOptions = [
-  { id: 'mozzarella', name: 'Mozzarella', color: 'bg-yellow-100', dots: 'bg-yellow-200' },
+  { id: 'mozzarella', name: 'Mozzarella', color: 'bg-orange-300', dots: 'bg-orange-400' },
   { id: 'cheddar', name: 'Cheddar', color: 'bg-orange-300', dots: 'bg-orange-400' },
-  { id: 'none', name: 'No Cheese', color: 'bg-transparent', dots: 'bg-transparent' },
+  { id: 'none', name: 'No Cheese', color: 'bg-orange-300', dots: 'bg-orange-400' },
 ];
 
 const toppingOptions = [
-  { id: 'pepperoni', name: 'Pepperoni', emoji: '🍕', color: 'bg-red-600', shape: 'rounded-full' },
+  { id: 'pepperoni', name: 'Pepperoni', emoji: '🥓', color: 'bg-red-600', shape: 'rounded-full' },
   { id: 'mushrooms', name: 'Mushrooms', emoji: '🍄', color: 'bg-amber-100', shape: 'rounded-md' },
   { id: 'peppers', name: 'Peppers', emoji: '🫑', color: 'bg-green-500', shape: 'rounded-sm' },
   { id: 'olives', name: 'Olives', emoji: '🫒', color: 'bg-gray-800', shape: 'rounded-full' },
+  { id: 'onions', name: 'Onions', emoji: '🧅', color: 'bg-purple-200', shape: 'rounded-full' },
 ];
 
 function getQuestionOptions(question: Question | undefined): string[] {
@@ -398,9 +399,9 @@ function PizzaDisplay({
         )}
       </AnimatePresence>
 
-      {/* Toppings */}
+      {/* Toppings - show as soon as they're selected (stage 4+) */}
       <AnimatePresence>
-        {currentStage >= 5 && selectedChoices.toppings.length > 0 && (
+        {currentStage >= 4 && selectedChoices.toppings.length > 0 && (
           <div className="absolute inset-6 sm:inset-8 md:inset-10">
             {toppingPositions.map((item) => (
               <motion.div
@@ -414,6 +415,7 @@ function PizzaDisplay({
                 variants={toppingVariants}
                 initial="hidden"
                 animate="visible"
+                exit={{ scale: 0, opacity: 0 }}
                 custom={item.index}
               />
             ))}
@@ -904,32 +906,26 @@ function CheeseSelection({
           >
             {/* Cheese visual with melting effect */}
             <div className="relative w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-1 sm:mb-2">
-              {option.id !== 'none' ? (
-                <motion.div
-                  className={`w-full h-full rounded-full ${option.color} border-2 border-yellow-300 relative overflow-hidden`}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                >
-                  {/* Cheese dots/texture */}
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <motion.div
-                      key={i}
-                      className={`absolute w-2 h-2 rounded-full ${option.dots}`}
-                      style={{
-                        left: `${20 + (i % 3) * 25}%`,
-                        top: `${20 + Math.floor(i / 3) * 40}%`,
-                      }}
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ delay: 0.3 + i * 0.05 }}
-                    />
-                  ))}
-                </motion.div>
-              ) : (
-                <div className="w-full h-full rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center">
-                  <span className="text-gray-400 text-xl">🚫</span>
-                </div>
-              )}
+              <motion.div
+                className={`w-full h-full rounded-full ${option.color} border-2 border-orange-400 relative overflow-hidden`}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+              >
+                {/* Cheese dots/texture */}
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <motion.div
+                    key={i}
+                    className={`absolute w-2 h-2 rounded-full ${option.dots}`}
+                    style={{
+                      left: `${20 + (i % 3) * 25}%`,
+                      top: `${20 + Math.floor(i / 3) * 35}%`,
+                    }}
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: 0.3 + i * 0.05 }}
+                  />
+                ))}
+              </motion.div>
             </div>
             <div className="font-medium text-gray-700 text-xs sm:text-sm">{option.answerValue}</div>
           </motion.button>

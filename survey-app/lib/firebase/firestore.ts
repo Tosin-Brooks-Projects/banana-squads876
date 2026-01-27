@@ -18,7 +18,7 @@ import {
   writeBatch,
 } from 'firebase/firestore';
 import { db } from './config';
-import { User, Survey, SurveyResponse, Answer, ResponseMetadata, SurveyQuickStats, PreviousUsername, PartialResponse } from '@/lib/types';
+import { User, Survey, SurveyResponse, Answer, ResponseMetadata, SurveyQuickStats, PartialResponse } from '@/lib/types';
 
 // User operations
 export async function createUser(user: User): Promise<void> {
@@ -550,7 +550,8 @@ export interface SavePartialResponseData {
   adventureState?: Record<string, unknown>;
 }
 
-async function getPartialResponseId(
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+async function _getPartialResponseId(
   surveyId: string,
   sessionId: string
 ): Promise<string | null> {

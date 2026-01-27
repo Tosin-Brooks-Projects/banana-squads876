@@ -20,11 +20,11 @@ function cleanupOldEntries() {
   if (now - lastCleanup < CLEANUP_INTERVAL) return;
 
   lastCleanup = now;
-  for (const [key, entry] of rateLimitStore.entries()) {
+  Array.from(rateLimitStore.entries()).forEach(([key, entry]) => {
     if (entry.resetAt < now) {
       rateLimitStore.delete(key);
     }
-  }
+  });
 }
 
 export interface RateLimitConfig {

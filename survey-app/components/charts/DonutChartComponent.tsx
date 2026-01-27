@@ -5,6 +5,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recha
 interface DonutChartData {
   name: string;
   value: number;
+  [key: string]: string | number;
 }
 
 interface DonutChartComponentProps {
@@ -30,21 +31,21 @@ const COLORS = [
 ];
 
 interface CustomLabelProps {
-  cx: number;
-  cy: number;
-  midAngle: number;
-  innerRadius: number;
-  outerRadius: number;
-  percent: number;
+  cx?: number;
+  cy?: number;
+  midAngle?: number;
+  innerRadius?: number;
+  outerRadius?: number;
+  percent?: number;
 }
 
 const renderCustomizedLabel = ({
-  cx,
-  cy,
-  midAngle,
-  innerRadius,
-  outerRadius,
-  percent,
+  cx = 0,
+  cy = 0,
+  midAngle = 0,
+  innerRadius = 0,
+  outerRadius = 0,
+  percent = 0,
 }: CustomLabelProps) => {
   const RADIAN = Math.PI / 180;
   const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
@@ -115,10 +116,13 @@ export default function DonutChartComponent({
               borderRadius: '8px',
               boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
             }}
-            formatter={(value: number) => [
-              `${value} (${((value / total) * 100).toFixed(1)}%)`,
-              'Responses',
-            ]}
+            formatter={(value) => {
+              const numValue = typeof value === 'number' ? value : 0;
+              return [
+                `${numValue} (${((numValue / total) * 100).toFixed(1)}%)`,
+                'Responses',
+              ];
+            }}
           />
           {showLegend && (
             <Legend

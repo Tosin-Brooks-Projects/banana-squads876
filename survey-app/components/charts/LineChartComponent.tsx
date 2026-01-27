@@ -13,7 +13,7 @@ import {
   Area,
 } from 'recharts';
 import { motion } from 'framer-motion';
-import { ACCESSIBLE_COLORS, CHART_COLORS, BRAND_COLORS } from './chartColors';
+import { CHART_COLORS, BRAND_COLORS } from './chartColors';
 import ChartSkeleton from './ChartSkeleton';
 
 interface LineChartData {

@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { signOut } from '@/lib/firebase/auth';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 interface DashboardHeaderProps {
   onMenuClick: () => void;
@@ -14,6 +14,22 @@ export default function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
   const { firebaseUser, user } = useAuthContext();
   const router = useRouter();
   const [isSigningOut, setIsSigningOut] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    }
+
+    if (isDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [isDropdownOpen]);
 
   const handleSignOut = async () => {
     setIsSigningOut(true);
@@ -60,13 +76,19 @@ export default function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
             <span className="text-xs text-neutral-500">{email}</span>
           </div>
 
-          <div className="relative group">
-            <button className="flex items-center gap-2 p-1 rounded-full hover:bg-neutral-100 transition-colors">
+          <div className="relative" ref={dropdownRef}>
+            <button
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              className="flex items-center gap-2 p-1 min-h-[48px] min-w-[48px] justify-center rounded-full hover:bg-neutral-100 transition-colors touch-manipulation"
+              aria-expanded={isDropdownOpen}
+              aria-haspopup="true"
+            >
               {photoURL ? (
                 <img
                   src={photoURL}
                   alt={displayName}
                   className="w-9 h-9 rounded-full object-cover border-2 border-neutral-200"
+                  loading="lazy"
                 />
               ) : (
                 <div className="w-9 h-9 rounded-full bg-brand-100 flex items-center justify-center border-2 border-neutral-200">
@@ -77,34 +99,40 @@ export default function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
               )}
             </button>
 
-            <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-neutral-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-              <div className="p-3 border-b border-neutral-100 sm:hidden">
-                <p className="text-sm font-medium text-neutral-900">{displayName}</p>
-                <p className="text-xs text-neutral-500 truncate">{email}</p>
+            {isDropdownOpen && (
+              <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-neutral-200 transition-all duration-200">
+                <div className="p-3 border-b border-neutral-100 sm:hidden">
+                  <p className="text-sm font-medium text-neutral-900">{displayName}</p>
+                  <p className="text-xs text-neutral-500 truncate">{email}</p>
+                </div>
+                <div className="p-1">
+                  <Link
+                    href="/dashboard/settings"
+                    onClick={() => setIsDropdownOpen(false)}
+                    className="flex items-center gap-2 px-3 py-2 min-h-[44px] text-sm text-neutral-700 hover:bg-neutral-100 rounded-md transition-colors touch-manipulation"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    Settings
+                  </Link>
+                  <button
+                    onClick={() => {
+                      setIsDropdownOpen(false);
+                      handleSignOut();
+                    }}
+                    disabled={isSigningOut}
+                    className="flex items-center gap-2 w-full px-3 py-2 min-h-[44px] text-sm text-red-600 hover:bg-red-50 rounded-md transition-colors disabled:opacity-50 touch-manipulation"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                    {isSigningOut ? 'Signing out...' : 'Sign out'}
+                  </button>
+                </div>
               </div>
-              <div className="p-1">
-                <Link
-                  href="/dashboard/settings"
-                  className="flex items-center gap-2 px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-100 rounded-md transition-colors"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                  Settings
-                </Link>
-                <button
-                  onClick={handleSignOut}
-                  disabled={isSigningOut}
-                  className="flex items-center gap-2 w-full px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-md transition-colors disabled:opacity-50"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                  </svg>
-                  {isSigningOut ? 'Signing out...' : 'Sign out'}
-                </button>
-              </div>
-            </div>
+            )}
           </div>
         </div>
       </div>

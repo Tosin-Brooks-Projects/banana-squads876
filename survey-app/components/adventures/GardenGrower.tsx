@@ -43,12 +43,12 @@ const stageVariants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.5, ease: 'easeOut' }
+    transition: { duration: 0.5, ease: 'easeOut' as const }
   },
   exit: {
     opacity: 0,
     y: -30,
-    transition: { duration: 0.3, ease: 'easeIn' }
+    transition: { duration: 0.3, ease: 'easeIn' as const }
   }
 };
 
@@ -177,13 +177,14 @@ function GardenDisplay({
   currentStage,
   selectedChoices,
   growthProgress,
-  isGrowing,
+  isGrowing: _isGrowing,
 }: {
   currentStage: number;
   selectedChoices: SelectedChoices;
   growthProgress: number;
   isGrowing: boolean;
 }) {
+  void _isGrowing;
   const soil = soilOptions.find(s => s.id === selectedChoices.soil) || soilOptions[0];
   const seed = seedOptions.find(s => s.id === selectedChoices.seed);
   const sunPosition = selectedChoices.sunlight; // 0-100
@@ -1242,7 +1243,7 @@ function SunlightStage({
 
 // Stage 5: Growth Stage
 function GrowthStage({
-  isGrowing,
+  isGrowing: _isGrowingParam,
   progress,
   name,
 }: {
@@ -1250,10 +1251,11 @@ function GrowthStage({
   progress: number;
   name: string;
 }) {
+  void _isGrowingParam;
   const growthLabel = progress < 20 ? 'Germinating...' : progress < 50 ? 'Sprouting...' : progress < 80 ? 'Growing leaves...' : progress < 100 ? 'Blooming...' : 'Fully grown!';
 
   if (progress >= 100) {
-    void name; // Unused but kept for API compatibility
+    void name;
     return (
       <motion.div
         className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8 text-center"

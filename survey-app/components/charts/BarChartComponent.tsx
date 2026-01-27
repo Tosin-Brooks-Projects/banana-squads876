@@ -13,7 +13,7 @@ import {
   LabelList,
   Legend,
 } from 'recharts';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { ACCESSIBLE_COLORS, CHART_COLORS } from './chartColors';
 import ChartSkeleton from './ChartSkeleton';
 
@@ -208,7 +208,7 @@ export default function BarChartComponent({
                 name="Responses"
                 radius={[0, 6, 6, 0]}
                 barSize={barHeight - 12}
-                background={{ fill: CHART_COLORS.background, radius: [0, 6, 6, 0] }}
+                background={{ fill: CHART_COLORS.background, radius: 6 }}
                 animationDuration={600}
                 animationEasing="ease-out"
               >
@@ -223,11 +223,12 @@ export default function BarChartComponent({
                 ))}
                 {(showCounts || showPercentages) && (
                   <LabelList
-                    dataKey={(entry: BarChartData) => {
-                      const parts = [];
-                      if (showCounts) parts.push(entry.value);
-                      if (showPercentages && entry.percentage !== undefined) {
-                        parts.push(`(${entry.percentage.toFixed(0)}%)`);
+                    dataKey={(entry: Record<string, unknown>) => {
+                      const barEntry = entry as unknown as BarChartData;
+                      const parts: (string | number)[] = [];
+                      if (showCounts) parts.push(barEntry.value);
+                      if (showPercentages && barEntry.percentage !== undefined) {
+                        parts.push(`(${barEntry.percentage.toFixed(0)}%)`);
                       }
                       return parts.join(' ');
                     }}
@@ -336,7 +337,7 @@ export default function BarChartComponent({
                   fill={CHART_COLORS.textMuted}
                   fontSize={11}
                   fontWeight={500}
-                  formatter={(value: number) => `${value.toFixed(0)}%`}
+                  formatter={(value) => typeof value === 'number' ? `${value.toFixed(0)}%` : ''}
                 />
               )}
             </Bar>

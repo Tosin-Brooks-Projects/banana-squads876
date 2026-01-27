@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Question, Answer, OnProgressCallback } from '@/lib/types';
 
@@ -15,6 +15,7 @@ interface ClassicSurveyProps {
   onComplete: (responses: Answer[]) => void;
   onProgress?: OnProgressCallback;
   initialState?: ClassicSurveyInitialState;
+  allowAnonymous?: boolean;
 }
 
 interface FormData {
@@ -27,6 +28,7 @@ export default function ClassicSurvey({
   onComplete,
   onProgress,
   initialState,
+  allowAnonymous = false,
 }: ClassicSurveyProps) {
   const [currentStage, setCurrentStage] = useState(initialState?.currentStage || 0);
   const [answers, setAnswers] = useState<Record<string, string | number | string[]>>(
@@ -36,7 +38,8 @@ export default function ClassicSurvey({
     initialState?.formData || { name: '', email: '' }
   );
 
-  const totalStages = questions.length + 1; // +1 for completion/contact info stage
+  // If anonymous, skip the contact info stage
+  const totalStages = allowAnonymous ? questions.length : questions.length + 1;
 
   // Report progress
   useEffect(() => {
@@ -62,6 +65,11 @@ export default function ClassicSurvey({
   };
 
   const handleNext = () => {
+    // If anonymous and on last question, submit directly
+    if (allowAnonymous && currentStage === questions.length - 1) {
+      handleComplete();
+      return;
+    }
     if (currentStage < totalStages - 1) {
       setCurrentStage(prev => prev + 1);
     }
@@ -92,7 +100,7 @@ export default function ClassicSurvey({
 
   const currentQuestion = questions[currentStage];
   const isLastQuestion = currentStage === questions.length - 1;
-  const isCompletionStage = currentStage === questions.length;
+  const isCompletionStage = !allowAnonymous && currentStage === questions.length;
   const progress = ((currentStage + 1) / totalStages) * 100;
 
   const renderQuestion = (question: Question) => {
@@ -292,7 +300,7 @@ export default function ClassicSurvey({
                         : 'bg-neutral-200 text-neutral-400 cursor-not-allowed'
                     }`}
                   >
-                    {isLastQuestion ? 'Continue' : 'Next'}
+                    {isLastQuestion ? (allowAnonymous ? 'Submit' : 'Continue') : 'Next'}
                   </button>
                 </div>
               </div>
@@ -302,7 +310,15 @@ export default function ClassicSurvey({
 
         {/* Branding */}
         <div className="mt-8 text-center text-sm text-neutral-400">
-          Powered by Unboring Surveys
+          Powered by{' '}
+          <a
+            href="https://unboringsurveys.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-brand-500 hover:text-brand-600 transition-colors"
+          >
+            Unboring Surveys
+          </a>
         </div>
       </div>
     </div>

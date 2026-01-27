@@ -43,12 +43,12 @@ const stageVariants = {
   visible: {
     opacity: 1,
     x: 0,
-    transition: { duration: 0.4, ease: 'easeOut' }
+    transition: { duration: 0.4, ease: 'easeOut' as const }
   },
   exit: {
     opacity: 0,
     x: -50,
-    transition: { duration: 0.3, ease: 'easeIn' }
+    transition: { duration: 0.3, ease: 'easeIn' as const }
   }
 };
 
@@ -67,7 +67,7 @@ const bowlVariants = {
     scale: 1,
     y: 0,
     transition: {
-      type: 'spring',
+      type: 'spring' as const,
       stiffness: 260,
       damping: 20
     }
@@ -80,7 +80,7 @@ const scoopVariants = {
     y: 0,
     opacity: 1,
     transition: {
-      type: 'spring',
+      type: 'spring' as const,
       stiffness: 300,
       damping: 15,
       delay: 0.1
@@ -96,7 +96,7 @@ const sauceVariants = {
     scaleY: 1,
     transition: {
       duration: 0.5,
-      ease: 'easeOut'
+      ease: 'easeOut' as const
     }
   }
 };
@@ -107,7 +107,7 @@ const toppingVariants = {
     scale: 1,
     opacity: 1,
     transition: {
-      type: 'spring',
+      type: 'spring' as const,
       stiffness: 500,
       damping: 15,
       delay: i * 0.1
@@ -122,7 +122,7 @@ const cherryVariants = {
     opacity: 1,
     rotate: 0,
     transition: {
-      type: 'spring',
+      type: 'spring' as const,
       stiffness: 200,
       damping: 10
     }
@@ -727,6 +727,19 @@ export default function IceCreamSundae({ questions, onComplete, onProgress, init
             </motion.div>
           </AnimatePresence>
         </div>
+      </div>
+
+      {/* Branding */}
+      <div className="mt-8 text-center text-sm text-gray-400">
+        Powered by{' '}
+        <a
+          href="https://unboringsurveys.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-pink-500 hover:text-pink-600 transition-colors"
+        >
+          Unboring Surveys
+        </a>
       </div>
     </div>
   );

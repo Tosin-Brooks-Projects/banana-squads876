@@ -471,7 +471,7 @@ export function InlineSavingIndicator({ message = 'Saving...' }: { message?: str
   );
 }
 
-export default {
+const ErrorStates = {
   SurveyNotFound,
   NetworkError,
   SurveyExpired,
@@ -482,3 +482,5 @@ export default {
   SavingIndicator,
   InlineSavingIndicator,
 };
+
+export default ErrorStates;

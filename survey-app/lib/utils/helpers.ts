@@ -1,4 +1,4 @@
-import { SurveyResponse, QuestionStats, Question } from '@/lib/types';
+import { SurveyResponse, QuestionStats, Question, isMultipleChoiceQuestion, isRatingQuestion, isTextQuestion } from '@/lib/types';
 
 export function generateSlug(title: string): string {
   return title
@@ -36,12 +36,20 @@ export function calculateQuestionStats(
   return questions.map((question) => {
     const responseCounts: Record<string, number> = {};
 
-    question.options.forEach((option) => {
-      responseCounts[option] = 0;
-    });
+    if (isMultipleChoiceQuestion(question)) {
+      question.options.forEach((option) => {
+        responseCounts[option] = 0;
+      });
+    }
 
     responses.forEach((response) => {
-      const answer = response.answers[question.id];
+      let answer: string | undefined;
+      if (Array.isArray(response.answers)) {
+        const answerObj = response.answers.find(a => a.questionId === question.id);
+        answer = answerObj ? String(answerObj.value) : undefined;
+      } else {
+        answer = response.answers[question.id];
+      }
       if (answer && responseCounts[answer] !== undefined) {
         responseCounts[answer]++;
       }
@@ -83,7 +91,14 @@ export function exportToCSV(
   const rows = responses.map((response) => [
     response.id,
     formatDateTime(response.completedAt),
-    ...questions.map((q) => response.answers[q.id] || ''),
+    ...questions.map((q) => {
+      if (Array.isArray(response.answers)) {
+        const answerObj = response.answers.find(a => a.questionId === q.id);
+        return answerObj ? String(answerObj.value) : '';
+      } else {
+        return response.answers[q.id] || '';
+      }
+    }),
   ]);
 
   const csvContent = [
@@ -147,22 +162,33 @@ export function aggregateResponses(
   let maxRating = 0;
   const textResponses: string[] = [];
 
-  // Check if this is a text question (no predefined options or empty options)
-  const isTextQuestion = !question.options || question.options.length === 0;
+  // Determine question type
+  const isTextQ = isTextQuestion(question);
+  const isRatingQ = isRatingQuestion(question);
+  const isMultipleChoiceQ = isMultipleChoiceQuestion(question);
 
   // Check if all options are numeric (rating question)
-  const allOptionsNumeric = !isTextQuestion && question.options.every((opt) => !isNaN(Number(opt)));
+  const allOptionsNumeric = isRatingQ || (isMultipleChoiceQ && question.options.every((opt) => !isNaN(Number(opt))));
 
-  if (allOptionsNumeric && !isTextQuestion) {
+  if (allOptionsNumeric && !isTextQ) {
     isRating = true;
-    maxRating = Math.max(...question.options.map(Number));
+    if (isRatingQ) {
+      maxRating = question.scale;
+    } else if (isMultipleChoiceQ) {
+      maxRating = Math.max(...question.options.map(Number));
+    }
   }
 
   // Initialize counts for all options (if not text question)
-  if (!isTextQuestion) {
+  if (isMultipleChoiceQ) {
     question.options.forEach((option) => {
       counts[option] = 0;
     });
+  } else if (isRatingQ) {
+    // Initialize counts for rating scale
+    for (let i = 1; i <= question.scale; i++) {
+      counts[String(i)] = 0;
+    }
   }
 
   // Count responses for each option
@@ -179,7 +205,7 @@ export function aggregateResponses(
     if (answerValue !== undefined && answerValue !== null && answerValue !== '') {
       const valueStr = String(answerValue);
 
-      if (isTextQuestion) {
+      if (isTextQ) {
         // For text questions, collect the responses
         textResponses.push(valueStr);
         total++;
@@ -216,7 +242,7 @@ export function aggregateResponses(
 
   // Determine question type
   let type: QuestionType = 'multiple_choice';
-  if (isTextQuestion) {
+  if (isTextQ) {
     type = 'text';
   } else if (isRating) {
     type = 'rating';
@@ -230,7 +256,7 @@ export function aggregateResponses(
     totalResponses: total,
     average: isRating && total > 0 ? sum / total : undefined,
     maxRating: isRating ? maxRating : undefined,
-    textResponses: isTextQuestion ? textResponses : undefined,
+    textResponses: isTextQ ? textResponses : undefined,
   };
 }
 

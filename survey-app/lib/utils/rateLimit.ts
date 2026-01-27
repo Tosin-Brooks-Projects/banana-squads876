@@ -184,7 +184,7 @@ export class RateLimitError extends Error {
 /**
  * Higher-order function to wrap async functions with rate limiting
  */
-export function withRateLimit<T extends (...args: any[]) => Promise<any>>(
+export function withRateLimit<T extends (...args: unknown[]) => Promise<unknown>>(
   fn: T,
   config: RateLimitConfig,
   getIdentifier?: (...args: Parameters<T>) => string
@@ -205,7 +205,7 @@ export function withRateLimit<T extends (...args: any[]) => Promise<any>>(
  * Checks for suspicious patterns
  */
 export function detectSpamSubmission(data: {
-  answers: any[];
+  answers: unknown[];
   completionTimeMs: number;
   surveyQuestionCount: number;
 }): { isSpam: boolean; reason?: string } {
@@ -221,7 +221,10 @@ export function detectSpamSubmission(data: {
   }
 
   // Check for all identical answers (suspicious for multiple choice)
-  const answerValues = data.answers.map(a => JSON.stringify(a.value));
+  const answerValues = data.answers.map(a => {
+    const answer = a as { value?: unknown };
+    return JSON.stringify(answer.value);
+  });
   const uniqueAnswers = new Set(answerValues);
 
   if (data.answers.length > 2 && uniqueAnswers.size === 1) {

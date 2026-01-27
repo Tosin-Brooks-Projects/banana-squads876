@@ -52,12 +52,12 @@ const stageVariants = {
   visible: {
     opacity: 1,
     x: 0,
-    transition: { duration: 0.4, ease: 'easeOut' }
+    transition: { duration: 0.4, ease: 'easeOut' as const }
   },
   exit: {
     opacity: 0,
     x: -50,
-    transition: { duration: 0.3, ease: 'easeIn' }
+    transition: { duration: 0.3, ease: 'easeIn' as const }
   }
 };
 
@@ -239,7 +239,8 @@ function HouseDisplay({
   };
 
   // Layout constants (in pixels)
-  const groundHeight = 64; // h-16
+  const _groundHeight = 64; // h-16 (reserved for future use)
+  void _groundHeight;
   const foundationBase = 56; // bottom-14 (sits slightly into ground)
   const foundationHeight = foundation?.height || 16;
   const wallHeight = 96; // h-24
@@ -572,7 +573,8 @@ export default function DreamHome({ questions, onComplete, onProgress, initialSt
   );
   const [showConfetti, setShowConfetti] = useState(false);
   const [lightsOn, setLightsOn] = useState(false);
-  const [placementMode, setPlacementMode] = useState<'windows' | 'door' | null>(null);
+  const [_placementMode, setPlacementMode] = useState<'windows' | 'door' | null>(null);
+  void _placementMode;
 
   const reportProgress = useCallback(() => {
     if (!onProgress || currentStage === 0 || currentStage >= 6) return;
@@ -1239,8 +1241,8 @@ function FormCapture({
 
 // Stage 4: Windows & Door Selection
 function WindowsDoorSelection({
-  windowOptions,
-  doorOptions,
+  windowOptions: windowOpts,
+  doorOptions: doorOpts,
   selectedWindows,
   selectedDoor,
   onWindowSelect,
@@ -1248,8 +1250,8 @@ function WindowsDoorSelection({
   onComplete,
   onBack,
 }: {
-  windowOptions: Array<typeof windowOptions[0] & { answerValue: string }>;
-  doorOptions: Array<typeof doorOptions[0] & { answerValue: string }>;
+  windowOptions: Array<{ id: string; name: string; shape: string; answerValue: string }>;
+  doorOptions: Array<{ id: string; name: string; style: string; answerValue: string }>;
   selectedWindows: string;
   selectedDoor: string;
   onWindowSelect: (visualId: string, answerValue: string) => void;
@@ -1278,7 +1280,7 @@ function WindowsDoorSelection({
       <div className="mb-6">
         <h3 className="text-sm font-medium text-gray-700 mb-3">Window Style</h3>
         <div className="grid grid-cols-3 gap-2 sm:gap-3">
-          {windowOptions.map((option, index) => (
+          {windowOpts.map((option, index) => (
             <motion.button
               key={option.id}
               onClick={() => onWindowSelect(option.id, option.answerValue)}
@@ -1304,7 +1306,7 @@ function WindowsDoorSelection({
       <div className="mb-6">
         <h3 className="text-sm font-medium text-gray-700 mb-3">Door Style</h3>
         <div className="grid grid-cols-3 gap-2 sm:gap-3">
-          {doorOptions.map((option, index) => (
+          {doorOpts.map((option, index) => (
             <motion.button
               key={option.id}
               onClick={() => onDoorSelect(option.id, option.answerValue)}
@@ -1359,8 +1361,8 @@ function WindowsDoorSelection({
 
 // Stage 5: Paint & Landscape Selection
 function PaintLandscapeSelection({
-  colorOptions,
-  landscapeOptions,
+  colorOptions: colorOpts,
+  landscapeOptions: landscapeOpts,
   selectedColor,
   selectedLandscape,
   onColorSelect,
@@ -1368,8 +1370,8 @@ function PaintLandscapeSelection({
   onComplete,
   onBack,
 }: {
-  colorOptions: Array<typeof colorOptions[0] & { answerValue: string }>;
-  landscapeOptions: Array<typeof landscapeOptions[0] & { answerValue: string }>;
+  colorOptions: Array<{ id: string; name: string; color: string; border: string; answerValue: string }>;
+  landscapeOptions: Array<{ id: string; name: string; emoji: string; answerValue: string }>;
   selectedColor: string;
   selectedLandscape: string;
   onColorSelect: (visualId: string, answerValue: string) => void;
@@ -1398,7 +1400,7 @@ function PaintLandscapeSelection({
       <div className="mb-6">
         <h3 className="text-sm font-medium text-gray-700 mb-3">House Color</h3>
         <div className="grid grid-cols-4 gap-2 sm:gap-3">
-          {colorOptions.map((option, index) => (
+          {colorOpts.map((option, index) => (
             <motion.button
               key={option.id}
               onClick={() => onColorSelect(option.id, option.answerValue)}
@@ -1424,7 +1426,7 @@ function PaintLandscapeSelection({
       <div className="mb-6">
         <h3 className="text-sm font-medium text-gray-700 mb-3">Landscaping</h3>
         <div className="grid grid-cols-3 gap-2 sm:gap-3">
-          {landscapeOptions.map((option, index) => (
+          {landscapeOpts.map((option, index) => (
             <motion.button
               key={option.id}
               onClick={() => onLandscapeSelect(option.id, option.answerValue)}

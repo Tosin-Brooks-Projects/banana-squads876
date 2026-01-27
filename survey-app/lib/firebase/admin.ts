@@ -12,12 +12,13 @@ function getFirebaseAdmin() {
     // In development, can use application default credentials
     let serviceAccount: Record<string, unknown> | undefined;
 
-    if (process.env.FIREBASE_SERVICE_ACCOUNT_KEY) {
+    const serviceAccountKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+
+    if (serviceAccountKey) {
       try {
-        serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
+        serviceAccount = JSON.parse(serviceAccountKey);
       } catch (parseError) {
         console.error('Failed to parse FIREBASE_SERVICE_ACCOUNT_KEY:', parseError);
-        // Continue without service account - will try application default credentials
       }
     }
 
@@ -76,6 +77,7 @@ export async function getSurveyAdmin(surveyId: string): Promise<{
   status: string;
   paymentStatus?: string;
   pricingTier?: string;
+  paymentId?: string;
 } | null> {
   try {
     const { db } = getFirebaseAdmin();
@@ -94,9 +96,26 @@ export async function getSurveyAdmin(surveyId: string): Promise<{
       status: data.status,
       paymentStatus: data.paymentStatus,
       pricingTier: data.pricingTier,
+      paymentId: data.paymentId,
     };
   } catch (error) {
     console.error('Error getting survey with Admin SDK:', error);
     return null;
+  }
+}
+
+// Update survey using Admin SDK (bypasses security rules)
+export async function updateSurveyAdmin(surveyId: string, updates: Record<string, unknown>): Promise<boolean> {
+  try {
+    const { db } = getFirebaseAdmin();
+    const docRef = db.collection('surveys').doc(surveyId);
+    await docRef.update({
+      ...updates,
+      updatedAt: new Date(),
+    });
+    return true;
+  } catch (error) {
+    console.error('Error updating survey with Admin SDK:', error);
+    return false;
   }
 }

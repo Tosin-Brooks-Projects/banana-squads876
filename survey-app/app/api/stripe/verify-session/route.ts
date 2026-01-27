@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe/config';
-import { verifyAuthToken } from '@/lib/firebase/admin';
+import { verifyAuthToken, getSurveyAdmin, updateSurveyAdmin } from '@/lib/firebase/admin';
 import { checkServerRateLimit, rateLimitResponse, RATE_LIMIT_CONFIGS } from '@/lib/utils/serverRateLimit';
+import { PricingTier, PRICING_TIERS } from '@/lib/types';
 
 export async function GET(request: NextRequest) {
   // Check rate limit
@@ -39,6 +40,41 @@ export async function GET(request: NextRequest) {
         { error: 'Session does not belong to this user' },
         { status: 403 }
       );
+    }
+
+    const surveyId = session.metadata?.surveyId;
+    const tier = session.metadata?.tier as PricingTier | undefined;
+
+    // If payment is successful, update the survey directly
+    // This handles the case where webhooks can't reach localhost during development
+    if (session.payment_status === 'paid' && surveyId && tier && PRICING_TIERS[tier]) {
+      const paymentId = typeof session.payment_intent === 'string'
+        ? session.payment_intent
+        : session.payment_intent?.id ?? null;
+
+      // Check if already processed (idempotency)
+      const existingSurvey = await getSurveyAdmin(surveyId);
+      if (existingSurvey && existingSurvey.paymentId !== paymentId) {
+        const tierConfig = PRICING_TIERS[tier];
+        const dataExpiresAt = new Date();
+        dataExpiresAt.setDate(dataExpiresAt.getDate() + tierConfig.retentionDays);
+
+        const updated = await updateSurveyAdmin(surveyId, {
+          pricingTier: tier,
+          responseLimit: tierConfig.responseLimit,
+          paymentStatus: 'paid',
+          paymentId,
+          dataExpiresAt,
+          status: 'published',
+          publishedAt: new Date(),
+        });
+
+        if (updated) {
+          console.log(`Survey ${surveyId} upgraded to ${tier} tier via verify-session`);
+        } else {
+          console.error(`Failed to update survey ${surveyId} via verify-session`);
+        }
+      }
     }
 
     return NextResponse.json({

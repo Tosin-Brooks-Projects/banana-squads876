@@ -7,6 +7,7 @@ import { Question, Answer } from '@/lib/types';
 const exampleQuestions: Question[] = [
   {
     id: '1',
+    type: 'multiple-choice',
     question: 'How do you prefer to receive updates?',
     options: ['Email', 'Phone', 'Text'],
     required: true,
@@ -14,6 +15,7 @@ const exampleQuestions: Question[] = [
   },
   {
     id: '2',
+    type: 'multiple-choice',
     question: 'How satisfied are you with our service?',
     options: ['Very satisfied', 'Satisfied', 'Neutral'],
     required: true,
@@ -21,6 +23,7 @@ const exampleQuestions: Question[] = [
   },
   {
     id: '3',
+    type: 'multiple-choice',
     question: 'What could we improve?',
     options: ['Speed', 'Quality', 'Price'],
     required: true,
@@ -28,6 +31,7 @@ const exampleQuestions: Question[] = [
   },
   {
     id: '4',
+    type: 'multiple-choice',
     question: 'Would you recommend us?',
     options: ['Definitely', 'Probably', 'Maybe', 'Not sure'],
     required: true,

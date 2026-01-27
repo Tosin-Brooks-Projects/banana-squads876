@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Timestamp } from 'firebase/firestore';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import { useAuthContext } from '@/contexts/AuthContext';

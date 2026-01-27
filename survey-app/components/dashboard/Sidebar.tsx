@@ -81,10 +81,10 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           <span className="text-lg font-bold text-neutral-900">Menu</span>
           <button
             onClick={onClose}
-            className="p-2 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 rounded-lg transition-colors"
+            className="p-2 min-h-[48px] min-w-[48px] flex items-center justify-center text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 rounded-lg transition-colors touch-manipulation"
             aria-label="Close menu"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
@@ -100,7 +100,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                 href={item.href}
                 onClick={onClose}
                 className={`
-                  flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition-colors
+                  flex items-center gap-3 px-3 py-2.5 min-h-[48px] rounded-lg font-medium transition-colors touch-manipulation
                   ${active
                     ? 'bg-brand-50 text-brand-700'
                     : 'text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900'
@@ -121,7 +121,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           <Link
             href="/dashboard/create"
             onClick={onClose}
-            className="flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-brand-500 text-white rounded-lg font-medium hover:bg-brand-600 transition-colors"
+            className="flex items-center justify-center gap-2 w-full px-4 py-2.5 min-h-[48px] bg-brand-500 text-white rounded-lg font-medium hover:bg-brand-600 transition-colors touch-manipulation"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />

@@ -5,7 +5,6 @@ import {
   signOut as firebaseSignOut,
   GoogleAuthProvider,
   signInWithPopup,
-  signInWithRedirect,
   getRedirectResult,
   sendPasswordResetEmail,
   sendSignInLinkToEmail,

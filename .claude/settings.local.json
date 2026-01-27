@@ -38,7 +38,9 @@
       "Bash(cmd /c \"taskkill /PID 53300 /F\")",
       "Bash(git rev-parse:*)",
       "Bash(git init:*)",
-      "Bash(git fetch:*)"
+      "Bash(git fetch:*)",
+      "Bash(node -e:*)",
+      "Bash(cmd /c \"taskkill /F /PID 21880\")"
     ]
   }
 }

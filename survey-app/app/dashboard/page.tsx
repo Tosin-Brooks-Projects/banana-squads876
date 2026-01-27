@@ -130,9 +130,15 @@ function DeleteConfirmModal({
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold text-neutral-900 mb-2">Delete Survey</h3>
-              <p className="text-neutral-600 mb-6">
-                Are you sure you want to delete &quot;{surveyTitle}&quot;? This action cannot be undone and all responses will be lost.
+              <h3 className="text-lg font-semibold text-neutral-900 mb-3">Delete Survey</h3>
+              <p className="text-neutral-600 mb-2">
+                Are you sure you want to delete this survey?
+              </p>
+              <p className="font-medium text-neutral-800 mb-3 break-words">
+                &quot;{surveyTitle}&quot;
+              </p>
+              <p className="text-sm text-red-600 mb-6">
+                This cannot be undone. All responses will be permanently lost.
               </p>
               <div className="flex items-center gap-3 justify-center">
                 <Button variant="outline" onClick={onCancel} disabled={isDeleting}>
@@ -183,10 +189,12 @@ function LoadingError({ onRetry }: { onRetry: () => void }) {
               We&apos;re having trouble connecting. Please check your internet connection and try again.
             </p>
             <Button onClick={onRetry}>
-              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
-              Try Again
+              <span className="inline-flex items-center">
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                Try Again
+              </span>
             </Button>
           </div>
         </Card>
@@ -387,7 +395,7 @@ export default function DashboardPage() {
                 ))}
               </div>
               <h2 className="text-xl sm:text-2xl font-bold text-neutral-900 mb-3">
-                You haven't created any challenges yet!
+                You haven&apos;t created any challenges yet!
               </h2>
               <p className="text-neutral-600 mb-8 max-w-md mx-auto">
                 Transform boring surveys into fun, interactive adventures that people actually want to complete.

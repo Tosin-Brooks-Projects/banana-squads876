@@ -95,6 +95,7 @@ const demoSurveys: Record<string, Survey> = {
     questions: [
       {
         id: 'q1',
+        type: 'multiple-choice' as const,
         question: 'How often do you visit coffee shops?',
         options: ['Daily', 'Weekly', 'Monthly', 'Rarely'],
         required: true,
@@ -102,6 +103,7 @@ const demoSurveys: Record<string, Survey> = {
       },
       {
         id: 'q2',
+        type: 'multiple-choice' as const,
         question: 'What\'s your favorite type of coffee?',
         options: ['Espresso', 'Latte', 'Cappuccino', 'Cold Brew'],
         required: true,
@@ -109,6 +111,7 @@ const demoSurveys: Record<string, Survey> = {
       },
       {
         id: 'q3',
+        type: 'multiple-choice' as const,
         question: 'How important is ambiance to you?',
         options: ['Very Important', 'Somewhat Important', 'Not Important'],
         required: true,
@@ -116,6 +119,7 @@ const demoSurveys: Record<string, Survey> = {
       },
       {
         id: 'q4',
+        type: 'multiple-choice' as const,
         question: 'What extras do you enjoy?',
         options: ['Free WiFi', 'Outdoor Seating', 'Live Music', 'Board Games'],
         required: false,
@@ -142,6 +146,7 @@ const demoSurveys: Record<string, Survey> = {
     questions: [
       {
         id: 'q1',
+        type: 'multiple-choice' as const,
         question: 'What\'s your preferred crust?',
         options: ['Thin & Crispy', 'Deep Dish', 'Stuffed Crust', 'Gluten-Free'],
         required: true,
@@ -149,6 +154,7 @@ const demoSurveys: Record<string, Survey> = {
       },
       {
         id: 'q2',
+        type: 'multiple-choice' as const,
         question: 'Favorite topping category?',
         options: ['Meats', 'Vegetables', 'Cheeses', 'Mixed'],
         required: true,
@@ -156,6 +162,7 @@ const demoSurveys: Record<string, Survey> = {
       },
       {
         id: 'q3',
+        type: 'multiple-choice' as const,
         question: 'How spicy do you like it?',
         options: ['Mild', 'Medium', 'Hot', 'Extra Hot'],
         required: true,
@@ -182,6 +189,7 @@ const demoSurveys: Record<string, Survey> = {
     questions: [
       {
         id: 'q1',
+        type: 'multiple-choice' as const,
         question: 'What type of garden do you prefer?',
         options: ['Flower Garden', 'Vegetable Garden', 'Herb Garden', 'Mixed'],
         required: true,
@@ -189,6 +197,7 @@ const demoSurveys: Record<string, Survey> = {
       },
       {
         id: 'q2',
+        type: 'multiple-choice' as const,
         question: 'How much time can you dedicate to gardening?',
         options: ['Daily', 'Weekly', 'Monthly', 'Minimal'],
         required: true,
@@ -196,6 +205,7 @@ const demoSurveys: Record<string, Survey> = {
       },
       {
         id: 'q3',
+        type: 'multiple-choice' as const,
         question: 'What\'s your experience level?',
         options: ['Beginner', 'Intermediate', 'Expert'],
         required: true,
@@ -213,8 +223,9 @@ const demoSurveys: Record<string, Survey> = {
   },
 };
 
-// Mini sundae display for completion screen
-function MiniSundaeDisplay({ selections }: { selections: FinalSelections }) {
+// Mini sundae display for completion screen (reserved for future use)
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function _MiniSundaeDisplay({ selections }: { selections: FinalSelections }) {
   const bowl = bowlOptions.find(b => b.name.toLowerCase().includes(selections.bowl?.toLowerCase() || '')) || bowlOptions[0];
   const scoop = scoopOptions.find(s => s.name.toLowerCase().includes(selections.scoop?.toLowerCase() || '')) || scoopOptions[0];
   const sauce = sauceOptions.find(s => s.name.toLowerCase().includes(selections.sauce?.toLowerCase() || '')) || sauceOptions[0];
@@ -344,7 +355,7 @@ export default function SurveyPage() {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [finalSelections, setFinalSelections] = useState<FinalSelections>({});
-  const [copied, setCopied] = useState(false);
+  const [, setCopied] = useState(false);
 
   // Check if we were redirected from a previous username (passed via query param)
   const redirectedFromParam = searchParams.get('moved_from');
@@ -481,7 +492,7 @@ export default function SurveyPage() {
 
       // Production mode: fetch from Firestore
       // First, get the user by username
-      let user = await getUserByUsername(username);
+      const user = await getUserByUsername(username);
 
       // If user not found, check if this is a previous username that should redirect
       if (!user) {
@@ -726,7 +737,7 @@ export default function SurveyPage() {
     }
   };
 
-  const handleShare = async () => {
+  const _handleShare = async () => {
     const url = window.location.href;
     try {
       await navigator.clipboard.writeText(url);
@@ -744,6 +755,7 @@ export default function SurveyPage() {
       setTimeout(() => setCopied(false), 2000);
     }
   };
+  void _handleShare;
 
   // Render the appropriate adventure component based on type
   const renderAdventure = () => {
@@ -767,6 +779,7 @@ export default function SurveyPage() {
             onComplete={(responses: Answer[]) => handleComplete(responses)}
             onProgress={handleProgress}
             initialState={adventureInitialState as Parameters<typeof ClassicSurvey>[0]['initialState']}
+            allowAnonymous={survey.settings?.allowAnonymous}
           />
         );
       case 'ice-cream-sundae':
@@ -800,7 +813,7 @@ export default function SurveyPage() {
         return (
           <DreamHome
             questions={questions}
-            onComplete={(selections: Record<string, string>) => handleComplete(selections)}
+            onComplete={(responses: Answer[]) => handleComplete(responses)}
             onProgress={handleProgress}
             initialState={adventureInitialState as Parameters<typeof DreamHome>[0]['initialState']}
           />
@@ -809,7 +822,7 @@ export default function SurveyPage() {
         return (
           <CoffeeBrewer
             questions={questions}
-            onComplete={(selections: Record<string, string>) => handleComplete(selections)}
+            onComplete={(responses: Answer[]) => handleComplete(responses)}
             onProgress={handleProgress}
             initialState={adventureInitialState as Parameters<typeof CoffeeBrewer>[0]['initialState']}
           />
@@ -821,6 +834,7 @@ export default function SurveyPage() {
             onComplete={(responses: Answer[]) => handleComplete(responses)}
             onProgress={handleProgress}
             initialState={adventureInitialState as Parameters<typeof ClassicSurvey>[0]['initialState']}
+            allowAnonymous={survey.settings?.allowAnonymous}
           />
         );
     }
@@ -923,17 +937,9 @@ export default function SurveyPage() {
               {survey.description && (
                 <p className="text-gray-600 mb-6">{survey.description}</p>
               )}
-              <div className="bg-indigo-50 rounded-lg p-4 mb-6">
-                <p className="text-indigo-700 text-sm">
-                  This is an interactive survey where you&apos;ll build your own creation while answering questions!
-                </p>
-              </div>
               <Button size="lg" className="w-full" onClick={handleStart}>
                 Start Adventure
               </Button>
-              <p className="text-gray-500 text-sm mt-4">
-                {survey.questions.length} questions
-              </p>
             </div>
           </Card>
         </motion.div>
@@ -957,8 +963,10 @@ export default function SurveyPage() {
 
   // Completion screen with final visual
   if (completed) {
-    const isIceCream = survey.adventureType === 'ice-cream-sundae';
-    const adventureLabel = getAdventureLabel(survey.adventureType);
+    const _isIceCream = survey.adventureType === 'ice-cream-sundae';
+    const _adventureLabel = getAdventureLabel(survey.adventureType);
+    void _isIceCream;
+    void _adventureLabel;
 
     return (
       <div className="min-h-screen bg-gradient-to-b from-green-50 via-white to-emerald-50 flex items-center justify-center p-6">
@@ -1003,14 +1011,9 @@ export default function SurveyPage() {
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.7 }}
               >
-                <Button
-                  variant="ghost"
-                  size="lg"
-                  className="w-full"
-                  onClick={() => window.close()}
-                >
-                  Close Window
-                </Button>
+                <p className="text-sm text-gray-500">
+                  You can safely close this tab now.
+                </p>
               </motion.div>
             </div>
           </Card>
