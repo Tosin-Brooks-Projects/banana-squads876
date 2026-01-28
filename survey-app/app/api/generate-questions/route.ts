@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { context, theme } = body;
+    const { context, theme, preferences } = body;
 
     if (!context || !theme) {
       return NextResponse.json(
@@ -27,21 +27,35 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const result = await generateQuestions(context, theme);
-    return NextResponse.json(result);
+    let result;
+    try {
+      result = await generateQuestions(context, theme, preferences);
+    } catch (genError) {
+      console.error('Question generation error:', genError);
 
-  } catch (error) {
-    console.error('Error generating questions:', error);
+      // Handle JSON parsing errors with a specific message
+      if (genError instanceof SyntaxError) {
+        return NextResponse.json(
+          { error: 'Failed to parse AI response as JSON' },
+          { status: 500 }
+        );
+      }
 
-    if (error instanceof SyntaxError) {
+      // Handle other generation errors with their message
       return NextResponse.json(
-        { error: 'Failed to parse AI response as JSON' },
+        { error: `Failed to generate questions: ${genError instanceof Error ? genError.message : 'Unknown error'}` },
         { status: 500 }
       );
     }
 
+    return NextResponse.json(result);
+
+  } catch (error) {
+    // Handle unexpected errors (request parsing, rate limiting, etc.)
+    console.error('Error in generate-questions API:', error);
+
     return NextResponse.json(
-      { error: 'Failed to generate questions' },
+      { error: 'An unexpected error occurred' },
       { status: 500 }
     );
   }

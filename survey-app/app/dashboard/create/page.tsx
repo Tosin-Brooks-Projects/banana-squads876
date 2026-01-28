@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence, Reorder } from 'framer-motion';
 import { useAuthContext } from '@/contexts/AuthContext';
 import Button from '@/components/ui/Button';
@@ -19,6 +19,7 @@ import {
   getUser,
 } from '@/lib/firebase/firestore';
 import TierSelector from '@/components/pricing/TierSelector';
+import AIUpgradeModal from '@/components/AIUpgradeModal';
 import {
   checkRateLimit,
   recordRequest,
@@ -105,6 +106,7 @@ const generateId = () => Math.random().toString(36).substring(2, 9);
 
 export default function CreateSurveyPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { user, firebaseUser } = useAuthContext();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<FormData>(DEFAULT_FORM_DATA);
@@ -120,6 +122,9 @@ export default function CreateSurveyPage() {
   const [slugManuallyEdited, setSlugManuallyEdited] = useState(false);
   const [hasUsedFreeTier, setHasUsedFreeTier] = useState(false);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+  const [showAIUpgradeModal, setShowAIUpgradeModal] = useState(false);
+  const [paidForAI, setPaidForAI] = useState(false); // Track if user paid for AI upgrade
+  const [shouldAutoGenerate, setShouldAutoGenerate] = useState(false); // Trigger auto-generation after upgrade
   const formRef = useRef<HTMLDivElement>(null);
 
   // Check if user has used their free tier
@@ -132,6 +137,55 @@ export default function CreateSurveyPage() {
     }
     checkFreeTierUsage();
   }, [firebaseUser]);
+
+  // Handle return from Stripe AI upgrade checkout
+  useEffect(() => {
+    const upgraded = searchParams.get('upgraded');
+    const tier = searchParams.get('tier') as PricingTier | null;
+    const upgradeCancelled = searchParams.get('upgrade_cancelled');
+
+    if (upgraded === 'true' && tier) {
+      // User successfully paid for AI upgrade
+      setPaidForAI(true);
+      setFormData(prev => ({ ...prev, pricingTier: tier }));
+
+      // If they have context (from their saved draft), trigger AI generation
+      // We need to wait for draft to load first, so set a flag
+      setShouldAutoGenerate(true);
+
+      // Clean up URL params
+      const newUrl = window.location.pathname;
+      window.history.replaceState({}, '', newUrl);
+    } else if (upgradeCancelled === 'true') {
+      // User cancelled - just clean up URL and let them continue
+      const newUrl = window.location.pathname;
+      window.history.replaceState({}, '', newUrl);
+    }
+  }, [searchParams]);
+
+  // Auto-generate questions after upgrade if we have context
+  const autoGenerateTriggeredRef = useRef(false);
+  useEffect(() => {
+    if (shouldAutoGenerate && formData.context && paidForAI && !isGenerating && !autoGenerateTriggeredRef.current) {
+      autoGenerateTriggeredRef.current = true;
+      setShouldAutoGenerate(false);
+      // Make sure we're on step 2 and trigger generation
+      setCurrentStep(2);
+    }
+  }, [shouldAutoGenerate, formData.context, paidForAI, isGenerating]);
+
+  // Trigger AI generation when ready after upgrade
+  useEffect(() => {
+    if (autoGenerateTriggeredRef.current && currentStep === 2 && !isGenerating && formData.context) {
+      autoGenerateTriggeredRef.current = false;
+      // Small delay to let UI update
+      const timer = setTimeout(() => {
+        generateQuestionsWithAI();
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentStep]);
 
   // Load draft from localStorage
   useEffect(() => {
@@ -223,8 +277,41 @@ export default function CreateSurveyPage() {
     return () => clearTimeout(timer);
   }, [formData.slug, checkSlugAvailability]);
 
-  // Generate questions from context (mock AI - replace with real API)
-  const generateQuestions = async () => {
+  // Check if user has access to AI features (Starter tier or above)
+  const hasAIAccess = () => {
+    // If they've paid for AI upgrade during this session
+    if (paidForAI) {
+      return true;
+    }
+    // If they've pre-selected a paid tier, they'll have access after payment
+    if (formData.pricingTier && formData.pricingTier !== 'free') {
+      return true;
+    }
+    // Otherwise, check if free tier is selected or no tier selected yet
+    return false;
+  };
+
+  // Handle generate questions button click
+  const handleGenerateClick = () => {
+    if (!hasAIAccess()) {
+      // Show upgrade modal for free tier users
+      setShowAIUpgradeModal(true);
+      return;
+    }
+    // Proceed with AI generation for paid tiers
+    generateQuestionsWithAI();
+  };
+
+  // Continue manually without AI (from modal)
+  const handleContinueManually = () => {
+    setShowAIUpgradeModal(false);
+    // Skip to step 3 with empty questions - user will add manually
+    setFormData(prev => ({ ...prev, questions: [] }));
+    setCurrentStep(3);
+  };
+
+  // Generate questions using real AI API
+  const generateQuestionsWithAI = async () => {
     // Check rate limit for question generation (max 10 per hour)
     const rateLimitResult = checkRateLimit(RATE_LIMITS.questionGeneration);
     if (!rateLimitResult.allowed) {
@@ -237,139 +324,61 @@ export default function CreateSurveyPage() {
     setErrors({});
     setIsGenerating(true);
 
-    // Simulate AI generation
-    await new Promise(resolve => setTimeout(resolve, 2000));
-
-    // Record the request for rate limiting
-    recordRequest(RATE_LIMITS.questionGeneration);
-
-    // Generate questions based on preferences
-    const { questionCount, questionStyle, anonymity } = formData.preferences;
-
-    // Determine target question count
-    const targetCounts: Record<QuestionCountRange, number> = {
-      '3-5': 4,
-      '5-10': 7,
-      '10-15': 12,
-      '15+': 18,
-    };
-    const targetCount = targetCounts[questionCount];
-
-    // Build questions array based on style preference
-    const mockQuestions: Question[] = [];
-    let order = 0;
-
-    // Always start with a multiple choice question
-    mockQuestions.push({
-      id: generateId(),
-      type: 'multiple-choice',
-      question: 'How often do you visit us?',
-      options: ['Daily', 'Weekly', 'Monthly', 'Rarely'],
-      required: true,
-      order: order++,
-    });
-
-    // Add rating question
-    mockQuestions.push({
-      id: generateId(),
-      type: 'rating',
-      question: 'How would you rate your overall experience?',
-      scale: 5,
-      startLabel: 'Poor',
-      endLabel: 'Excellent',
-      required: true,
-      order: order++,
-    });
-
-    // Add questions based on style preference
-    if (questionStyle === 'mostly-options' || questionStyle === 'balanced') {
-      mockQuestions.push({
-        id: generateId(),
-        type: 'multiple-choice',
-        question: 'What is the main reason for your visits?',
-        options: ['Quality', 'Price', 'Location', 'Atmosphere', 'Other'],
-        required: true,
-        order: order++,
+    try {
+      const response = await fetch('/api/generate-questions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          context: formData.context,
+          theme: formData.theme,
+          preferences: formData.preferences,
+        }),
       });
 
-      mockQuestions.push({
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to generate questions');
+      }
+
+      const data = await response.json();
+
+      // Record the request for rate limiting
+      recordRequest(RATE_LIMITS.questionGeneration);
+
+      // Map the AI-generated questions to our format with unique IDs
+      const generatedQuestions: Question[] = data.questions.map((q: Question, index: number) => ({
+        ...q,
         id: generateId(),
-        type: 'multiple-choice',
-        question: 'What could we improve?',
-        options: ['Service speed', 'Product quality', 'Pricing', 'Variety', 'Cleanliness'],
-        required: false,
-        order: order++,
-      });
-    }
+        order: index,
+      }));
 
-    if (questionStyle === 'mostly-open' || questionStyle === 'balanced') {
-      mockQuestions.push({
-        id: generateId(),
-        type: 'text',
-        question: 'What do you like most about your experience with us?',
-        placeholder: 'Tell us what you enjoy...',
-        maxLength: 500,
-        required: questionStyle === 'mostly-open',
-        order: order++,
-      });
-    }
-
-    // Fill remaining questions based on target count
-    while (mockQuestions.length < targetCount) {
-      const shouldBeOpenEnded = questionStyle === 'mostly-open' ||
-        (questionStyle === 'balanced' && mockQuestions.length % 3 === 0);
-
-      if (shouldBeOpenEnded) {
-        mockQuestions.push({
+      // Add contact info collection if requested
+      if (formData.preferences.anonymity === 'collect-info') {
+        generatedQuestions.push({
           id: generateId(),
           type: 'text',
-          question: `Additional feedback question ${mockQuestions.length + 1}?`,
-          placeholder: 'Share your thoughts...',
-          maxLength: 500,
+          question: 'Would you like to leave your email for follow-up? (Optional)',
+          placeholder: 'your@email.com',
+          maxLength: 100,
           required: false,
-          order: order++,
-        });
-      } else {
-        mockQuestions.push({
-          id: generateId(),
-          type: 'multiple-choice',
-          question: `Survey question ${mockQuestions.length + 1}?`,
-          options: ['Option A', 'Option B', 'Option C', 'Option D'],
-          required: false,
-          order: order++,
+          order: generatedQuestions.length,
         });
       }
-    }
 
-    // Always end with open feedback
-    if (mockQuestions[mockQuestions.length - 1].type !== 'text') {
-      mockQuestions.push({
-        id: generateId(),
-        type: 'text',
-        question: 'Any additional feedback you would like to share?',
-        placeholder: 'Tell us more about your experience...',
-        maxLength: 500,
-        required: false,
-        order: order++,
+      setFormData(prev => ({ ...prev, questions: generatedQuestions }));
+      setCurrentStep(3);
+    } catch (error) {
+      console.error('Error generating questions:', error);
+      setErrors({
+        general: error instanceof Error
+          ? error.message
+          : 'Failed to generate questions. Please try again.',
       });
+    } finally {
+      setIsGenerating(false);
     }
-
-    // Add contact info collection if requested
-    if (anonymity === 'collect-info') {
-      mockQuestions.push({
-        id: generateId(),
-        type: 'text',
-        question: 'Would you like to leave your email for follow-up? (Optional)',
-        placeholder: 'your@email.com',
-        maxLength: 100,
-        required: false,
-        order: order++,
-      });
-    }
-
-    setFormData(prev => ({ ...prev, questions: mockQuestions }));
-    setIsGenerating(false);
-    setCurrentStep(3);
   };
 
   // Question editing functions
@@ -478,9 +487,10 @@ export default function CreateSurveyPage() {
     const selectedTier = formData.pricingTier!;
     const tierConfig = PRICING_TIERS[selectedTier];
     const isFree = selectedTier === 'free';
+    const alreadyPaid = paidForAI; // User already paid during AI upgrade
 
-    // For paid tiers, show payment overlay immediately for smoother UX
-    if (!isFree) {
+    // For paid tiers that haven't been paid yet, show payment overlay
+    if (!isFree && !alreadyPaid) {
       setIsProcessingPayment(true);
     } else {
       setIsCreating(true);
@@ -504,6 +514,7 @@ export default function CreateSurveyPage() {
       dataExpiresAt.setDate(dataExpiresAt.getDate() + tierConfig.retentionDays);
 
       // Create the survey data
+      // If already paid, survey should be published with 'paid' status
       const surveyData = {
         userId: firebaseUser.uid,
         title: formData.title.trim(),
@@ -517,14 +528,14 @@ export default function CreateSurveyPage() {
           randomizeQuestions: false,
           thankYouMessage: formData.thankYouMessage.trim() || '',
         } as SurveySettings, // Extended settings
-        status: (isFree ? 'published' : 'draft') as 'published' | 'draft' | 'closed',
+        status: (isFree || alreadyPaid ? 'published' : 'draft') as 'published' | 'draft' | 'closed',
         createdAt: new Date(),
         updatedAt: new Date(),
-        ...(isFree ? { publishedAt: new Date() } : {}),
+        ...((isFree || alreadyPaid) ? { publishedAt: new Date() } : {}),
         // Pricing fields
         pricingTier: selectedTier,
         responseLimit: tierConfig.responseLimit,
-        paymentStatus: (isFree ? 'free' : 'unpaid') as 'unpaid' | 'paid' | 'free',
+        paymentStatus: (isFree ? 'free' : alreadyPaid ? 'paid' : 'unpaid') as 'unpaid' | 'paid' | 'free',
         dataExpiresAt,
       };
 
@@ -540,8 +551,8 @@ export default function CreateSurveyPage() {
       // Record the request for rate limiting
       recordRequest(RATE_LIMITS.surveyCreation);
 
-      // If paid tier, redirect to Stripe checkout
-      if (!isFree) {
+      // If paid tier and NOT already paid, redirect to Stripe checkout
+      if (!isFree && !alreadyPaid) {
         try {
           const authToken = await firebaseUser.getIdToken();
           const response = await fetch('/api/stripe/create-checkout', {
@@ -587,9 +598,11 @@ export default function CreateSurveyPage() {
         return;
       }
 
-      // Free tier flow - clear draft and show success
+      // Free tier OR already paid flow - clear draft and show success
       clearDraft();
-      const surveyUrl = `${user.username}/${formData.slug}`;
+      // Safety check - user should never be null here due to early return, but TypeScript needs this
+      const username = user?.username || 'user';
+      const surveyUrl = `${username}/${formData.slug}`;
       setCreatedSurvey({ id: surveyId, url: surveyUrl });
       setShowSuccessModal(true);
       setIsCreating(false);
@@ -932,11 +945,11 @@ export default function CreateSurveyPage() {
                   Back
                 </Button>
                 <Button
-                  onClick={generateQuestions}
+                  onClick={handleGenerateClick}
                   isLoading={isGenerating}
                   loadingText="Generating..."
                 >
-                  Generate Questions
+                  {hasAIAccess() ? 'Generate Questions with AI' : 'Generate Questions'}
                 </Button>
               </div>
 
@@ -1247,27 +1260,63 @@ export default function CreateSurveyPage() {
                 </div>
               )}
 
-              {/* Pricing Tier Selection */}
+              {/* Pricing Tier Selection or Confirmation */}
               <div className="mt-8 pt-8 border-t border-gray-200" data-field="pricing">
-                <TierSelector
-                  selectedTier={formData.pricingTier}
-                  onTierSelect={(tier) => {
-                    // Prevent free tier selection if premium theme is selected
-                    if (tier === 'free' && !FREE_TIER_THEMES.includes(formData.theme)) {
-                      setErrors(prev => ({
-                        ...prev,
-                        pricing: `The ${THEMES.find(t => t.value === formData.theme)?.label} theme requires a paid tier. Please select Starter or above, or go back and choose Classic or Ice Cream.`
-                      }));
-                      return;
-                    }
-                    setFormData(prev => ({ ...prev, pricingTier: tier }));
-                    if (errors.pricing) setErrors(prev => ({ ...prev, pricing: '' }));
-                  }}
-                  hasUsedFreeTier={hasUsedFreeTier}
-                  isLoading={isCreating || isProcessingPayment}
-                />
-                {errors.pricing && (
-                  <p className="mt-2 text-sm text-red-600 text-center">{errors.pricing}</p>
+                {paidForAI && formData.pricingTier ? (
+                  // User already paid for AI upgrade - show confirmation
+                  <div className="bg-green-50 border border-green-200 rounded-xl p-6">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                        <svg className="w-6 h-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-green-900">
+                          {PRICING_TIERS[formData.pricingTier].name} Plan Selected
+                        </h3>
+                        <p className="text-sm text-green-700">
+                          Payment complete - up to {PRICING_TIERS[formData.pricingTier].responseLimit} responses included
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-2xl font-bold text-green-700">
+                          ${PRICING_TIERS[formData.pricingTier].price}
+                        </p>
+                        <p className="text-xs text-green-600">paid</p>
+                      </div>
+                    </div>
+                    <div className="mt-4 pt-4 border-t border-green-200">
+                      <p className="text-sm text-green-700">
+                        <span className="font-medium">Included features:</span>{' '}
+                        {PRICING_TIERS[formData.pricingTier].features.join(', ')}
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  // User hasn't paid yet - show tier selector
+                  <>
+                    <TierSelector
+                      selectedTier={formData.pricingTier}
+                      onTierSelect={(tier) => {
+                        // Prevent free tier selection if premium theme is selected
+                        if (tier === 'free' && !FREE_TIER_THEMES.includes(formData.theme)) {
+                          setErrors(prev => ({
+                            ...prev,
+                            pricing: `The ${THEMES.find(t => t.value === formData.theme)?.label} theme requires a paid tier. Please select Starter or above, or go back and choose Classic or Ice Cream.`
+                          }));
+                          return;
+                        }
+                        setFormData(prev => ({ ...prev, pricingTier: tier }));
+                        if (errors.pricing) setErrors(prev => ({ ...prev, pricing: '' }));
+                      }}
+                      hasUsedFreeTier={hasUsedFreeTier}
+                      isLoading={isCreating || isProcessingPayment}
+                    />
+                    {errors.pricing && (
+                      <p className="mt-2 text-sm text-red-600 text-center">{errors.pricing}</p>
+                    )}
+                  </>
                 )}
               </div>
 
@@ -1285,11 +1334,13 @@ export default function CreateSurveyPage() {
                   loadingText={isProcessingPayment ? "Redirecting to payment..." : "Creating..."}
                   disabled={isCreating || isCheckingSlug || isProcessingPayment || !formData.pricingTier}
                 >
-                  {formData.pricingTier === 'free'
-                    ? 'Create Free Survey'
-                    : formData.pricingTier
-                      ? `Create & Pay $${PRICING_TIERS[formData.pricingTier].price}`
-                      : 'Select a Plan'}
+                  {paidForAI
+                    ? 'Create Survey'
+                    : formData.pricingTier === 'free'
+                      ? 'Create Free Survey'
+                      : formData.pricingTier
+                        ? `Create & Pay $${PRICING_TIERS[formData.pricingTier].price}`
+                        : 'Select a Plan'}
                 </Button>
               </div>
 
@@ -1370,6 +1421,13 @@ export default function CreateSurveyPage() {
         onClose={() => setShowSuccessModal(false)}
         onCreateAnother={handleCreateAnother}
         onGoToDashboard={handleGoToDashboard}
+      />
+
+      {/* AI Upgrade Modal */}
+      <AIUpgradeModal
+        isOpen={showAIUpgradeModal}
+        onClose={() => setShowAIUpgradeModal(false)}
+        onContinueManually={handleContinueManually}
       />
     </div>
   );
