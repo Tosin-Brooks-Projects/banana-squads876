@@ -54,7 +54,7 @@ export type AdventureType =
 // Adventure themes available for free tier
 export const FREE_TIER_THEMES: AdventureType[] = ['classic', 'ice-cream-sundae'];
 
-export type QuestionType = 'multiple-choice' | 'rating' | 'text';
+export type QuestionType = 'multiple-choice' | 'rating' | 'text' | 'emoji-slider';
 
 export interface BaseQuestion {
   id: string;
@@ -83,7 +83,14 @@ export interface TextQuestion extends BaseQuestion {
   maxLength?: number;
 }
 
-export type Question = MultipleChoiceQuestion | RatingQuestion | TextQuestion;
+export interface EmojiSliderQuestion extends BaseQuestion {
+  type: 'emoji-slider';
+  emojis?: string[]; // Custom emoji set, defaults to satisfaction scale
+  labels?: { start: string; end: string };
+  scale?: 5 | 10;
+}
+
+export type Question = MultipleChoiceQuestion | RatingQuestion | TextQuestion | EmojiSliderQuestion;
 
 // Helper to check question type
 export function isMultipleChoiceQuestion(q: Question): q is MultipleChoiceQuestion {
@@ -96,6 +103,10 @@ export function isRatingQuestion(q: Question): q is RatingQuestion {
 
 export function isTextQuestion(q: Question): q is TextQuestion {
   return q.type === 'text';
+}
+
+export function isEmojiSliderQuestion(q: Question): q is EmojiSliderQuestion {
+  return q.type === 'emoji-slider';
 }
 
 export interface SurveySettings {

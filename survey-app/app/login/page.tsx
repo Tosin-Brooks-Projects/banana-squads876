@@ -76,22 +76,28 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-50 flex items-center justify-center p-6">
+    <div className="min-h-screen bg-neutral-50 flex flex-col">
+      {/* Navigation - matches homepage */}
+      <nav className="container mx-auto px-6 py-4">
+        <Link href="/" className="inline-flex items-center gap-2 hover:opacity-80 transition-opacity">
+          <div className="w-8 h-8 bg-brand-500 rounded-lg flex items-center justify-center">
+            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
+          </div>
+          <span className="text-xl font-bold text-neutral-900">Unboring Surveys</span>
+        </Link>
+      </nav>
+
+      {/* Centered content */}
+      <div className="flex-1 flex items-center justify-center p-6">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-md"
       >
         <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-2">
-            <div className="w-8 h-8 bg-brand-500 rounded-lg flex items-center justify-center">
-              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-              </svg>
-            </div>
-            <span className="text-xl font-bold text-neutral-900">Unboring Surveys</span>
-          </Link>
-          <h1 className="text-3xl font-bold text-neutral-900 mt-6 mb-2">
+          <h1 className="text-3xl font-bold text-neutral-900 mb-2">
             {emailSent ? 'Check your email' : 'Welcome'}
           </h1>
           <p className="text-neutral-600">
@@ -191,6 +197,7 @@ export default function LoginPage() {
           )}
         </Card>
       </motion.div>
+      </div>
     </div>
   );
 }

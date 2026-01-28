@@ -20,6 +20,54 @@ import {
 import { db } from './config';
 import { User, Survey, SurveyResponse, Answer, ResponseMetadata, SurveyQuickStats, PartialResponse } from '@/lib/types';
 
+// Helper to recursively remove undefined values from objects
+// Firebase Firestore doesn't accept undefined values - they must be null or omitted
+function removeUndefined<T>(obj: T): T {
+  if (obj === null || obj === undefined) {
+    return obj;
+  }
+  // Preserve Firestore Timestamp instances
+  if (obj instanceof Timestamp) {
+    return obj;
+  }
+  // Preserve Date instances
+  if (obj instanceof Date) {
+    return obj;
+  }
+  if (Array.isArray(obj)) {
+    return obj.map(item => removeUndefined(item)) as T;
+  }
+  if (typeof obj === 'object') {
+    const result: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(obj)) {
+      if (value !== undefined) {
+        result[key] = removeUndefined(value);
+      }
+    }
+    return result as T;
+  }
+  return obj;
+}
+
+// Helper to safely convert Firestore data to Date
+// Handles both Timestamp objects and already-converted Date objects
+function toDate(value: unknown): Date {
+  if (value instanceof Date) {
+    return value;
+  }
+  if (value && typeof value === 'object' && 'toDate' in value && typeof (value as { toDate: () => Date }).toDate === 'function') {
+    return (value as { toDate: () => Date }).toDate();
+  }
+  // Fallback for unexpected formats - log warning and return current date
+  console.warn('toDate received unexpected value:', value);
+  return new Date();
+}
+
+function toDateOrNull(value: unknown): Date | undefined {
+  if (!value) return undefined;
+  return toDate(value);
+}
+
 // User operations
 export async function createUser(user: User): Promise<void> {
   await setDoc(doc(db, 'users', user.id), {
@@ -172,30 +220,33 @@ export function isUsernameReserved(username: string): boolean {
 
 // Survey operations
 export async function createSurvey(survey: Omit<Survey, 'id'>): Promise<string> {
-  const docRef = await addDoc(collection(db, 'surveys'), {
+  const surveyData = removeUndefined({
     ...survey,
     createdAt: Timestamp.fromDate(survey.createdAt),
     updatedAt: Timestamp.fromDate(survey.updatedAt),
     publishedAt: survey.publishedAt ? Timestamp.fromDate(survey.publishedAt) : null,
     responseCount: 0,
   });
+  const docRef = await addDoc(collection(db, 'surveys'), surveyData);
   return docRef.id;
 }
 
 // Create a free survey (unlimited free surveys allowed)
 export async function createFreeSurveyAtomic(
-  userId: string,
+  _userId: string,
   survey: Omit<Survey, 'id'>
 ): Promise<string> {
   const surveyRef = doc(collection(db, 'surveys'));
 
-  await setDoc(surveyRef, {
+  const surveyData = removeUndefined({
     ...survey,
     createdAt: Timestamp.fromDate(survey.createdAt),
     updatedAt: Timestamp.fromDate(survey.updatedAt),
     publishedAt: survey.publishedAt ? Timestamp.fromDate(survey.publishedAt) : null,
     responseCount: 0,
   });
+
+  await setDoc(surveyRef, surveyData);
 
   return surveyRef.id;
 }
@@ -218,9 +269,9 @@ export async function getSurvey(surveyId: string): Promise<Survey | null> {
   return {
     ...data,
     id: docSnap.id,
-    createdAt: data.createdAt.toDate(),
-    updatedAt: data.updatedAt.toDate(),
-    publishedAt: data.publishedAt?.toDate(),
+    createdAt: toDate(data.createdAt),
+    updatedAt: toDate(data.updatedAt),
+    publishedAt: toDateOrNull(data.publishedAt),
   } as Survey;
 }
 
@@ -240,9 +291,9 @@ export async function getSurveyBySlug(userId: string, slug: string): Promise<Sur
   return {
     ...data,
     id: doc.id,
-    createdAt: data.createdAt.toDate(),
-    updatedAt: data.updatedAt.toDate(),
-    publishedAt: data.publishedAt?.toDate(),
+    createdAt: toDate(data.createdAt),
+    updatedAt: toDate(data.updatedAt),
+    publishedAt: toDateOrNull(data.publishedAt),
   } as Survey;
 }
 
@@ -308,19 +359,20 @@ export async function getUserSurveys(userId: string): Promise<Survey[]> {
     return {
       ...data,
       id: doc.id,
-      createdAt: data.createdAt.toDate(),
-      updatedAt: data.updatedAt.toDate(),
-      publishedAt: data.publishedAt?.toDate(),
+      createdAt: toDate(data.createdAt),
+      updatedAt: toDate(data.updatedAt),
+      publishedAt: toDateOrNull(data.publishedAt),
     } as Survey;
   });
 }
 
 export async function updateSurvey(surveyId: string, updates: Partial<Survey>): Promise<void> {
   const docRef = doc(db, 'surveys', surveyId);
-  await updateDoc(docRef, {
+  const cleanedUpdates = removeUndefined({
     ...updates,
     updatedAt: Timestamp.now(),
   });
+  await updateDoc(docRef, cleanedUpdates);
 }
 
 export async function deleteSurvey(surveyId: string): Promise<void> {
@@ -466,9 +518,9 @@ export function subscribeToUserSurveys(
       return {
         ...data,
         id: doc.id,
-        createdAt: data.createdAt.toDate(),
-        updatedAt: data.updatedAt.toDate(),
-        publishedAt: data.publishedAt?.toDate(),
+        createdAt: toDate(data.createdAt),
+        updatedAt: toDate(data.updatedAt),
+        publishedAt: toDateOrNull(data.publishedAt),
       } as Survey;
     });
     callback(surveys);

@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Question, Answer, OnProgressCallback } from '@/lib/types';
+import { Question, Answer, OnProgressCallback, EmojiSliderQuestion } from '@/lib/types';
+import ThemedSlider from '@/components/questions/ThemedSlider';
 
 interface ClassicSurveyInitialState {
   currentStage: number;
@@ -166,6 +167,19 @@ export default function ClassicSurvey({
             placeholder={question.placeholder || 'Type your answer here...'}
             maxLength={question.maxLength || 1000}
             className="w-full p-4 rounded-xl border-2 border-neutral-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-200 outline-none transition-all resize-none min-h-[120px]"
+          />
+        );
+
+      case 'emoji-slider':
+        const emojiQuestion = question as EmojiSliderQuestion;
+        return (
+          <ThemedSlider
+            value={currentAnswer as number | undefined}
+            onChange={(value) => handleAnswer(question.id, value)}
+            theme="classic"
+            customVisuals={emojiQuestion.emojis}
+            scale={emojiQuestion.scale || 5}
+            labels={emojiQuestion.labels}
           />
         );
 

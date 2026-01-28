@@ -8,9 +8,11 @@ import {
   MultipleChoiceQuestion,
   RatingQuestion,
   TextQuestion,
+  EmojiSliderQuestion,
   isMultipleChoiceQuestion,
   isRatingQuestion,
   isTextQuestion,
+  isEmojiSliderQuestion,
 } from '@/lib/types';
 
 interface QuestionEditorProps {
@@ -30,6 +32,7 @@ interface ValidationErrors {
 const QUESTION_TYPES: { value: QuestionType; label: string; icon: string }[] = [
   { value: 'multiple-choice', label: 'Multiple Choice', icon: '○' },
   { value: 'rating', label: 'Rating', icon: '★' },
+  { value: 'emoji-slider', label: 'Emoji Slider', icon: '😊' },
   { value: 'text', label: 'Text', icon: '¶' },
 ];
 
@@ -113,12 +116,34 @@ export default function QuestionEditor({
         };
         break;
       case 'text':
-        newQuestion = {
+        // Build text question without undefined fields (Firestore rejects undefined values)
+        const textQuestion: TextQuestion = {
           ...base,
           type: 'text',
           placeholder: isTextQuestion(question) ? question.placeholder : '',
-          maxLength: isTextQuestion(question) ? question.maxLength : undefined,
         };
+        // Only add maxLength if it exists
+        if (isTextQuestion(question) && question.maxLength) {
+          textQuestion.maxLength = question.maxLength;
+        }
+        newQuestion = textQuestion;
+        break;
+      case 'emoji-slider':
+        // Build emoji slider question without undefined fields (Firestore rejects undefined values)
+        const emojiSliderQuestion: EmojiSliderQuestion = {
+          ...base,
+          type: 'emoji-slider',
+          scale: isEmojiSliderQuestion(question) ? question.scale : 5,
+        };
+        // Only add labels if they exist and have values
+        if (isEmojiSliderQuestion(question) && question.labels) {
+          emojiSliderQuestion.labels = question.labels;
+        }
+        // Only add emojis if they exist
+        if (isEmojiSliderQuestion(question) && question.emojis) {
+          emojiSliderQuestion.emojis = question.emojis;
+        }
+        newQuestion = emojiSliderQuestion;
         break;
     }
 
@@ -172,6 +197,21 @@ export default function QuestionEditor({
   const updateMaxLength = (maxLength: number | undefined) => {
     if (!isTextQuestion(question)) return;
     onChange({ ...question, maxLength });
+  };
+
+  // Emoji slider specific handlers
+  const updateEmojiScale = (scale: 5 | 10) => {
+    if (!isEmojiSliderQuestion(question)) return;
+    onChange({ ...question, scale });
+  };
+
+  const updateEmojiSliderLabel = (field: 'start' | 'end', value: string) => {
+    if (!isEmojiSliderQuestion(question)) return;
+    const currentLabels = question.labels || { start: '', end: '' };
+    onChange({
+      ...question,
+      labels: { ...currentLabels, [field]: value },
+    });
   };
 
   // Delete confirmation
@@ -374,6 +414,14 @@ export default function QuestionEditor({
                   question={question}
                   onUpdatePlaceholder={updatePlaceholder}
                   onUpdateMaxLength={updateMaxLength}
+                />
+              )}
+
+              {isEmojiSliderQuestion(question) && (
+                <EmojiSliderFields
+                  question={question}
+                  onUpdateScale={updateEmojiScale}
+                  onUpdateLabel={updateEmojiSliderLabel}
                 />
               )}
 
@@ -661,4 +709,105 @@ export function validateQuestion(question: Question): ValidationErrors {
 export function isQuestionValid(question: Question): boolean {
   const errors = validateQuestion(question);
   return Object.keys(errors).length === 0;
+}
+
+// Emoji Slider Fields Component
+const DEFAULT_EMOJIS_5 = ['😢', '😕', '😐', '🙂', '😊'];
+
+function EmojiSliderFields({
+  question,
+  onUpdateScale,
+  onUpdateLabel,
+}: {
+  question: EmojiSliderQuestion;
+  onUpdateScale: (scale: 5 | 10) => void;
+  onUpdateLabel: (field: 'start' | 'end', value: string) => void;
+}) {
+  const emojis = question.emojis || DEFAULT_EMOJIS_5;
+  const scale = question.scale || 5;
+
+  return (
+    <div className="space-y-4">
+      {/* Scale selector */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Scale
+        </label>
+        <div className="flex gap-3">
+          {([5, 10] as const).map((s) => (
+            <button
+              key={s}
+              onClick={() => onUpdateScale(s)}
+              className={`
+                px-4 py-2 rounded-lg border-2 transition-all
+                ${scale === s
+                  ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
+                  : 'border-gray-200 hover:border-gray-300 text-gray-600'
+                }
+              `}
+            >
+              1 - {s}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Emoji preview */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Preview
+        </label>
+        <div className="bg-gray-50 rounded-lg p-4">
+          <div className="flex justify-center items-center gap-2 mb-3">
+            {emojis.slice(0, scale).map((emoji, i) => (
+              <span
+                key={i}
+                className={`text-2xl ${i === Math.floor(scale / 2) ? 'transform scale-125' : 'opacity-60'}`}
+              >
+                {emoji}
+              </span>
+            ))}
+          </div>
+          <div className="flex justify-between text-xs text-gray-500">
+            <span>{question.labels?.start || 'Low'}</span>
+            <span>{question.labels?.end || 'High'}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Labels */}
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Start Label (optional)
+          </label>
+          <input
+            type="text"
+            value={question.labels?.start || ''}
+            onChange={(e) => onUpdateLabel('start', e.target.value)}
+            placeholder="e.g., Not satisfied"
+            className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            End Label (optional)
+          </label>
+          <input
+            type="text"
+            value={question.labels?.end || ''}
+            onChange={(e) => onUpdateLabel('end', e.target.value)}
+            placeholder="e.g., Very satisfied"
+            className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500"
+          />
+        </div>
+      </div>
+
+      {/* Info text */}
+      <p className="text-xs text-gray-500">
+        The emoji slider provides a visual, engaging way for respondents to rate their answers.
+        Emojis will automatically match the adventure theme when the survey is taken.
+      </p>
+    </div>
+  );
 }

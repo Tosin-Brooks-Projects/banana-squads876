@@ -70,7 +70,6 @@ export default function Home() {
             transition={{ delay: 0.2 }}
             className="text-xl text-neutral-600 mb-6 max-w-2xl mx-auto"
           >
-            Turn boring feedback forms into engaging experiences.
             Gamified surveys that boost completion rates by 3x.
           </motion.p>
 
@@ -128,7 +127,7 @@ export default function Home() {
               Why Choose Unboring Surveys?
             </h2>
             <p className="text-neutral-600 max-w-2xl mx-auto">
-              Traditional surveys are boring. Our interactive adventures make data collection fun.
+              Interactive adventures make data collection fun.
             </p>
           </motion.div>
 
@@ -137,17 +136,17 @@ export default function Home() {
               {
                 icon: '🎮',
                 title: 'Gamified Experience',
-                description: 'Turn mundane questions into interactive adventures that keep respondents engaged.',
+                description: 'Interactive adventures that keep respondents engaged.',
               },
               {
                 icon: '📊',
                 title: 'Rich Analytics',
-                description: 'Get detailed insights with beautiful charts and exportable reports.',
+                description: 'Beautiful charts and exportable reports.',
               },
               {
                 icon: '🚀',
                 title: 'Higher Completion Rates',
-                description: 'Our surveys see 3x higher completion rates compared to traditional forms.',
+                description: '3x higher completion rates vs. traditional forms.',
               },
             ].map((feature, index) => (
               <motion.div
@@ -182,7 +181,7 @@ export default function Home() {
               Ready to Make Surveys Fun?
             </h2>
             <p className="text-neutral-600 mb-8">
-              Join thousands of creators who are transforming the way they collect feedback.
+              Start transforming how you collect feedback.
             </p>
             <Link href="/login">
               <Button size="lg">

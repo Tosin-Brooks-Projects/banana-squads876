@@ -9,6 +9,14 @@
       ]
     },
     {
+      "collectionGroup": "surveys",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "userId", "order": "ASCENDING" },
+        { "fieldPath": "slug", "order": "ASCENDING" }
+      ]
+    },
+    {
       "collectionGroup": "responses",
       "queryScope": "COLLECTION",
       "fields": [

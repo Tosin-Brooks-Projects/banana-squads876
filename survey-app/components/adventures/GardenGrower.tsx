@@ -85,12 +85,23 @@ function getQuestionOptions(question: Question | undefined): string[] {
   }
 
   // Rating questions need generated options based on scale
-  if ('scale' in question) {
+  if (question.type === 'rating' && 'scale' in question) {
     const scale = question.scale || 5;
     return Array.from({ length: scale }, (_, i) => {
       const value = i + 1;
       if (value === 1 && question.startLabel) return question.startLabel;
       if (value === scale && question.endLabel) return question.endLabel;
+      return String(value);
+    });
+  }
+
+  // Emoji slider questions - use scale with optional labels
+  if (question.type === 'emoji-slider' && 'scale' in question) {
+    const scale = question.scale || 5;
+    return Array.from({ length: scale }, (_, i) => {
+      const value = i + 1;
+      if (value === 1 && question.labels?.start) return question.labels.start;
+      if (value === scale && question.labels?.end) return question.labels.end;
       return String(value);
     });
   }

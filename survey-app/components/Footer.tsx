@@ -16,6 +16,35 @@ export default function Footer() {
             @brooksconkle
           </Link>
         </p>
+        <div className="mt-4 flex items-center justify-center gap-4 flex-wrap">
+          <Link
+            href="/about"
+            className="text-neutral-500 hover:text-neutral-700 transition-colors"
+          >
+            About
+          </Link>
+          <span className="text-neutral-300">·</span>
+          <Link
+            href="/pricing"
+            className="text-neutral-500 hover:text-neutral-700 transition-colors"
+          >
+            Pricing
+          </Link>
+          <span className="text-neutral-300">·</span>
+          <Link
+            href="/terms"
+            className="text-neutral-500 hover:text-neutral-700 transition-colors"
+          >
+            Terms
+          </Link>
+          <span className="text-neutral-300">·</span>
+          <Link
+            href="/privacy"
+            className="text-neutral-500 hover:text-neutral-700 transition-colors"
+          >
+            Privacy
+          </Link>
+        </div>
       </div>
     </footer>
   );
