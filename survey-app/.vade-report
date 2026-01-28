@@ -1,0 +1,41 @@
+## Vercel Speed Insights Installation and Configuration
+
+Successfully installed and configured Vercel Speed Insights for the Next.js 14 application with App Router.
+
+### Changes Made:
+
+#### 1. Package Installation
+- **Modified**: `package.json`
+  - Added `@vercel/speed-insights` version ^1.3.1 to dependencies
+- **Modified**: `package-lock.json`
+  - Updated with new dependency and its sub-dependencies (607 packages added)
+
+#### 2. Integration
+- **Modified**: `app/layout.tsx`
+  - Added import statement: `import { SpeedInsights } from "@vercel/speed-insights/next"`
+  - Added `<SpeedInsights />` component inside the `<body>` tag, placed after the `<AuthProvider>` wrapper
+  - This placement ensures Speed Insights is loaded on every page of the application
+
+### Implementation Details:
+
+The project uses Next.js 14.2.35 with App Router, so I followed the recommended approach for Next.js 13.5+:
+- Used the `/next` import path for automatic routing detection
+- Placed the component in the root layout for global coverage
+- No additional configuration or props required (framework automatically handles routing)
+
+### Verification:
+
+- ✓ Linter passed without introducing any new errors
+- ✓ Code follows existing project patterns and TypeScript conventions
+- ✓ Lock files updated with new dependencies
+- ✗ Build test encountered pre-existing Firebase API key configuration issues (unrelated to Speed Insights changes)
+
+### Notes:
+
+The Speed Insights component will automatically:
+- Track Core Web Vitals (LCP, FID, CLS, FCP, TTFB, INP)
+- Send performance data to Vercel Analytics dashboard
+- Work seamlessly with App Router's automatic route detection
+- Have minimal impact on bundle size and performance
+
+The integration is production-ready and will start collecting metrics once deployed to Vercel.
