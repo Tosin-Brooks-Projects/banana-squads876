@@ -282,6 +282,7 @@ function PizzaDisplay({
   const cheese = cheeseOptions.find(c => c.id === selectedChoices.cheese);
 
   // Generate random positions for toppings - using deterministic positions based on topping id
+  // Keep toppings within the circular sauce area (not square bounds)
   const toppingPositions = selectedChoices.toppings.flatMap((uniqueId, toppingIndex) => {
     // Extract base visual ID from uniqueId (e.g., "pepperoni-0" -> "pepperoni")
     const baseVisualId = uniqueId.replace(/-\d+$/, '');
@@ -293,15 +294,16 @@ function PizzaDisplay({
     return Array.from({ length: pieces }, (_, i) => {
       // Use deterministic positioning based on indices
       const angle = ((toppingIndex * pieces + i) * 137.5) % 360; // Golden angle distribution
-      const radius = 25 + ((toppingIndex * pieces + i) % 3) * 15;
+      // Radius ranges from 8-38% from center, keeping toppings within the sauce circle
+      const radius = 8 + ((toppingIndex * pieces + i) % 4) * 10;
       const x = 50 + radius * Math.cos(angle * Math.PI / 180);
       const y = 50 + radius * Math.sin(angle * Math.PI / 180);
 
       return {
         id: `${uniqueId}-piece-${i}`,
         topping,
-        x: Math.max(15, Math.min(85, x)),
-        y: Math.max(15, Math.min(85, y)),
+        x,
+        y,
         rotation: (toppingIndex * 45 + i * 72) % 360,
         index: toppingIndex * pieces + i,
       };
@@ -1179,9 +1181,10 @@ function ToppingsSelection({
           Back
         </button>
       )}
-      <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4 sm:mb-6">
+      <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-1">
         {question?.question || 'Add Your Toppings'}
       </h2>
+      <p className="text-sm text-gray-500 mb-4 sm:mb-6">Select all that apply</p>
       <div className="grid grid-cols-2 gap-2 sm:gap-4 mb-4 sm:mb-6">
         {options.map((option, index) => {
           const isSelected = selectedToppings.includes(option.uniqueId);

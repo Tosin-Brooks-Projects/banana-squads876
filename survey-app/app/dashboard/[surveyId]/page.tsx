@@ -299,8 +299,15 @@ export default function SurveyDetailPage() {
   const [selectedWinner, setSelectedWinner] = useState<SurveyResponse | null>(null);
   const [isPickingWinner, setIsPickingWinner] = useState(false);
   const [isSavingWinnerImage, setIsSavingWinnerImage] = useState(false);
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [editedTitle, setEditedTitle] = useState('');
+  const [isEditingDescription, setIsEditingDescription] = useState(false);
+  const [editedDescription, setEditedDescription] = useState('');
+  const [savingTitle, setSavingTitle] = useState(false);
+  const [savingDescription, setSavingDescription] = useState(false);
   const winnerCardRef = useRef<HTMLDivElement>(null);
   const expirationInputRef = useRef<HTMLInputElement>(null);
+  const titleInputRef = useRef<HTMLInputElement>(null);
 
   // Define fetchData early so it can be used in payment verification
   const fetchData = useCallback(async () => {
@@ -468,6 +475,91 @@ export default function SurveyDetailPage() {
     setLoading(true);
     fetchData().finally(() => setLoading(false));
   }, [surveyId, fetchData]);
+
+  // Start editing title
+  const handleEditTitle = () => {
+    if (survey) {
+      setEditedTitle(survey.title);
+      setIsEditingTitle(true);
+      setTimeout(() => titleInputRef.current?.focus(), 0);
+    }
+  };
+
+  // Save edited title
+  const handleSaveTitle = async () => {
+    if (!survey || savingTitle) return;
+    const trimmedTitle = editedTitle.trim();
+    if (!trimmedTitle || trimmedTitle === survey.title) {
+      setIsEditingTitle(false);
+      return;
+    }
+
+    setSavingTitle(true);
+    const previousSurvey = { ...survey };
+    setSurvey({ ...survey, title: trimmedTitle });
+
+    try {
+      await updateSurvey(surveyId, { title: trimmedTitle });
+      setToastMessage('Title updated');
+      setShowToast(true);
+      setIsEditingTitle(false);
+    } catch (err) {
+      console.error('Error updating title:', err);
+      setSurvey(previousSurvey);
+      setToastMessage('Failed to update title');
+      setShowToast(true);
+    } finally {
+      setSavingTitle(false);
+    }
+  };
+
+  // Cancel editing title
+  const handleCancelTitleEdit = () => {
+    setIsEditingTitle(false);
+    setEditedTitle('');
+  };
+
+  // Start editing description
+  const handleEditDescription = () => {
+    if (survey) {
+      setEditedDescription(survey.description || '');
+      setIsEditingDescription(true);
+    }
+  };
+
+  // Save edited description
+  const handleSaveDescription = async () => {
+    if (!survey || savingDescription) return;
+    const trimmedDescription = editedDescription.trim();
+    if (trimmedDescription === (survey.description || '')) {
+      setIsEditingDescription(false);
+      return;
+    }
+
+    setSavingDescription(true);
+    const previousSurvey = { ...survey };
+    setSurvey({ ...survey, description: trimmedDescription || undefined });
+
+    try {
+      await updateSurvey(surveyId, { description: trimmedDescription || '' });
+      setToastMessage('Description updated');
+      setShowToast(true);
+      setIsEditingDescription(false);
+    } catch (err) {
+      console.error('Error updating description:', err);
+      setSurvey(previousSurvey);
+      setToastMessage('Failed to update description');
+      setShowToast(true);
+    } finally {
+      setSavingDescription(false);
+    }
+  };
+
+  // Cancel editing description
+  const handleCancelDescriptionEdit = () => {
+    setIsEditingDescription(false);
+    setEditedDescription('');
+  };
 
   const handleRefresh = async () => {
     setIsRefreshing(true);
@@ -693,8 +785,56 @@ export default function SurveyDetailPage() {
                 ← Back
               </Link>
               <div className="text-3xl sm:text-4xl">{getAdventureEmoji(survey.adventureType)}</div>
-              <div className="min-w-0">
-                <h1 className="text-lg sm:text-xl font-bold text-gray-900 truncate">{survey.title}</h1>
+              <div className="min-w-0 flex-1">
+                {isEditingTitle ? (
+                  <div className="flex items-center gap-2">
+                    <input
+                      ref={titleInputRef}
+                      type="text"
+                      value={editedTitle}
+                      onChange={(e) => setEditedTitle(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') handleSaveTitle();
+                        if (e.key === 'Escape') handleCancelTitleEdit();
+                      }}
+                      className="text-lg sm:text-xl font-bold text-gray-900 bg-white border border-gray-300 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 w-full max-w-xs"
+                      disabled={savingTitle}
+                    />
+                    <button
+                      onClick={handleSaveTitle}
+                      disabled={savingTitle}
+                      className="p-1.5 text-green-600 hover:bg-green-50 rounded-lg transition-colors disabled:opacity-50"
+                      title="Save"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    </button>
+                    <button
+                      onClick={handleCancelTitleEdit}
+                      disabled={savingTitle}
+                      className="p-1.5 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50"
+                      title="Cancel"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                ) : (
+                  <div className="group flex items-center gap-2">
+                    <h1 className="text-lg sm:text-xl font-bold text-gray-900 truncate">{survey.title}</h1>
+                    <button
+                      onClick={handleEditTitle}
+                      className="p-1 text-gray-400 hover:text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity"
+                      title="Edit title"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                      </svg>
+                    </button>
+                  </div>
+                )}
                 <p className="text-gray-500 text-xs sm:text-sm">
                   {getAdventureLabel(survey.adventureType)} • {responses.length} responses
                 </p>
@@ -971,6 +1111,69 @@ export default function SurveyDetailPage() {
                   </span>
                 </Button>
               </Link>
+            </div>
+          </Card>
+        </motion.div>
+
+        {/* Description */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.42 }}
+          className="mb-6 sm:mb-8"
+        >
+          <Card>
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex-1">
+                <p className="text-gray-500 text-xs mb-1">Description</p>
+                {isEditingDescription ? (
+                  <div className="space-y-3">
+                    <textarea
+                      value={editedDescription}
+                      onChange={(e) => setEditedDescription(e.target.value)}
+                      placeholder="Add a description for your survey..."
+                      rows={3}
+                      className="w-full text-sm text-gray-700 bg-white border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 resize-none"
+                      disabled={savingDescription}
+                    />
+                    <div className="flex items-center gap-2">
+                      <Button
+                        size="sm"
+                        onClick={handleSaveDescription}
+                        disabled={savingDescription}
+                        isLoading={savingDescription}
+                      >
+                        Save
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleCancelDescriptionEdit}
+                        disabled={savingDescription}
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="group flex items-start gap-2">
+                    {survey.description ? (
+                      <p className="text-sm text-gray-700">{survey.description}</p>
+                    ) : (
+                      <p className="text-sm text-gray-400 italic">No description</p>
+                    )}
+                    <button
+                      onClick={handleEditDescription}
+                      className="p-1 text-gray-400 hover:text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
+                      title="Edit description"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                      </svg>
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </Card>
         </motion.div>

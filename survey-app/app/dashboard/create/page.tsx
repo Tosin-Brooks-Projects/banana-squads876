@@ -347,9 +347,15 @@ export default function CreateSurveyPage() {
   // Continue manually without AI (from modal)
   const handleContinueManually = () => {
     setShowAIUpgradeModal(false);
-    // Skip to step 3 with empty questions - user will add manually
-    setFormData(prev => ({ ...prev, questions: [] }));
-    setCurrentStep(3);
+    // If coming from step 1 (theme selection), go to step 2 (preferences)
+    // If coming from step 2 (preferences), skip to step 3 with empty questions
+    if (currentStep === 1) {
+      setCurrentStep(2);
+    } else {
+      // Skip to step 3 with empty questions - user will add manually
+      setFormData(prev => ({ ...prev, questions: [] }));
+      setCurrentStep(3);
+    }
   };
 
   // Generate questions using real AI API
@@ -708,6 +714,14 @@ export default function CreateSurveyPage() {
       return;
     }
     setErrors({});
+
+    // If they selected a premium theme and haven't paid, show upgrade modal
+    const isPremiumTheme = !FREE_TIER_THEMES.includes(formData.theme);
+    if (isPremiumTheme && !paidForAI) {
+      setShowAIUpgradeModal(true);
+      return;
+    }
+
     setCurrentStep(2);
   };
 
@@ -1470,6 +1484,11 @@ export default function CreateSurveyPage() {
         isOpen={showAIUpgradeModal}
         onClose={() => setShowAIUpgradeModal(false)}
         onContinueManually={handleContinueManually}
+        isPremiumTheme={!FREE_TIER_THEMES.includes(formData.theme)}
+        onSwitchToFreeTheme={() => {
+          setFormData(prev => ({ ...prev, theme: 'classic' as AdventureType }));
+          setShowAIUpgradeModal(false);
+        }}
       />
     </div>
   );

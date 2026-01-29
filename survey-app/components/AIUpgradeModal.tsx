@@ -8,9 +8,17 @@ interface AIUpgradeModalProps {
   isOpen: boolean;
   onClose: () => void;
   onContinueManually: () => void;
+  isPremiumTheme?: boolean;
+  onSwitchToFreeTheme?: () => void;
 }
 
-export default function AIUpgradeModal({ isOpen, onClose, onContinueManually }: AIUpgradeModalProps) {
+export default function AIUpgradeModal({
+  isOpen,
+  onClose,
+  onContinueManually,
+  isPremiumTheme = false,
+  onSwitchToFreeTheme,
+}: AIUpgradeModalProps) {
   return (
     <AnimatePresence>
       {isOpen && (
@@ -37,15 +45,19 @@ export default function AIUpgradeModal({ isOpen, onClose, onContinueManually }: 
                 transition={{ delay: 0.2, type: 'spring', damping: 15 }}
                 className="inline-block mb-3"
               >
-                <span className="text-4xl">✨</span>
+                <span className="text-4xl">{isPremiumTheme ? '🎨' : '✨'}</span>
               </motion.div>
-              <h2 className="text-xl font-bold">Let AI Write Your Questions</h2>
+              <h2 className="text-xl font-bold">
+                {isPremiumTheme ? 'Premium Theme Selected' : 'Let AI Write Your Questions'}
+              </h2>
             </div>
 
             {/* Content */}
             <div className="px-6 py-5">
               <p className="text-gray-600 text-center mb-5">
-                Upgrade to a paid plan to unlock AI-generated questions, more responses, and CSV export.
+                {isPremiumTheme
+                  ? 'This theme requires a paid plan. Upgrade to unlock premium themes, AI-generated questions, more responses, and CSV export.'
+                  : 'Upgrade to a paid plan to unlock AI-generated questions, more responses, and CSV export.'}
               </p>
 
               {/* Two button actions */}
@@ -55,13 +67,23 @@ export default function AIUpgradeModal({ isOpen, onClose, onContinueManually }: 
                     View All Plans
                   </Button>
                 </Link>
-                <Button
-                  onClick={onContinueManually}
-                  variant="outline"
-                  className="w-full"
-                >
-                  Continue Free
-                </Button>
+                {isPremiumTheme && onSwitchToFreeTheme ? (
+                  <Button
+                    onClick={onSwitchToFreeTheme}
+                    variant="outline"
+                    className="w-full"
+                  >
+                    Switch to Free Theme
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={onContinueManually}
+                    variant="outline"
+                    className="w-full"
+                  >
+                    Continue Free
+                  </Button>
+                )}
               </div>
             </div>
           </motion.div>
