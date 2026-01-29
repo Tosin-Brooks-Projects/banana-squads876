@@ -287,7 +287,14 @@ function PizzaDisplay({
   const toppingPositions = selectedChoices.toppings.flatMap((uniqueId, toppingIndex) => {
     // Extract base visual ID from uniqueId (e.g., "pepperoni-0" -> "pepperoni")
     const baseVisualId = uniqueId.replace(/-\d+$/, '');
-    const topping = toppingOptions.find(t => t.id === baseVisualId);
+    // First try to match by ID, then fall back to cycling through toppings by index
+    let topping = toppingOptions.find(t => t.id === baseVisualId);
+    if (!topping) {
+      // Use index from uniqueId to pick a visual (cycles through available toppings)
+      const indexMatch = uniqueId.match(/-(\d+)$/);
+      const visualIndex = indexMatch ? parseInt(indexMatch[1], 10) : toppingIndex;
+      topping = toppingOptions[visualIndex % toppingOptions.length];
+    }
     if (!topping) return [];
 
     // Generate 4-6 pieces per topping with deterministic positions
