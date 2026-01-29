@@ -315,7 +315,7 @@ export default function CreateSurveyPage() {
     return () => clearTimeout(timer);
   }, [formData.slug, checkSlugAvailability]);
 
-  // Check if user has access to AI features (Starter tier or above)
+  // Check if user has access to AI features (Starter tier or above, or premium theme selected)
   const hasAIAccess = () => {
     // If they've paid for AI upgrade during this session
     if (paidForAI) {
@@ -325,7 +325,11 @@ export default function CreateSurveyPage() {
     if (formData.pricingTier && formData.pricingTier !== 'free') {
       return true;
     }
-    // Otherwise, check if free tier is selected or no tier selected yet
+    // If they selected a premium theme, they'll need to pay anyway (AI included)
+    if (!FREE_TIER_THEMES.includes(formData.theme)) {
+      return true;
+    }
+    // Otherwise, they're on a free theme with no paid tier selected
     return false;
   };
 
