@@ -639,7 +639,7 @@ export default function SettingsPage() {
             </div>
             {user.username && (
               <p className="mt-2 text-sm text-gray-500">
-                Your survey URL: <span className="font-mono text-indigo-600">playthis.co/{user.username}/your-survey</span>
+                Your survey URL: <span className="font-mono text-indigo-600">unboringsurveys.com/{user.username}/your-survey</span>
               </p>
             )}
           </div>
@@ -707,7 +707,7 @@ export default function SettingsPage() {
                       <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
                         <p className="text-sm text-gray-500 mb-1">Your new survey URL will be:</p>
                         <p className="text-sm font-mono text-indigo-600 break-all">
-                          playthis.co/<span className="font-semibold">{newUsername}</span>/your-survey
+                          unboringsurveys.com/<span className="font-semibold">{newUsername}</span>/your-survey
                         </p>
                       </div>
                     )}

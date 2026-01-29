@@ -316,7 +316,7 @@ export default function OnboardingPage() {
               <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
                 <p className="text-sm text-gray-500 mb-1">Your survey URL will be:</p>
                 <p className="text-sm font-mono text-indigo-600 break-all">
-                  playthis.co/<span className="font-semibold">{username}</span>/your-survey
+                  unboringsurveys.com/<span className="font-semibold">{username}</span>/your-survey
                 </p>
               </div>
             )}
