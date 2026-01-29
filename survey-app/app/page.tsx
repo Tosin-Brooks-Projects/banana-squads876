@@ -28,9 +28,9 @@ export default function Home() {
             transition={{ delay: 0.1 }}
             className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-neutral-900 mb-6"
           >
-            Surveys that people{' '}
+            Surveys people{' '}
             <span className="relative inline-block">
-              <span className="relative z-10">actually complete</span>
+              <span className="relative z-10">actually finish</span>
               <span className="absolute bottom-2 left-0 w-full h-3 bg-brand-200 -z-0"></span>
             </span>
           </motion.h1>
