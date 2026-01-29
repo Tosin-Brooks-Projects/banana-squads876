@@ -1310,8 +1310,8 @@ export default function CreateSurveyPage() {
                 </div>
               </div>
 
-              {/* Premium theme warning */}
-              {!FREE_TIER_THEMES.includes(formData.theme) && (
+              {/* Premium theme warning - only show if user hasn't paid yet */}
+              {!FREE_TIER_THEMES.includes(formData.theme) && !paidForAI && (
                 <div className="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-lg">
                   <div className="flex items-start gap-3">
                     <span className="text-xl">✨</span>
