@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Link from 'next/link';
 import { useAuthContext } from '@/contexts/AuthContext';
 import Button from '@/components/ui/Button';
 import { Spinner } from '@/components/ui/LoadingStates';
@@ -64,13 +65,6 @@ export default function AIUpgradeModal({ isOpen, onClose, onContinueManually }: 
     }
   };
 
-  const sampleQuestions = [
-    "How often do you visit our coffee shop?",
-    "What's your favorite drink to order?",
-    "How would you rate the speed of service?",
-    "What could we improve about your experience?",
-  ];
-
   return (
     <AnimatePresence>
       {isOpen && (
@@ -86,7 +80,7 @@ export default function AIUpgradeModal({ isOpen, onClose, onContinueManually }: 
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.9, opacity: 0, y: 20 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden"
+            className="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Processing overlay */}
@@ -106,24 +100,21 @@ export default function AIUpgradeModal({ isOpen, onClose, onContinueManually }: 
               )}
             </AnimatePresence>
 
-            {/* Header with gradient */}
-            <div className="bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-8 text-white text-center">
+            {/* Header with brand gradient */}
+            <div className="bg-gradient-to-r from-brand-500 to-brand-600 px-6 py-6 text-white text-center">
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ delay: 0.2, type: 'spring', damping: 15 }}
-                className="inline-block mb-4"
+                className="inline-block mb-3"
               >
-                <span className="text-5xl">✨</span>
+                <span className="text-4xl">✨</span>
               </motion.div>
-              <h2 className="text-2xl font-bold mb-2">Unlock AI-Powered Questions</h2>
-              <p className="text-indigo-100">
-                Let our AI craft the perfect questions for your survey
-              </p>
+              <h2 className="text-xl font-bold">Let AI Write Your Questions</h2>
             </div>
 
             {/* Content */}
-            <div className="px-6 py-6">
+            <div className="px-6 py-5">
               {/* Error message */}
               {error && (
                 <motion.div
@@ -135,65 +126,37 @@ export default function AIUpgradeModal({ isOpen, onClose, onContinueManually }: 
                 </motion.div>
               )}
 
-              {/* What you get */}
-              <div className="mb-6">
-                <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
-                  What AI Generation Does
-                </h3>
-                <ul className="space-y-2">
-                  <li className="flex items-start gap-2">
-                    <svg className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    <span className="text-gray-700">Analyzes your survey goal to generate relevant questions</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <svg className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    <span className="text-gray-700">Creates a mix of question types for better insights</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <svg className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    <span className="text-gray-700">Saves time - get a complete survey in seconds</span>
-                  </li>
-                </ul>
-              </div>
-
-              {/* Sample questions */}
-              <div className="mb-6">
-                <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
-                  Example AI-Generated Questions
-                </h3>
-                <div className="bg-gray-50 rounded-lg p-4 space-y-2">
-                  {sampleQuestions.map((question, index) => (
-                    <motion.div
-                      key={index}
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.3 + index * 0.1 }}
-                      className="flex items-center gap-2 text-sm text-gray-600"
-                    >
-                      <span className="w-5 h-5 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs font-medium flex-shrink-0">
-                        {index + 1}
-                      </span>
-                      {question}
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
+              {/* Benefits - simplified */}
+              <ul className="space-y-2 mb-5">
+                <li className="flex items-center gap-2 text-gray-700">
+                  <svg className="w-5 h-5 text-green-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  Generates relevant questions instantly
+                </li>
+                <li className="flex items-center gap-2 text-gray-700">
+                  <svg className="w-5 h-5 text-green-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  Mix of question types for better insights
+                </li>
+                <li className="flex items-center gap-2 text-gray-700">
+                  <svg className="w-5 h-5 text-green-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  Edit and customize as needed
+                </li>
+              </ul>
 
               {/* Pricing callout */}
-              <div className="bg-indigo-50 border border-indigo-100 rounded-lg p-4 mb-6">
+              <div className="bg-brand-50 border border-brand-100 rounded-lg p-4 mb-5">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="font-semibold text-gray-900">Starter Plan</p>
-                    <p className="text-sm text-gray-600">AI questions + 100 responses + CSV export</p>
+                    <p className="text-sm text-gray-600">AI + 100 responses + export</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-2xl font-bold text-indigo-600">$9</p>
+                    <p className="text-2xl font-bold text-brand-600">$9</p>
                     <p className="text-xs text-gray-500">per survey</p>
                   </div>
                 </div>
@@ -204,17 +167,26 @@ export default function AIUpgradeModal({ isOpen, onClose, onContinueManually }: 
                 <Button
                   onClick={() => handleUpgrade('starter')}
                   disabled={isProcessing}
-                  className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700"
+                  className="w-full"
                 >
-                  {isProcessing ? 'Processing...' : 'Upgrade to Starter - $9'}
+                  {isProcessing ? 'Processing...' : 'Upgrade - $9'}
                 </Button>
-                <button
-                  onClick={onContinueManually}
-                  disabled={isProcessing}
-                  className="w-full py-2.5 text-gray-600 hover:text-gray-900 text-sm font-medium transition-colors disabled:opacity-50"
-                >
-                  No thanks, I&apos;ll write my own questions
-                </button>
+                <div className="flex items-center justify-between">
+                  <button
+                    onClick={onContinueManually}
+                    disabled={isProcessing}
+                    className="text-gray-500 hover:text-gray-700 text-sm transition-colors disabled:opacity-50"
+                  >
+                    Write my own
+                  </button>
+                  <Link
+                    href="/pricing"
+                    className="text-brand-600 hover:text-brand-700 text-sm font-medium transition-colors"
+                    onClick={onClose}
+                  >
+                    See all plans
+                  </Link>
+                </div>
               </div>
             </div>
           </motion.div>
