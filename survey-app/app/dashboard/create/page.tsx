@@ -803,7 +803,7 @@ export default function CreateSurveyPage() {
                           `}
                         >
                           <span className="text-2xl block mb-1 h-8 flex items-center justify-center">{theme.icon}</span>
-                          <span className="text-sm font-medium">{theme.label}</span>
+                          <span className="text-sm font-medium text-gray-900">{theme.label}</span>
                           {theme.isPremium && (
                             <span className="absolute top-1 right-1 text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-full font-medium">
                               Pro

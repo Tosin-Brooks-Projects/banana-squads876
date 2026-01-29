@@ -59,13 +59,13 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-neutral-50">
+    <div className="min-h-screen bg-neutral-50 overflow-x-hidden">
       <DashboardHeader onMenuClick={() => setSidebarOpen(true)} />
 
       <div className="flex">
         <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
-        <main className="flex-1 p-4 lg:p-6 lg:ml-0">
+        <main className="flex-1 min-w-0 p-4 lg:p-6 lg:ml-0">
           <div className="max-w-7xl mx-auto">
             {children}
           </div>

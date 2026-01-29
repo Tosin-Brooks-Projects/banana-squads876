@@ -426,7 +426,7 @@ export default function DashboardPage() {
         </div>
         <Link
           href="/dashboard/create"
-          className="flex items-center gap-2 px-4 py-2.5 bg-brand-500 text-white rounded-lg font-medium hover:bg-brand-600 transition-colors"
+          className="flex items-center justify-center gap-2 w-full sm:w-auto px-4 py-2.5 bg-brand-500 text-white rounded-lg font-medium hover:bg-brand-600 transition-colors"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -501,7 +501,7 @@ export default function DashboardPage() {
                         <p className="text-sm font-semibold text-neutral-900">{survey.stats.totalResponses}</p>
                       </div>
                       <span
-                        className={`px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap ${
+                        className={`px-2 sm:px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap ${
                           survey.status === 'published'
                             ? 'bg-green-100 text-green-700'
                             : survey.status === 'closed'
@@ -516,7 +516,7 @@ export default function DashboardPage() {
                           : survey.status === 'closed'
                           ? 'Closed'
                           : survey.paymentStatus === 'unpaid'
-                          ? 'Payment Required'
+                          ? <><span className="sm:hidden">Unpaid</span><span className="hidden sm:inline">Payment Required</span></>
                           : 'Draft'}
                       </span>
                       {/* Delete button */}
