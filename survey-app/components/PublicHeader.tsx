@@ -92,6 +92,24 @@ export default function PublicHeader({ variant = 'solid' }: PublicHeaderProps) {
             >
               Log in
             </Link>
+            <Link
+              href="/pricing"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block px-4 py-2 text-neutral-600 hover:bg-neutral-100 rounded-lg transition-colors"
+              role="menuitem"
+              tabIndex={mobileMenuOpen ? 0 : -1}
+            >
+              Pricing
+            </Link>
+            <Link
+              href="/about"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block px-4 py-2 text-neutral-600 hover:bg-neutral-100 rounded-lg transition-colors"
+              role="menuitem"
+              tabIndex={mobileMenuOpen ? 0 : -1}
+            >
+              About
+            </Link>
           </div>
         </motion.div>
       </nav>
