@@ -124,6 +124,7 @@ export default function CreateSurveyPage() {
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const [showAIUpgradeModal, setShowAIUpgradeModal] = useState(false);
   const [paidForAI, setPaidForAI] = useState(false); // Track if user paid for AI upgrade
+  const [paidTier, setPaidTier] = useState<PricingTier | null>(null); // Store the tier user paid for
   const [shouldAutoGenerate, setShouldAutoGenerate] = useState(false); // Trigger auto-generation after upgrade
   const formRef = useRef<HTMLDivElement>(null);
 
@@ -139,7 +140,12 @@ export default function CreateSurveyPage() {
   }, [firebaseUser]);
 
   // Handle return from Stripe AI upgrade checkout
+  // Check URL params on mount - this needs to run synchronously before localStorage
+  const upgradeCheckedRef = useRef(false);
   useEffect(() => {
+    if (upgradeCheckedRef.current) return;
+    upgradeCheckedRef.current = true;
+
     const upgraded = searchParams.get('upgraded');
     const tier = searchParams.get('tier') as PricingTier | null;
     const upgradeCancelled = searchParams.get('upgrade_cancelled');
@@ -147,10 +153,9 @@ export default function CreateSurveyPage() {
     if (upgraded === 'true' && tier) {
       // User successfully paid for AI upgrade
       setPaidForAI(true);
-      setFormData(prev => ({ ...prev, pricingTier: tier }));
+      setPaidTier(tier); // Store the tier they paid for
 
       // If they have context (from their saved draft), trigger AI generation
-      // We need to wait for draft to load first, so set a flag
       setShouldAutoGenerate(true);
 
       // Clean up URL params
@@ -162,6 +167,19 @@ export default function CreateSurveyPage() {
       window.history.replaceState({}, '', newUrl);
     }
   }, [searchParams]);
+
+  // Ensure pricingTier stays set after upgrade - runs whenever paidTier changes or formData loads
+  useEffect(() => {
+    if (paidForAI && paidTier) {
+      // Always force the pricing tier to match what they paid for
+      setFormData(prev => {
+        if (prev.pricingTier !== paidTier) {
+          return { ...prev, pricingTier: paidTier };
+        }
+        return prev;
+      });
+    }
+  }, [paidForAI, paidTier]);
 
   // Auto-generate questions after upgrade if we have context
   const autoGenerateTriggeredRef = useRef(false);
@@ -193,7 +211,25 @@ export default function CreateSurveyPage() {
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        setFormData(parsed.formData || DEFAULT_FORM_DATA);
+        const loadedFormData = parsed.formData || DEFAULT_FORM_DATA;
+
+        // Check if user already paid for upgrade (stored in localStorage)
+        if (parsed.paidForAI && parsed.paidTier) {
+          setPaidForAI(true);
+          setPaidTier(parsed.paidTier);
+          loadedFormData.pricingTier = parsed.paidTier;
+        }
+
+        // Also check URL params (for fresh return from Stripe)
+        const urlParams = new URLSearchParams(window.location.search);
+        const upgradedFromUrl = urlParams.get('upgraded') === 'true';
+        const tierFromUrl = urlParams.get('tier') as PricingTier | null;
+
+        if (upgradedFromUrl && tierFromUrl) {
+          loadedFormData.pricingTier = tierFromUrl;
+        }
+
+        setFormData(loadedFormData);
         setCurrentStep(parsed.currentStep || 1);
       } catch {
         // Invalid data, ignore
@@ -201,11 +237,11 @@ export default function CreateSurveyPage() {
     }
   }, []);
 
-  // Save draft to localStorage
+  // Save draft to localStorage (including paid status)
   useEffect(() => {
-    const draft = { formData, currentStep };
+    const draft = { formData, currentStep, paidForAI, paidTier };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(draft));
-  }, [formData, currentStep]);
+  }, [formData, currentStep, paidForAI, paidTier]);
 
   // Clear draft
   const clearDraft = useCallback(() => {
@@ -213,6 +249,8 @@ export default function CreateSurveyPage() {
     setFormData(DEFAULT_FORM_DATA);
     setCurrentStep(1);
     setSlugManuallyEdited(false);
+    setPaidForAI(false);
+    setPaidTier(null);
   }, []);
 
   // Generate slug from title
