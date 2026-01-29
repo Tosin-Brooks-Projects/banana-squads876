@@ -126,43 +126,11 @@ export default function AIUpgradeModal({ isOpen, onClose, onContinueManually }: 
                 </motion.div>
               )}
 
-              {/* Benefits - simplified */}
-              <ul className="space-y-2 mb-5">
-                <li className="flex items-center gap-2 text-gray-700">
-                  <svg className="w-5 h-5 text-green-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  Generates relevant questions instantly
-                </li>
-                <li className="flex items-center gap-2 text-gray-700">
-                  <svg className="w-5 h-5 text-green-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  Mix of question types for better insights
-                </li>
-                <li className="flex items-center gap-2 text-gray-700">
-                  <svg className="w-5 h-5 text-green-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  Edit and customize as needed
-                </li>
-              </ul>
+              <p className="text-gray-600 text-center mb-5">
+                AI generates questions, you get 100 responses + CSV export
+              </p>
 
-              {/* Pricing callout */}
-              <div className="bg-brand-50 border border-brand-100 rounded-lg p-4 mb-5">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-semibold text-gray-900">Starter Plan</p>
-                    <p className="text-sm text-gray-600">AI + 100 responses + export</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-2xl font-bold text-brand-600">$9</p>
-                    <p className="text-xs text-gray-500">per survey</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Actions */}
+              {/* Two button actions */}
               <div className="space-y-3">
                 <Button
                   onClick={() => handleUpgrade('starter')}
@@ -171,22 +139,25 @@ export default function AIUpgradeModal({ isOpen, onClose, onContinueManually }: 
                 >
                   {isProcessing ? 'Processing...' : 'Upgrade - $9'}
                 </Button>
-                <div className="flex items-center justify-between">
-                  <button
-                    onClick={onContinueManually}
-                    disabled={isProcessing}
-                    className="text-gray-500 hover:text-gray-700 text-sm transition-colors disabled:opacity-50"
-                  >
-                    Write my own
-                  </button>
-                  <Link
-                    href="/pricing"
-                    className="text-brand-600 hover:text-brand-700 text-sm font-medium transition-colors"
-                    onClick={onClose}
-                  >
-                    See all plans
-                  </Link>
-                </div>
+                <Button
+                  onClick={onContinueManually}
+                  disabled={isProcessing}
+                  variant="outline"
+                  className="w-full"
+                >
+                  Continue Free
+                </Button>
+              </div>
+
+              {/* See all plans link */}
+              <div className="text-center mt-4">
+                <Link
+                  href="/pricing"
+                  className="text-gray-500 hover:text-gray-700 text-sm transition-colors"
+                  onClick={onClose}
+                >
+                  See all plans
+                </Link>
               </div>
             </div>
           </motion.div>
