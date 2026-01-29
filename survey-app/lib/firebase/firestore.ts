@@ -331,6 +331,35 @@ export async function getSurveyBySlug(userId: string, slug: string): Promise<Sur
   } as Survey;
 }
 
+// Get a published survey by slug - for public/anonymous access
+// This includes status='published' in the query to satisfy Firestore security rules
+export async function getPublicSurveyBySlug(userId: string, slug: string): Promise<Survey | null> {
+  const q = query(
+    collection(db, 'surveys'),
+    where('userId', '==', userId),
+    where('slug', '==', slug),
+    where('status', '==', 'published'),
+    limit(1)
+  );
+  const snapshot = await getDocs(q);
+
+  if (snapshot.empty) return null;
+
+  const doc = snapshot.docs[0];
+  const data = doc.data();
+  return {
+    ...data,
+    id: doc.id,
+    createdAt: toDate(data.createdAt),
+    updatedAt: toDate(data.updatedAt),
+    publishedAt: toDateOrNull(data.publishedAt),
+    settings: data.settings ? {
+      ...data.settings,
+      expiresAt: toDateOrNull(data.settings.expiresAt),
+    } : undefined,
+  } as Survey;
+}
+
 export async function checkSlugExists(userId: string, slug: string): Promise<boolean> {
   const survey = await getSurveyBySlug(userId, slug);
   return survey !== null;

@@ -25,7 +25,7 @@ import {
 import { Survey, Answer, PartialResponse, ProgressUpdate } from '@/lib/types';
 import {
   getUserByUsername,
-  getSurveyBySlug,
+  getPublicSurveyBySlug,
   createResponse,
   ResponseLimitExceededError,
   getUserByPreviousUsername,
@@ -511,19 +511,14 @@ export default function SurveyPage() {
         return;
       }
 
-      // Then, get the survey by userId and slug
-      const surveyData = await getSurveyBySlug(user.id, slug);
+      // Then, get the published survey by userId and slug
+      // Using getPublicSurveyBySlug which includes status='published' in the query
+      // This is required for Firestore security rules to allow anonymous access
+      const surveyData = await getPublicSurveyBySlug(user.id, slug);
       if (!surveyData) {
+        // Survey not found or not published
         setError('Survey not found');
         setErrorType('not_found');
-        setLoading(false);
-        return;
-      }
-
-      // Check if survey is published
-      if (surveyData.status !== 'published') {
-        setError('This survey is not available');
-        setErrorType('unavailable');
         setLoading(false);
         return;
       }
