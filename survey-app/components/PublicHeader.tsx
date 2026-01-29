@@ -41,18 +41,6 @@ export default function PublicHeader({ variant = 'solid' }: PublicHeaderProps) {
             animate={{ opacity: 1, x: 0 }}
             className="hidden sm:flex items-center gap-4"
           >
-            <Link
-              href="/pricing"
-              className="text-neutral-600 hover:text-neutral-900 transition-colors"
-            >
-              Pricing
-            </Link>
-            <Link
-              href="/about"
-              className="text-neutral-600 hover:text-neutral-900 transition-colors"
-            >
-              About
-            </Link>
             <Link href="/login">
               <Button variant="outline" size="sm">
                 Log in
@@ -103,24 +91,6 @@ export default function PublicHeader({ variant = 'solid' }: PublicHeaderProps) {
               tabIndex={mobileMenuOpen ? 0 : -1}
             >
               Log in
-            </Link>
-            <Link
-              href="/pricing"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block px-4 py-2 text-neutral-600 hover:bg-neutral-100 rounded-lg transition-colors"
-              role="menuitem"
-              tabIndex={mobileMenuOpen ? 0 : -1}
-            >
-              Pricing
-            </Link>
-            <Link
-              href="/about"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block px-4 py-2 text-neutral-600 hover:bg-neutral-100 rounded-lg transition-colors"
-              role="menuitem"
-              tabIndex={mobileMenuOpen ? 0 : -1}
-            >
-              About
             </Link>
           </div>
         </motion.div>
