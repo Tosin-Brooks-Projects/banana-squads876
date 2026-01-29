@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { PRICING_TIERS } from '@/lib/types';
 import PricingCard from '@/components/pricing/PricingCard';
 import Footer from '@/components/Footer';
+import PublicHeader from '@/components/PublicHeader';
 
 export default function PricingPage() {
   const router = useRouter();
@@ -13,35 +14,7 @@ export default function PricingPage() {
 
   return (
     <div className="min-h-screen bg-neutral-50">
-      {/* Header */}
-      <header className="bg-white border-b border-neutral-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-brand-500 rounded-lg flex items-center justify-center">
-                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                </svg>
-              </div>
-              <span className="text-xl font-bold text-neutral-900">Unboring Surveys</span>
-            </Link>
-            <div className="flex items-center gap-4">
-              <Link
-                href="/login"
-                className="text-neutral-600 hover:text-neutral-900 transition-colors"
-              >
-                Log in
-              </Link>
-              <Link
-                href="/login"
-                className="bg-brand-500 text-white px-4 py-2 rounded-lg hover:bg-brand-600 transition-colors"
-              >
-                Get Started
-              </Link>
-            </div>
-          </div>
-        </div>
-      </header>
+      <PublicHeader />
 
       {/* Hero */}
       <section className="py-16 px-4 sm:px-6 lg:px-8">
