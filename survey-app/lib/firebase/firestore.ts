@@ -70,12 +70,37 @@ function toDateOrNull(value: unknown): Date | undefined {
 
 // User operations
 export async function createUser(user: User): Promise<void> {
-  const userData = removeUndefined({
-    ...user,
-    createdAt: Timestamp.fromDate(user.createdAt),
-    updatedAt: Timestamp.fromDate(user.updatedAt),
-  });
-  await setDoc(doc(db, 'users', user.id), userData);
+  const docRef = doc(db, 'users', user.id);
+  const existingDoc = await getDoc(docRef);
+
+  // Explicitly pick allowed fields to prevent unauthorized field injection
+  const allowedFields = {
+    id: user.id,
+    email: user.email,
+    username: user.username,
+    displayName: user.displayName,
+    photoURL: user.photoURL,
+  };
+
+  if (existingDoc.exists()) {
+    // Document already exists, use updateDoc to comply with security rules
+    const updateData = removeUndefined({
+      email: allowedFields.email,
+      username: allowedFields.username,
+      displayName: allowedFields.displayName,
+      photoURL: allowedFields.photoURL,
+      updatedAt: Timestamp.fromDate(user.updatedAt),
+    });
+    await updateDoc(docRef, updateData);
+  } else {
+    // New document, use setDoc
+    const userData = removeUndefined({
+      ...allowedFields,
+      createdAt: Timestamp.fromDate(user.createdAt),
+      updatedAt: Timestamp.fromDate(user.updatedAt),
+    });
+    await setDoc(docRef, userData);
+  }
 }
 
 export async function getUser(userId: string): Promise<User | null> {
