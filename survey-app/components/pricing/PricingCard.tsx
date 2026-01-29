@@ -109,7 +109,7 @@ export default function PricingCard({
           isSelected
             ? 'bg-brand-500 text-white'
             : isFree
-            ? 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'
+            ? 'border-2 border-brand-500 text-brand-600 hover:bg-brand-50'
             : 'bg-brand-500 text-white hover:bg-brand-600'
         } ${disabled || isLoading ? 'cursor-not-allowed' : ''}`}
       >

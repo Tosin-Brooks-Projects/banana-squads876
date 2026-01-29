@@ -20,7 +20,7 @@ export default function TierSelector({
   const [showAllTiers, setShowAllTiers] = useState(false);
 
   const tiers = Object.values(PRICING_TIERS);
-  const popularTiers = tiers.filter((t) => ['starter', 'pro'].includes(t.id));
+  const mainTiers = tiers.filter((t) => ['free', 'starter', 'pro'].includes(t.id));
 
   const handleSelect = (tier: PricingTierConfig) => {
     onTierSelect(tier.id);
@@ -53,33 +53,13 @@ export default function TierSelector({
         </p>
       </div>
 
-      {/* Quick toggle for free tier */}
-      <div className="mb-6 p-4 bg-neutral-50 rounded-lg border border-neutral-200">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="font-medium text-neutral-900">
-              Want to start for free?
-            </p>
-            <p className="text-sm text-neutral-600">
-              Create unlimited surveys with up to 25 responses each
-            </p>
-          </div>
-          <button
-            onClick={() => onTierSelect('free')}
-            className="px-4 py-2 text-sm font-medium text-brand-600 hover:text-brand-700 hover:bg-brand-50 rounded-lg transition-colors"
-          >
-            Use Free Tier
-          </button>
-        </div>
-      </div>
-
-      {/* Compact tier cards (Starter & Pro only) */}
+      {/* Main tier cards (Free, Starter & Pro) */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="grid gap-4 items-stretch grid-cols-1 md:grid-cols-2 max-w-2xl mx-auto"
+        className="grid gap-4 items-stretch grid-cols-1 md:grid-cols-3 max-w-4xl mx-auto"
       >
-        {popularTiers.map((tier) => (
+        {mainTiers.map((tier) => (
           <PricingCard
             key={tier.id}
             tier={tier}
