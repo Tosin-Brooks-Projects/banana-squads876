@@ -810,7 +810,7 @@ function BowlSelection({
             <div className="mb-1 sm:mb-2">
               <BowlIcon fillColor={option.fillColor} borderColor={option.borderColor} size={48} />
             </div>
-            <div className="font-medium text-gray-700 text-sm sm:text-base text-center">{option.answerValue}</div>
+            <div className="font-medium text-gray-700 text-xs sm:text-sm text-center break-words leading-tight">{option.answerValue}</div>
           </motion.button>
         ))}
       </div>
@@ -1115,7 +1115,7 @@ function SauceSelection({
               transition={{ delay: 0.2 + index * 0.1, duration: 0.3 }}
               style={{ originY: 0 }}
             />
-            <div className="font-medium text-gray-700 text-xs sm:text-sm">{option.answerValue}</div>
+            <div className="font-medium text-gray-700 text-xs sm:text-sm text-center break-words leading-tight">{option.answerValue}</div>
           </motion.button>
         ))}
       </div>
@@ -1208,7 +1208,7 @@ function ToppingsSelection({
                   )}
                 </motion.div>
                 <span className="text-xl sm:text-2xl">{option.emoji}</span>
-                <span className="font-medium text-gray-700 text-xs sm:text-sm">{option.answerValue}</span>
+                <span className="font-medium text-gray-700 text-xs sm:text-sm break-words leading-tight">{option.answerValue}</span>
               </div>
             </motion.button>
           );

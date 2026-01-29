@@ -838,7 +838,7 @@ function SoilSelection({
                 />
               ))}
             </motion.div>
-            <div className="font-medium text-gray-700 text-sm sm:text-base">{option.answerValue}</div>
+            <div className="font-medium text-gray-700 text-xs sm:text-sm text-center break-words leading-tight">{option.answerValue}</div>
             <div className="text-xs text-gray-500 mt-1">{option.description}</div>
           </motion.button>
         ))}
@@ -898,7 +898,7 @@ function SeedSelection({
             >
               {option.emoji}
             </motion.div>
-            <div className="font-medium text-gray-700 text-xs sm:text-sm">{option.answerValue}</div>
+            <div className="font-medium text-gray-700 text-xs sm:text-sm text-center break-words leading-tight">{option.answerValue}</div>
           </motion.button>
         ))}
       </div>
