@@ -119,3 +119,74 @@ export async function updateSurveyAdmin(surveyId: string, updates: Record<string
     return false;
   }
 }
+
+// Get survey responses using Admin SDK (for server-side API routes)
+export async function getSurveyResponsesAdmin(surveyId: string): Promise<{
+  id: string;
+  surveyId: string;
+  answers: { questionId: string; value: string | number | string[] }[];
+  completedAt: Date;
+  respondentName?: string;
+  respondentEmail?: string;
+  metadata: { completionTime: number; userAgent?: string; ipAddress?: string };
+}[]> {
+  try {
+    const { db } = getFirebaseAdmin();
+    const responsesRef = db.collection('responses');
+    const snapshot = await responsesRef
+      .where('surveyId', '==', surveyId)
+      .orderBy('completedAt', 'desc')
+      .get();
+
+    return snapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        surveyId: data.surveyId,
+        answers: data.answers || [],
+        completedAt: data.completedAt?.toDate() || new Date(),
+        respondentName: data.respondentName,
+        respondentEmail: data.respondentEmail,
+        metadata: data.metadata || { completionTime: 0 },
+      };
+    });
+  } catch (error) {
+    console.error('Error getting survey responses with Admin SDK:', error);
+    throw error;
+  }
+}
+
+// Get full survey data using Admin SDK (for AI analysis)
+export async function getFullSurveyAdmin(surveyId: string): Promise<{
+  id: string;
+  userId: string;
+  title: string;
+  status: string;
+  questions: { id: string; question: string; type: string; options?: string[] }[];
+  paymentStatus?: string;
+  pricingTier?: string;
+} | null> {
+  try {
+    const { db } = getFirebaseAdmin();
+    const docRef = db.collection('surveys').doc(surveyId);
+    const docSnap = await docRef.get();
+
+    if (!docSnap.exists) return null;
+
+    const data = docSnap.data();
+    if (!data) return null;
+
+    return {
+      id: docSnap.id,
+      userId: data.userId,
+      title: data.title,
+      status: data.status,
+      questions: data.questions || [],
+      paymentStatus: data.paymentStatus,
+      pricingTier: data.pricingTier,
+    };
+  } catch (error) {
+    console.error('Error getting full survey with Admin SDK:', error);
+    return null;
+  }
+}

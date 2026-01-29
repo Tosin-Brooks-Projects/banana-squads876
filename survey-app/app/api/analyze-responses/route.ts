@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyAuthToken } from '@/lib/firebase/admin';
-import { getSurvey, getSurveyResponses } from '@/lib/firebase/firestore';
+import { verifyAuthToken, getFullSurveyAdmin, getSurveyResponsesAdmin } from '@/lib/firebase/admin';
 import { analyzeResponses, AIAnalysisResult } from '@/lib/ai/responseAnalyzer';
 import { checkServerRateLimit, rateLimitResponse, RATE_LIMIT_CONFIGS } from '@/lib/utils/serverRateLimit';
 import { PricingTier } from '@/lib/types';
@@ -40,8 +39,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get the survey
-    const survey = await getSurvey(surveyId);
+    // Get the survey using Admin SDK (server-side)
+    const survey = await getFullSurveyAdmin(surveyId);
     if (!survey) {
       return NextResponse.json(
         { error: 'Survey not found' },
@@ -78,10 +77,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get responses
+    // Get responses using Admin SDK (server-side)
     let responses;
     try {
-      responses = await getSurveyResponses(surveyId);
+      responses = await getSurveyResponsesAdmin(surveyId);
     } catch (fetchError) {
       console.error('Error fetching responses:', fetchError);
       return NextResponse.json(
@@ -93,7 +92,16 @@ export async function POST(request: NextRequest) {
     // Run AI analysis
     let analysis: AIAnalysisResult;
     try {
-      analysis = await analyzeResponses(survey, responses);
+      // Adapt survey format for analyzeResponses
+      const surveyForAnalysis = {
+        ...survey,
+        questions: survey.questions.map(q => ({
+          ...q,
+          required: false,
+          order: 0,
+        })),
+      };
+      analysis = await analyzeResponses(surveyForAnalysis as Parameters<typeof analyzeResponses>[0], responses);
     } catch (aiError) {
       console.error('AI analysis failed:', aiError);
       const aiErrorMessage = aiError instanceof Error ? aiError.message : 'Unknown AI error';
