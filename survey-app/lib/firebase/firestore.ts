@@ -70,11 +70,12 @@ function toDateOrNull(value: unknown): Date | undefined {
 
 // User operations
 export async function createUser(user: User): Promise<void> {
-  await setDoc(doc(db, 'users', user.id), {
+  const userData = removeUndefined({
     ...user,
     createdAt: Timestamp.fromDate(user.createdAt),
     updatedAt: Timestamp.fromDate(user.updatedAt),
   });
+  await setDoc(doc(db, 'users', user.id), userData);
 }
 
 export async function getUser(userId: string): Promise<User | null> {

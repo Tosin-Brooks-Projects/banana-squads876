@@ -7,6 +7,7 @@ import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { updateUser, createUser, checkUsernameExists, isUsernameReserved } from '@/lib/firebase/firestore';
+import { signOut } from '@/lib/firebase/auth';
 
 // Username validation rules
 const USERNAME_MIN_LENGTH = 3;
@@ -374,6 +375,23 @@ export default function OnboardingPage() {
               Continue
             </Button>
           </form>
+
+          {/* Sign out option for users who need to use a different account */}
+          <div className="mt-6 pt-4 border-t border-gray-200 text-center">
+            <p className="text-sm text-gray-500 mb-2">
+              Signed in as {firebaseUser?.email}
+            </p>
+            <button
+              type="button"
+              onClick={async () => {
+                await signOut();
+                router.push('/login');
+              }}
+              className="text-sm text-gray-500 hover:text-gray-700 underline"
+            >
+              Sign out and use a different account
+            </button>
+          </div>
         </Card>
       </motion.div>
     </div>
