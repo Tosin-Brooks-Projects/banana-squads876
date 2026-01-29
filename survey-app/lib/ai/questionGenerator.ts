@@ -26,6 +26,12 @@ const STYLE_DISTRIBUTION: Record<string, { multipleChoice: number; rating: numbe
   'mostly-open': { multipleChoice: 20, rating: 20, text: 60 },
 };
 
+// Themed adventures only support multiple-choice and rating questions (visual/clickable, no text input)
+const THEMED_ADVENTURES = ['ice-cream-sundae', 'pizza-builder', 'garden-grower', 'dream-home', 'coffee-brewer'];
+
+// Distribution for themed adventures (no text questions - all visual/clickable)
+const THEMED_DISTRIBUTION = { multipleChoice: 65, rating: 35, text: 0 };
+
 export async function generateQuestions(
   context: string,
   theme: string,
@@ -41,8 +47,22 @@ export async function generateQuestions(
   const targetCount = Math.floor((min + max) / 2);
 
   // Determine question distribution based on style
+  // Themed adventures don't support text questions (only visual/clickable options)
+  const isThemedAdventure = THEMED_ADVENTURES.includes(theme);
   const style = preferences?.questionStyle || 'balanced';
-  const distribution = STYLE_DISTRIBUTION[style];
+  const distribution = isThemedAdventure ? THEMED_DISTRIBUTION : STYLE_DISTRIBUTION[style];
+
+  // Build the prompt with appropriate question types
+  const questionTypesSection = isThemedAdventure
+    ? `Question Distribution (approximate):
+- ${Math.round(targetCount * distribution.multipleChoice / 100)} multiple choice questions (3-5 options each)
+- ${Math.round(targetCount * distribution.rating / 100)} rating questions (scale of 5)
+
+IMPORTANT: This is a themed visual adventure. Only use "multiple-choice" and "rating" question types. DO NOT use "text" questions - the theme only supports clickable/visual options.`
+    : `Question Distribution (approximate):
+- ${Math.round(targetCount * distribution.multipleChoice / 100)} multiple choice questions (3-5 options each)
+- ${Math.round(targetCount * distribution.rating / 100)} rating questions (scale of 5)
+- ${Math.round(targetCount * distribution.text / 100)} open-ended text questions`;
 
   const prompt = `You are a survey expert creating questions for an engaging survey platform called "Unboring Surveys".
 
@@ -53,14 +73,36 @@ Adventure Theme: ${theme}
 
 Create exactly ${targetCount} survey questions that will provide actionable insights.
 
-Question Distribution (approximate):
-- ${Math.round(targetCount * distribution.multipleChoice / 100)} multiple choice questions (3-5 options each)
-- ${Math.round(targetCount * distribution.rating / 100)} rating questions (scale of 5)
-- ${Math.round(targetCount * distribution.text / 100)} open-ended text questions
+${questionTypesSection}
 
 IMPORTANT: Make questions specific, engaging, and directly relevant to their stated goal. Avoid generic questions.
 
-Return ONLY valid JSON in this EXACT format (no markdown, no code blocks, just JSON):
+${isThemedAdventure ? `Return ONLY valid JSON in this EXACT format (no markdown, no code blocks, just JSON):
+{
+  "questions": [
+    {
+      "type": "multiple-choice",
+      "question": "Your question text here?",
+      "options": ["Option 1", "Option 2", "Option 3", "Option 4"],
+      "required": true
+    },
+    {
+      "type": "rating",
+      "question": "Your rating question here?",
+      "scale": 5,
+      "startLabel": "Poor",
+      "endLabel": "Excellent",
+      "required": true
+    }
+  ]
+}
+
+Rules:
+- "type" must be exactly: "multiple-choice" or "rating" (NO "text" type for themed adventures)
+- Multiple choice must have "options" array with 3-5 choices
+- Rating must have "scale": 5, "startLabel", and "endLabel"
+- Mix required: true and required: false appropriately
+- Start with an engaging question` : `Return ONLY valid JSON in this EXACT format (no markdown, no code blocks, just JSON):
 {
   "questions": [
     {
@@ -93,7 +135,7 @@ Rules:
 - Rating must have "scale": 5, "startLabel", and "endLabel"
 - Text must have "placeholder" and "maxLength": 500
 - Mix required: true and required: false appropriately
-- Start with an engaging question, end with an open feedback question`;
+- Start with an engaging question, end with an open feedback question`}`;
 
   const message = await anthropic.messages.create({
     model: 'claude-sonnet-4-20250514',
@@ -177,6 +219,16 @@ Rules:
         } as RatingQuestion;
 
       case 'text':
+        // For themed adventures, convert text questions to rating (themed UIs don't support text input)
+        if (isThemedAdventure) {
+          return {
+            ...baseQuestion,
+            type: 'rating',
+            scale: 5 as const,
+            startLabel: 'Not at all',
+            endLabel: 'Very much',
+          } as RatingQuestion;
+        }
         return {
           ...baseQuestion,
           type: 'text',
@@ -185,6 +237,16 @@ Rules:
         } as TextQuestion;
 
       default:
+        // For themed adventures, default to rating instead of text
+        if (isThemedAdventure) {
+          return {
+            ...baseQuestion,
+            type: 'rating',
+            scale: 5 as const,
+            startLabel: 'Poor',
+            endLabel: 'Excellent',
+          } as RatingQuestion;
+        }
         // Default to text for unknown types
         return {
           ...baseQuestion,
