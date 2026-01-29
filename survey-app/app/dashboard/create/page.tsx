@@ -207,6 +207,18 @@ export default function CreateSurveyPage() {
 
   // Load draft from localStorage
   useEffect(() => {
+    // Check if user explicitly wants a fresh start
+    const urlParams = new URLSearchParams(window.location.search);
+    const isNewSurvey = urlParams.get('new') === 'true';
+
+    if (isNewSurvey) {
+      // Clear draft and start fresh
+      localStorage.removeItem(STORAGE_KEY);
+      // Clean up URL params
+      window.history.replaceState({}, '', window.location.pathname);
+      return;
+    }
+
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       try {
@@ -221,7 +233,6 @@ export default function CreateSurveyPage() {
         }
 
         // Also check URL params (for fresh return from Stripe)
-        const urlParams = new URLSearchParams(window.location.search);
         const upgradedFromUrl = urlParams.get('upgraded') === 'true';
         const tierFromUrl = urlParams.get('tier') as PricingTier | null;
 

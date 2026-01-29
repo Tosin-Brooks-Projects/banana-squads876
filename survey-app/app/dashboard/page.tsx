@@ -401,7 +401,7 @@ export default function DashboardPage() {
                 Transform boring surveys into fun, interactive adventures that people actually want to complete.
               </p>
               <Link
-                href="/dashboard/create"
+                href="/dashboard/create?new=true"
                 className="inline-flex items-center gap-2 px-4 py-2.5 bg-brand-500 text-white rounded-lg font-medium hover:bg-brand-600 transition-colors"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -425,7 +425,7 @@ export default function DashboardPage() {
           <p className="text-neutral-600 mt-1">Create and manage your survey adventures</p>
         </div>
         <Link
-          href="/dashboard/create"
+          href="/dashboard/create?new=true"
           className="flex items-center justify-center gap-2 w-full sm:w-auto px-4 py-2.5 bg-brand-500 text-white rounded-lg font-medium hover:bg-brand-600 transition-colors"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
