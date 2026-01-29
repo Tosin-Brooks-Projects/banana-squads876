@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Question, Answer, OnProgressCallback } from '@/lib/types';
+import FinalThoughts from './shared/FinalThoughts';
 
 interface GardenGrowerInitialState {
   currentStage: number;
@@ -509,6 +510,7 @@ export default function GardenGrower({ questions, onComplete, onProgress, initia
   const [showConfetti, setShowConfetti] = useState(false);
   const [growthProgress, setGrowthProgress] = useState(0);
   const [isGrowing, setIsGrowing] = useState(false);
+  const [additionalThoughts, setAdditionalThoughts] = useState('');
 
   const reportProgress = useCallback(() => {
     if (!onProgress || currentStage === 0 || currentStage >= 5) return;
@@ -523,7 +525,7 @@ export default function GardenGrower({ questions, onComplete, onProgress, initia
 
     onProgress({
       currentStage,
-      totalStages: 6,
+      totalStages: 7,
       answers,
       adventureState: {
         currentStage,
@@ -598,7 +600,12 @@ export default function GardenGrower({ questions, onComplete, onProgress, initia
         [questions[3].id]: { visualId: sunlightLevel.toLowerCase(), answerValue: sunlightLevel },
       }));
     }
-    setCurrentStage(5);
+    setCurrentStage(5); // Go to final thoughts
+  };
+
+  // Go from final thoughts to growth animation
+  const handleGoToGrowth = () => {
+    setCurrentStage(6);
     startGrowth();
   };
 
@@ -625,7 +632,8 @@ export default function GardenGrower({ questions, onComplete, onProgress, initia
 
             answers.push(
               { questionId: 'respondent_name', value: formData.name },
-              { questionId: 'respondent_email', value: formData.email }
+              { questionId: 'respondent_email', value: formData.email },
+              { questionId: 'additional_thoughts', value: additionalThoughts }
             );
 
             onComplete(answers);
@@ -693,6 +701,17 @@ export default function GardenGrower({ questions, onComplete, onProgress, initia
           />
         );
       case 5:
+        return (
+          <FinalThoughts
+            value={additionalThoughts}
+            onChange={setAdditionalThoughts}
+            onContinue={handleGoToGrowth}
+            onBack={handleBack}
+            theme="garden"
+            respondentName={formData.name}
+          />
+        );
+      case 6:
         return (
           <GrowthStage
             isGrowing={isGrowing}

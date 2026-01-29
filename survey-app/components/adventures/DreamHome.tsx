@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Question, Answer, OnProgressCallback } from '@/lib/types';
+import FinalThoughts from './shared/FinalThoughts';
 
 interface DreamHomeInitialState {
   currentStage: number;
@@ -505,7 +506,7 @@ function HouseDisplay({
 
       {/* Landscape */}
       <AnimatePresence>
-        {currentStage >= 5 && landscape && (
+        {currentStage >= 6 && landscape && (
           <>
             <motion.div
               initial={{ scale: 0, y: 20 }}
@@ -586,6 +587,7 @@ export default function DreamHome({ questions, onComplete, onProgress, initialSt
   const [lightsOn, setLightsOn] = useState(false);
   const [_placementMode, setPlacementMode] = useState<'windows' | 'door' | null>(null);
   void _placementMode;
+  const [additionalThoughts, setAdditionalThoughts] = useState('');
 
   const reportProgress = useCallback(() => {
     if (!onProgress || currentStage === 0 || currentStage >= 6) return;
@@ -600,7 +602,7 @@ export default function DreamHome({ questions, onComplete, onProgress, initialSt
 
     onProgress({
       currentStage,
-      totalStages: 6,
+      totalStages: 8,
       answers,
       adventureState: {
         currentStage,
@@ -720,8 +722,13 @@ export default function DreamHome({ questions, onComplete, onProgress, initialSt
     }
   };
 
-  const handleComplete = () => {
+  // Go to final thoughts stage
+  const handleGoToFinalThoughts = () => {
     setCurrentStage(6);
+  };
+
+  const handleComplete = () => {
+    setCurrentStage(7);
     setLightsOn(true);
     setShowConfetti(true);
 
@@ -735,7 +742,8 @@ export default function DreamHome({ questions, onComplete, onProgress, initialSt
 
     answers.push(
       { questionId: 'respondent_name', value: formData.name },
-      { questionId: 'respondent_email', value: formData.email }
+      { questionId: 'respondent_email', value: formData.email },
+      { questionId: 'additional_thoughts', value: additionalThoughts }
     );
 
     onComplete(answers);
@@ -808,11 +816,22 @@ export default function DreamHome({ questions, onComplete, onProgress, initialSt
             selectedLandscape={selectedChoices.landscape}
             onColorSelect={handleColorSelect}
             onLandscapeSelect={handleLandscapeSelect}
-            onComplete={handleComplete}
+            onComplete={handleGoToFinalThoughts}
             onBack={handleBack}
           />
         );
       case 6:
+        return (
+          <FinalThoughts
+            value={additionalThoughts}
+            onChange={setAdditionalThoughts}
+            onContinue={handleComplete}
+            onBack={handleBack}
+            theme="home"
+            respondentName={formData.name}
+          />
+        );
+      case 7:
         return <CompletionStage name={formData.name} />;
       default:
         return null;
@@ -833,14 +852,14 @@ export default function DreamHome({ questions, onComplete, onProgress, initialSt
         <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-blue-700 mb-1 sm:mb-2">
           Build Your Dream Home!
         </h1>
-        {currentStage < 6 && (
+        {currentStage < 7 && (
           <motion.p
             className="text-gray-600 text-sm sm:text-base"
             key={currentStage}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
           >
-            Stage {currentStage + 1} of 6
+            Stage {currentStage + 1} of 7
           </motion.p>
         )}
       </motion.div>

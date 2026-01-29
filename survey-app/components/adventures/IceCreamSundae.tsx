@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Question, Answer, OnProgressCallback } from '@/lib/types';
+import FinalThoughts from './shared/FinalThoughts';
 
 interface IceCreamSundaeInitialState {
   currentStage: number;
@@ -406,7 +407,7 @@ function SundaeDisplay({
 
       {/* Cherry */}
       <AnimatePresence>
-        {currentStage >= 5 && (
+        {currentStage >= 6 && (
           <motion.div
             className="absolute bottom-32 sm:bottom-40 md:bottom-44 left-0 right-0 mx-auto w-fit"
             variants={cherryVariants}
@@ -458,6 +459,7 @@ export default function IceCreamSundae({ questions, onComplete, onProgress, init
     }
   );
   const [showConfetti, setShowConfetti] = useState(false);
+  const [additionalThoughts, setAdditionalThoughts] = useState('');
 
   const reportProgress = useCallback(() => {
     if (!onProgress || currentStage === 0 || currentStage >= 5) return;
@@ -472,7 +474,7 @@ export default function IceCreamSundae({ questions, onComplete, onProgress, init
 
     onProgress({
       currentStage,
-      totalStages: 6,
+      totalStages: 7,
       answers,
       adventureState: {
         currentStage,
@@ -598,8 +600,13 @@ export default function IceCreamSundae({ questions, onComplete, onProgress, init
     }
   };
 
-  const handleComplete = () => {
+  // Go to final thoughts stage
+  const handleGoToFinalThoughts = () => {
     setCurrentStage(5);
+  };
+
+  const handleComplete = () => {
+    setCurrentStage(6);
     setShowConfetti(true);
 
     const answers: Answer[] = questions.map((question) => {
@@ -612,7 +619,8 @@ export default function IceCreamSundae({ questions, onComplete, onProgress, init
 
     answers.push(
       { questionId: 'respondent_name', value: formData.name },
-      { questionId: 'respondent_email', value: formData.email }
+      { questionId: 'respondent_email', value: formData.email },
+      { questionId: 'additional_thoughts', value: additionalThoughts }
     );
 
     onComplete(answers);
@@ -671,12 +679,23 @@ export default function IceCreamSundae({ questions, onComplete, onProgress, init
             options={mappedToppingOptions}
             selectedToppings={selectedChoices.toppings}
             onToggle={handleToppingToggle}
-            onComplete={handleComplete}
+            onComplete={handleGoToFinalThoughts}
             onBack={handleBack}
             allowMultiple={toppingsAllowMultiple}
           />
         );
       case 5:
+        return (
+          <FinalThoughts
+            value={additionalThoughts}
+            onChange={setAdditionalThoughts}
+            onContinue={handleComplete}
+            onBack={handleBack}
+            theme="ice-cream"
+            respondentName={formData.name}
+          />
+        );
+      case 6:
         return <CompletionStage name={formData.name} />;
       default:
         return null;
@@ -697,14 +716,14 @@ export default function IceCreamSundae({ questions, onComplete, onProgress, init
         <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-pink-600 mb-1 sm:mb-2">
           Build Your Perfect Sundae!
         </h1>
-        {currentStage < 5 && (
+        {currentStage < 6 && (
           <motion.p
             className="text-gray-600 text-sm sm:text-base"
             key={currentStage}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
           >
-            Stage {currentStage + 1} of 5
+            Stage {currentStage + 1} of 6
           </motion.p>
         )}
       </motion.div>

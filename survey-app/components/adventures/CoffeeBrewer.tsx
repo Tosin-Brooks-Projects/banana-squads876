@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Question, Answer, OnProgressCallback, isMultipleChoiceQuestion } from '@/lib/types';
+import FinalThoughts from './shared/FinalThoughts';
 
 interface CoffeeBrewerInitialState {
   currentStage: number;
@@ -578,9 +579,10 @@ export default function CoffeeBrewer({ questions, onComplete, onProgress, initia
   const [isPouringCoffee, setIsPouringCoffee] = useState(false);
   const [isGrinding, setIsGrinding] = useState(false);
   const [showLatteArt, setShowLatteArt] = useState(false);
+  const [additionalThoughts, setAdditionalThoughts] = useState('');
 
   const reportProgress = useCallback(() => {
-    if (!onProgress || currentStage === 0 || currentStage >= 5) return;
+    if (!onProgress || currentStage === 0 || currentStage >= 6) return;
 
     const answers: Answer[] = questions.map((question) => {
       const entry = answerMap[question.id];
@@ -592,7 +594,7 @@ export default function CoffeeBrewer({ questions, onComplete, onProgress, initia
 
     onProgress({
       currentStage,
-      totalStages: 6,
+      totalStages: 7,
       answers,
       adventureState: {
         currentStage,
@@ -713,8 +715,12 @@ export default function CoffeeBrewer({ questions, onComplete, onProgress, initia
     }
   };
 
-  const handleComplete = () => {
+  const handleGoToFinalThoughts = () => {
     setCurrentStage(5);
+  };
+
+  const handleComplete = () => {
+    setCurrentStage(6);
     setShowLatteArt(true);
     setShowConfetti(true);
 
@@ -728,7 +734,8 @@ export default function CoffeeBrewer({ questions, onComplete, onProgress, initia
 
     answers.push(
       { questionId: 'respondent_name', value: formData.name },
-      { questionId: 'respondent_email', value: formData.email }
+      { questionId: 'respondent_email', value: formData.email },
+      { questionId: 'additional_thoughts', value: additionalThoughts }
     );
 
     onComplete(answers);
@@ -789,11 +796,22 @@ export default function CoffeeBrewer({ questions, onComplete, onProgress, initia
             selectedFinishing={selectedChoices.finishing}
             allowMultiple={allowMultipleFinishing}
             onSelect={handleFinishingSelect}
-            onComplete={handleComplete}
+            onComplete={handleGoToFinalThoughts}
             onBack={handleBack}
           />
         );
       case 5:
+        return (
+          <FinalThoughts
+            value={additionalThoughts}
+            onChange={setAdditionalThoughts}
+            onContinue={handleComplete}
+            onBack={handleBack}
+            theme="coffee"
+            respondentName={formData.name}
+          />
+        );
+      case 6:
         return <CompletionStage name={formData.name} />;
       default:
         return null;
@@ -814,14 +832,14 @@ export default function CoffeeBrewer({ questions, onComplete, onProgress, initia
         <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-amber-800 mb-1 sm:mb-2">
           Brew Your Perfect Coffee!
         </h1>
-        {currentStage < 5 && (
+        {currentStage < 6 && (
           <motion.p
             className="text-amber-600 text-sm sm:text-base"
             key={currentStage}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
           >
-            Stage {currentStage + 1} of 5
+            Stage {currentStage + 1} of 6
           </motion.p>
         )}
       </motion.div>

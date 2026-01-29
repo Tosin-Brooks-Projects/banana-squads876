@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Question, Answer, OnProgressCallback } from '@/lib/types';
+import FinalThoughts from './shared/FinalThoughts';
 
 interface PizzaBuilderInitialState {
   currentStage: number;
@@ -486,9 +487,10 @@ export default function PizzaBuilder({ questions, onComplete, onProgress, initia
   const [isBaking, setIsBaking] = useState(false);
   const [bakingProgress, setBakingProgress] = useState(0);
   const [isDone, setIsDone] = useState(false);
+  const [additionalThoughts, setAdditionalThoughts] = useState('');
 
   const reportProgress = useCallback(() => {
-    if (!onProgress || currentStage === 0 || currentStage >= 5) return;
+    if (!onProgress || currentStage === 0 || currentStage >= 6) return;
 
     const answers: Answer[] = questions.map((question) => {
       const entry = answerMap[question.id];
@@ -500,7 +502,7 @@ export default function PizzaBuilder({ questions, onComplete, onProgress, initia
 
     onProgress({
       currentStage,
-      totalStages: 6,
+      totalStages: 7,
       answers,
       adventureState: {
         currentStage,
@@ -605,8 +607,14 @@ export default function PizzaBuilder({ questions, onComplete, onProgress, initia
     }
   };
 
-  const handleBake = () => {
+  // Go to final thoughts stage
+  const handleGoToFinalThoughts = () => {
     setCurrentStage(5);
+  };
+
+  // Actually start baking (after final thoughts)
+  const handleBake = () => {
+    setCurrentStage(6);
     setIsBaking(true);
     setBakingProgress(0);
 
@@ -631,7 +639,8 @@ export default function PizzaBuilder({ questions, onComplete, onProgress, initia
 
             answers.push(
               { questionId: 'respondent_name', value: formData.name },
-              { questionId: 'respondent_email', value: formData.email }
+              { questionId: 'respondent_email', value: formData.email },
+              { questionId: 'additional_thoughts', value: additionalThoughts }
             );
 
             onComplete(answers);
@@ -689,11 +698,22 @@ export default function PizzaBuilder({ questions, onComplete, onProgress, initia
             options={mappedToppingOptions}
             selectedToppings={selectedChoices.toppings}
             onToggle={handleToppingToggle}
-            onBake={handleBake}
+            onBake={handleGoToFinalThoughts}
             onBack={handleBack}
           />
         );
       case 5:
+        return (
+          <FinalThoughts
+            value={additionalThoughts}
+            onChange={setAdditionalThoughts}
+            onContinue={handleBake}
+            onBack={handleBack}
+            theme="pizza"
+            respondentName={formData.name}
+          />
+        );
+      case 6:
         return (
           <BakingStage
             isBaking={isBaking}
@@ -721,7 +741,7 @@ export default function PizzaBuilder({ questions, onComplete, onProgress, initia
         <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-orange-600 mb-1 sm:mb-2">
           Build Your Perfect Pizza! 🍕
         </h1>
-        {currentStage < 5 && (
+        {currentStage < 6 && (
           <motion.p
             className="text-gray-600 text-sm sm:text-base"
             key={currentStage}
