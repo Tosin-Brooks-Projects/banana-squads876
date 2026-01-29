@@ -17,6 +17,7 @@ interface PizzaBuilderProps {
   onComplete: (responses: Answer[]) => void;
   onProgress?: OnProgressCallback;
   initialState?: PizzaBuilderInitialState;
+  allowAnonymous?: boolean;
 }
 
 interface FormData {
@@ -468,7 +469,7 @@ function PizzaDisplay({
   );
 }
 
-export default function PizzaBuilder({ questions, onComplete, onProgress, initialState }: PizzaBuilderProps) {
+export default function PizzaBuilder({ questions, onComplete, onProgress, initialState, allowAnonymous = false }: PizzaBuilderProps) {
   const [currentStage, setCurrentStage] = useState(initialState?.currentStage ?? 0);
   const [selectedChoices, setSelectedChoices] = useState<SelectedChoices>(
     initialState?.selectedChoices ?? {
@@ -504,7 +505,7 @@ export default function PizzaBuilder({ questions, onComplete, onProgress, initia
 
     onProgress({
       currentStage,
-      totalStages: 7,
+      totalStages: allowAnonymous ? 6 : 7,
       answers,
       adventureState: {
         currentStage,
@@ -512,10 +513,10 @@ export default function PizzaBuilder({ questions, onComplete, onProgress, initia
         answerMap,
         formData,
       },
-      respondentName: formData.name || undefined,
-      respondentEmail: formData.email || undefined,
+      respondentName: allowAnonymous ? undefined : (formData.name || undefined),
+      respondentEmail: allowAnonymous ? undefined : (formData.email || undefined),
     });
-  }, [onProgress, currentStage, questions, answerMap, selectedChoices, formData]);
+  }, [onProgress, currentStage, questions, answerMap, selectedChoices, formData, allowAnonymous]);
 
   useEffect(() => {
     reportProgress();
@@ -556,7 +557,8 @@ export default function PizzaBuilder({ questions, onComplete, onProgress, initia
         [questions[2].id]: { visualId, answerValue },
       }));
     }
-    setCurrentStage(3);
+    // Skip FormCapture stage if anonymous
+    setCurrentStage(allowAnonymous ? 4 : 3);
   };
 
   const handleFormSubmit = (e: React.FormEvent) => {
@@ -605,7 +607,12 @@ export default function PizzaBuilder({ questions, onComplete, onProgress, initia
 
   const handleBack = () => {
     if (currentStage > 0) {
-      setCurrentStage(prev => prev - 1);
+      // Skip FormCapture stage (3) when going back if anonymous
+      if (allowAnonymous && currentStage === 4) {
+        setCurrentStage(2);
+      } else {
+        setCurrentStage(prev => prev - 1);
+      }
     }
   };
 
@@ -639,11 +646,14 @@ export default function PizzaBuilder({ questions, onComplete, onProgress, initia
               };
             });
 
-            answers.push(
-              { questionId: 'respondent_name', value: formData.name },
-              { questionId: 'respondent_email', value: formData.email },
-              { questionId: 'additional_thoughts', value: additionalThoughts }
-            );
+            // Only include name/email if not anonymous
+            if (!allowAnonymous) {
+              answers.push(
+                { questionId: 'respondent_name', value: formData.name },
+                { questionId: 'respondent_email', value: formData.email }
+              );
+            }
+            answers.push({ questionId: 'additional_thoughts', value: additionalThoughts });
 
             onComplete(answers);
           }, 2000);
@@ -750,7 +760,12 @@ export default function PizzaBuilder({ questions, onComplete, onProgress, initia
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
           >
-            Stage {currentStage + 1} of 6
+            {(() => {
+              const totalStages = allowAnonymous ? 5 : 6;
+              // Adjust displayed stage number when anonymous (skip stage 3)
+              const displayStage = allowAnonymous && currentStage >= 4 ? currentStage : currentStage + 1;
+              return `Stage ${displayStage} of ${totalStages}`;
+            })()}
           </motion.p>
         )}
       </motion.div>

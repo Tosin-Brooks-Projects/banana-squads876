@@ -1,16 +1,69 @@
 'use client';
 
+import { Suspense, useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { PRICING_TIERS } from '@/lib/types';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { PRICING_TIERS, PricingTier } from '@/lib/types';
 import PricingCard from '@/components/pricing/PricingCard';
 import Footer from '@/components/Footer';
 import PublicHeader from '@/components/PublicHeader';
+import { useAuthContext } from '@/contexts/AuthContext';
 
-export default function PricingPage() {
+function PricingContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const { firebaseUser } = useAuthContext();
+  const [checkoutLoading, setCheckoutLoading] = useState<PricingTier | null>(null);
+
   const tiers = Object.values(PRICING_TIERS);
+  const fromCreate = searchParams.get('from') === 'create';
+
+  const handleTierSelect = async (tierId: PricingTier) => {
+    // If not coming from create flow, just redirect to login
+    if (!fromCreate) {
+      router.push('/login');
+      return;
+    }
+
+    // If free tier selected, go back to create page
+    if (tierId === 'free') {
+      router.push('/dashboard/create');
+      return;
+    }
+
+    // If not logged in, redirect to login with return URL
+    if (!firebaseUser) {
+      router.push(`/login?redirect=/pricing?from=create`);
+      return;
+    }
+
+    // User is logged in and selected a paid tier - initiate checkout
+    setCheckoutLoading(tierId);
+    try {
+      const token = await firebaseUser.getIdToken();
+      const response = await fetch('/api/stripe/create-ai-upgrade', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ tier: tierId }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create checkout session');
+      }
+
+      const { url } = await response.json();
+      if (url) {
+        window.location.href = url;
+      }
+    } catch (error) {
+      console.error('Checkout error:', error);
+      setCheckoutLoading(null);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-neutral-50">
@@ -62,9 +115,8 @@ export default function PricingPage() {
                   tier={tier}
                   isPopular={tier.id === 'pro'}
                   isSelected={false}
-                  onSelect={() => {
-                    router.push('/login');
-                  }}
+                  isLoading={checkoutLoading === tier.id}
+                  onSelect={() => handleTierSelect(tier.id)}
                 />
               </motion.div>
             ))}
@@ -132,5 +184,17 @@ function FaqItem({ question, answer }: { question: string; answer: string }) {
       <h3 className="text-lg font-semibold text-neutral-900">{question}</h3>
       <p className="mt-2 text-neutral-600">{answer}</p>
     </div>
+  );
+}
+
+export default function PricingPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-500"></div>
+      </div>
+    }>
+      <PricingContent />
+    </Suspense>
   );
 }

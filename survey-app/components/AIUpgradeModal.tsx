@@ -48,7 +48,7 @@ export default function AIUpgradeModal({
                 <span className="text-4xl">{isPremiumTheme ? '🎨' : '✨'}</span>
               </motion.div>
               <h2 className="text-xl font-bold">
-                {isPremiumTheme ? 'Premium Theme Selected' : 'Let AI Help'}
+                {isPremiumTheme ? 'Premium Theme Selected' : 'Want Extra Features?'}
               </h2>
             </div>
 
@@ -57,12 +57,12 @@ export default function AIUpgradeModal({
               <p className="text-gray-600 text-center mb-5">
                 {isPremiumTheme
                   ? 'This theme requires a paid plan. Upgrade to unlock premium themes, AI-generated questions, more responses, and CSV export.'
-                  : 'Want to upgrade to a paid plan to unlock AI-generated questions, more responses, and CSV export?'}
+                  : 'Upgrade to a paid plan to unlock AI-generated questions, more responses, and CSV export.'}
               </p>
 
               {/* Two button actions */}
               <div className="space-y-3">
-                <Link href="/pricing" onClick={onClose} className="block">
+                <Link href="/pricing?from=create" onClick={onClose} className="block">
                   <Button className="w-full">
                     View Plans
                   </Button>

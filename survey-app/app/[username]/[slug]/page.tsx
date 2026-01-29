@@ -789,6 +789,7 @@ export default function SurveyPage() {
             onComplete={(responses: Answer[]) => handleComplete(responses)}
             onProgress={handleProgress}
             initialState={adventureInitialState as Parameters<typeof IceCreamSundae>[0]['initialState']}
+            allowAnonymous={survey.settings?.allowAnonymous}
           />
         );
       case 'pizza-builder':
@@ -798,6 +799,7 @@ export default function SurveyPage() {
             onComplete={(responses: Answer[]) => handleComplete(responses)}
             onProgress={handleProgress}
             initialState={adventureInitialState as Parameters<typeof PizzaBuilder>[0]['initialState']}
+            allowAnonymous={survey.settings?.allowAnonymous}
           />
         );
       case 'garden-grower':
@@ -807,6 +809,7 @@ export default function SurveyPage() {
             onComplete={(responses: Answer[]) => handleComplete(responses)}
             onProgress={handleProgress}
             initialState={adventureInitialState as Parameters<typeof GardenGrower>[0]['initialState']}
+            allowAnonymous={survey.settings?.allowAnonymous}
           />
         );
       case 'dream-home':
@@ -816,6 +819,7 @@ export default function SurveyPage() {
             onComplete={(responses: Answer[]) => handleComplete(responses)}
             onProgress={handleProgress}
             initialState={adventureInitialState as Parameters<typeof DreamHome>[0]['initialState']}
+            allowAnonymous={survey.settings?.allowAnonymous}
           />
         );
       case 'coffee-brewer':
@@ -825,6 +829,7 @@ export default function SurveyPage() {
             onComplete={(responses: Answer[]) => handleComplete(responses)}
             onProgress={handleProgress}
             initialState={adventureInitialState as Parameters<typeof CoffeeBrewer>[0]['initialState']}
+            allowAnonymous={survey.settings?.allowAnonymous}
           />
         );
       default:

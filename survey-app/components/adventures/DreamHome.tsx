@@ -18,6 +18,7 @@ interface DreamHomeProps {
   onComplete: (responses: Answer[]) => void;
   onProgress?: OnProgressCallback;
   initialState?: DreamHomeInitialState;
+  allowAnonymous?: boolean;
 }
 
 interface FormData {
@@ -557,7 +558,7 @@ function HouseDisplay({
   );
 }
 
-export default function DreamHome({ questions, onComplete, onProgress, initialState }: DreamHomeProps) {
+export default function DreamHome({ questions, onComplete, onProgress, initialState, allowAnonymous = false }: DreamHomeProps) {
   const [currentStage, setCurrentStage] = useState(initialState?.currentStage ?? 0);
   const [selectedChoices, setSelectedChoices] = useState<SelectedChoices>(
     initialState?.selectedChoices ?? {
@@ -602,7 +603,7 @@ export default function DreamHome({ questions, onComplete, onProgress, initialSt
 
     onProgress({
       currentStage,
-      totalStages: 8,
+      totalStages: allowAnonymous ? 7 : 8,
       answers,
       adventureState: {
         currentStage,
@@ -611,10 +612,10 @@ export default function DreamHome({ questions, onComplete, onProgress, initialSt
         answerMap,
         formData,
       },
-      respondentName: formData.name || undefined,
-      respondentEmail: formData.email || undefined,
+      respondentName: allowAnonymous ? undefined : (formData.name || undefined),
+      respondentEmail: allowAnonymous ? undefined : (formData.email || undefined),
     });
-  }, [onProgress, currentStage, questions, answerMap, selectedChoices, placedItems, formData]);
+  }, [onProgress, currentStage, questions, answerMap, selectedChoices, placedItems, formData, allowAnonymous]);
 
   useEffect(() => {
     reportProgress();
@@ -658,7 +659,21 @@ export default function DreamHome({ questions, onComplete, onProgress, initialSt
         [questions[2].id]: { visualId, answerValue },
       }));
     }
-    setCurrentStage(3);
+    // Skip FormCapture stage if anonymous
+    if (allowAnonymous) {
+      setCurrentStage(4);
+      setPlacementMode('windows');
+      // Pre-place default windows and door
+      setPlacedItems({
+        windows: [
+          { x: -20, y: 145 },
+          { x: 20, y: 145 },
+        ],
+        door: { x: 0, y: 118 },
+      });
+    } else {
+      setCurrentStage(3);
+    }
   };
 
   const handleFormSubmit = (e: React.FormEvent) => {
@@ -740,11 +755,14 @@ export default function DreamHome({ questions, onComplete, onProgress, initialSt
       };
     });
 
-    answers.push(
-      { questionId: 'respondent_name', value: formData.name },
-      { questionId: 'respondent_email', value: formData.email },
-      { questionId: 'additional_thoughts', value: additionalThoughts }
-    );
+    // Only include name/email if not anonymous
+    if (!allowAnonymous) {
+      answers.push(
+        { questionId: 'respondent_name', value: formData.name },
+        { questionId: 'respondent_email', value: formData.email }
+      );
+    }
+    answers.push({ questionId: 'additional_thoughts', value: additionalThoughts });
 
     onComplete(answers);
 
@@ -753,7 +771,12 @@ export default function DreamHome({ questions, onComplete, onProgress, initialSt
 
   const handleBack = () => {
     if (currentStage > 0) {
-      setCurrentStage(prev => prev - 1);
+      // Skip FormCapture stage (3) when going back if anonymous
+      if (allowAnonymous && currentStage === 4) {
+        setCurrentStage(2);
+      } else {
+        setCurrentStage(prev => prev - 1);
+      }
     }
   };
 
@@ -859,7 +882,12 @@ export default function DreamHome({ questions, onComplete, onProgress, initialSt
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
           >
-            Stage {currentStage + 1} of 7
+            {(() => {
+              const totalStages = allowAnonymous ? 6 : 7;
+              // Adjust displayed stage number when anonymous (skip stage 3)
+              const displayStage = allowAnonymous && currentStage >= 4 ? currentStage : currentStage + 1;
+              return `Stage ${displayStage} of ${totalStages}`;
+            })()}
           </motion.p>
         )}
       </motion.div>
