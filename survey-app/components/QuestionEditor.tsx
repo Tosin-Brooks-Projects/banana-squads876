@@ -43,10 +43,11 @@ export default function QuestionEditor({
   index = 0,
   showDragHandle = true,
 }: QuestionEditorProps) {
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [errors, setErrors] = useState<ValidationErrors>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [showTypeDropdown, setShowTypeDropdown] = useState(false);
 
   // Validation
   const validate = useCallback((q: Question): ValidationErrors => {
@@ -116,30 +117,25 @@ export default function QuestionEditor({
         };
         break;
       case 'text':
-        // Build text question without undefined fields (Firestore rejects undefined values)
         const textQuestion: TextQuestion = {
           ...base,
           type: 'text',
           placeholder: isTextQuestion(question) ? question.placeholder : '',
         };
-        // Only add maxLength if it exists
         if (isTextQuestion(question) && question.maxLength) {
           textQuestion.maxLength = question.maxLength;
         }
         newQuestion = textQuestion;
         break;
       case 'emoji-slider':
-        // Build emoji slider question without undefined fields (Firestore rejects undefined values)
         const emojiSliderQuestion: EmojiSliderQuestion = {
           ...base,
           type: 'emoji-slider',
           scale: isEmojiSliderQuestion(question) ? question.scale : 5,
         };
-        // Only add labels if they exist and have values
         if (isEmojiSliderQuestion(question) && question.labels) {
           emojiSliderQuestion.labels = question.labels;
         }
-        // Only add emojis if they exist
         if (isEmojiSliderQuestion(question) && question.emojis) {
           emojiSliderQuestion.emojis = question.emojis;
         }
@@ -149,6 +145,7 @@ export default function QuestionEditor({
 
     onChange(newQuestion);
     setErrors({});
+    setShowTypeDropdown(false);
   };
 
   // Multiple choice specific handlers
@@ -172,7 +169,6 @@ export default function QuestionEditor({
     }
     const newOptions = question.options.filter((_, i) => i !== idx);
     onChange({ ...question, options: newOptions });
-    // Re-validate after deletion
     const newErrors = validate({ ...question, options: newOptions });
     setErrors(newErrors);
   };
@@ -221,16 +217,33 @@ export default function QuestionEditor({
       setShowDeleteConfirm(false);
     } else {
       setShowDeleteConfirm(true);
-      // Auto-hide after 3 seconds
       setTimeout(() => setShowDeleteConfirm(false), 3000);
     }
   };
 
-  // Get type icon
-  const getTypeIcon = () => {
-    const typeConfig = QUESTION_TYPES.find(t => t.value === question.type);
-    return typeConfig?.icon || '?';
+  // Get type info - always returns a valid type (defaults to first type if not found)
+  const currentTypeInfo = QUESTION_TYPES.find(t => t.value === question.type) ?? QUESTION_TYPES[0];
+
+  // Get preview text for collapsed state
+  const getPreviewText = () => {
+    if (isMultipleChoiceQuestion(question)) {
+      const validOptions = question.options.filter(o => o.trim());
+      return validOptions.length > 0 ? `${validOptions.length} options` : 'No options';
+    }
+    if (isRatingQuestion(question)) {
+      return `1-${question.scale} scale`;
+    }
+    if (isEmojiSliderQuestion(question)) {
+      return `Emoji 1-${question.scale || 5}`;
+    }
+    if (isTextQuestion(question)) {
+      return 'Free text';
+    }
+    return '';
   };
+
+  // Check if question has validation issues
+  const hasErrors = Object.keys(validate(question)).length > 0;
 
   return (
     <motion.div
@@ -238,59 +251,106 @@ export default function QuestionEditor({
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
-      className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden"
+      className={`bg-white rounded-xl border shadow-sm overflow-hidden transition-colors ${
+        hasErrors ? 'border-amber-300' : 'border-gray-200'
+      }`}
     >
-      {/* Header - Always visible */}
-      <div className="flex items-center gap-3 px-4 py-3 bg-gray-50 border-b border-gray-200">
+      {/* Compact Header - Click to expand */}
+      <div
+        className={`flex items-center gap-2 px-3 py-2.5 cursor-pointer transition-colors ${
+          isExpanded ? 'bg-gray-50 border-b border-gray-200' : 'hover:bg-gray-50'
+        }`}
+        onClick={() => setIsExpanded(!isExpanded)}
+      >
         {/* Drag handle */}
         {showDragHandle && (
-          <div className="cursor-grab active:cursor-grabbing p-1 text-gray-400 hover:text-gray-600 transition-colors">
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div
+            className="cursor-grab active:cursor-grabbing p-1 text-gray-300 hover:text-gray-500 transition-colors"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h16M4 16h16" />
             </svg>
           </div>
         )}
 
-        {/* Question number and type badge */}
-        <div className="flex items-center gap-2 flex-1 min-w-0">
-          <span className="text-sm font-medium text-gray-500">Q{index + 1}</span>
-          <span className="px-2 py-0.5 text-xs font-medium bg-indigo-100 text-indigo-700 rounded-full flex items-center gap-1">
-            <span>{getTypeIcon()}</span>
-            <span className="capitalize">{question.type.replace('-', ' ')}</span>
-          </span>
-          {question.required && (
-            <span className="px-2 py-0.5 text-xs font-medium bg-red-100 text-red-700 rounded-full">
-              Required
-            </span>
-          )}
-          {/* Truncated question preview */}
-          {!isExpanded && question.question && (
-            <span className="text-sm text-gray-600 truncate">
-              {question.question}
-            </span>
+        {/* Question number */}
+        <span className="text-xs font-semibold text-gray-400 w-6">Q{index + 1}</span>
+
+        {/* Question text or placeholder */}
+        <div className="flex-1 min-w-0">
+          {question.question ? (
+            <p className="text-sm text-gray-800 truncate">{question.question}</p>
+          ) : (
+            <p className="text-sm text-gray-400 italic">Enter your question...</p>
           )}
         </div>
 
-        {/* Action buttons */}
-        <div className="flex items-center gap-1">
-          {/* Expand/Collapse */}
+        {/* Type badge - clickable dropdown */}
+        <div className="relative" onClick={(e) => e.stopPropagation()}>
           <button
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="p-1.5 text-gray-400 hover:text-gray-600 transition-colors"
-            title={isExpanded ? 'Collapse' : 'Expand'}
+            onClick={() => setShowTypeDropdown(!showTypeDropdown)}
+            className="flex items-center gap-1 px-2 py-0.5 text-xs font-medium bg-gray-100 text-gray-600 rounded hover:bg-gray-200 transition-colors"
           >
-            <motion.svg
-              animate={{ rotate: isExpanded ? 180 : 0 }}
-              className="w-5 h-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
+            <span>{currentTypeInfo.icon}</span>
+            <span className="hidden sm:inline">{currentTypeInfo.label}</span>
+            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </motion.svg>
+            </svg>
           </button>
 
-          {/* Delete button */}
+          {/* Type dropdown */}
+          <AnimatePresence>
+            {showTypeDropdown && (
+              <motion.div
+                initial={{ opacity: 0, y: -5 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -5 }}
+                className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10 py-1 min-w-[140px]"
+              >
+                {QUESTION_TYPES.map((type) => (
+                  <button
+                    key={type.value}
+                    onClick={() => changeType(type.value)}
+                    className={`w-full px-3 py-1.5 text-left text-sm flex items-center gap-2 hover:bg-gray-50 transition-colors ${
+                      question.type === type.value ? 'bg-indigo-50 text-indigo-700' : 'text-gray-700'
+                    }`}
+                  >
+                    <span>{type.icon}</span>
+                    <span>{type.label}</span>
+                  </button>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* Preview info */}
+        <span className="text-xs text-gray-400 hidden sm:block">{getPreviewText()}</span>
+
+        {/* Required indicator */}
+        {question.required && (
+          <span className="w-1.5 h-1.5 bg-red-500 rounded-full" title="Required" />
+        )}
+
+        {/* Error indicator */}
+        {hasErrors && !isExpanded && (
+          <span className="w-1.5 h-1.5 bg-amber-500 rounded-full" title="Needs attention" />
+        )}
+
+        {/* Expand icon */}
+        <motion.svg
+          animate={{ rotate: isExpanded ? 180 : 0 }}
+          className="w-4 h-4 text-gray-400"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </motion.svg>
+
+        {/* Delete button */}
+        <div onClick={(e) => e.stopPropagation()}>
           <AnimatePresence mode="wait">
             {showDeleteConfirm ? (
               <motion.button
@@ -299,9 +359,9 @@ export default function QuestionEditor({
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.8, opacity: 0 }}
                 onClick={handleDelete}
-                className="px-2 py-1 text-xs font-medium bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+                className="px-2 py-0.5 text-xs font-medium bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
               >
-                Confirm Delete
+                Delete?
               </motion.button>
             ) : (
               <motion.button
@@ -310,10 +370,10 @@ export default function QuestionEditor({
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.8, opacity: 0 }}
                 onClick={handleDelete}
-                className="p-1.5 text-gray-400 hover:text-red-500 transition-colors"
+                className="p-1 text-gray-300 hover:text-red-500 transition-colors"
                 title="Delete question"
               >
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                 </svg>
               </motion.button>
@@ -333,35 +393,10 @@ export default function QuestionEditor({
             className="overflow-hidden"
           >
             <div className="p-4 space-y-4">
-              {/* Question type selector */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Question Type
-                </label>
-                <div className="flex flex-wrap gap-2">
-                  {QUESTION_TYPES.map((type) => (
-                    <button
-                      key={type.value}
-                      onClick={() => changeType(type.value)}
-                      className={`
-                        px-3 py-1.5 text-sm rounded-lg border-2 transition-all flex items-center gap-1.5
-                        ${question.type === type.value
-                          ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
-                          : 'border-gray-200 hover:border-gray-300 text-gray-600'
-                        }
-                      `}
-                    >
-                      <span>{type.icon}</span>
-                      <span>{type.label}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
               {/* Question text */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Question Text <span className="text-red-500">*</span>
+                <label className="block text-xs font-medium text-gray-500 mb-1">
+                  Question Text
                 </label>
                 <input
                   type="text"
@@ -370,11 +405,11 @@ export default function QuestionEditor({
                   onBlur={() => handleBlur('question')}
                   placeholder="Enter your question..."
                   className={`
-                    w-full px-4 py-2 rounded-lg border transition-colors
+                    w-full px-3 py-2 text-sm rounded-lg border transition-colors
                     focus:outline-none focus:ring-2 focus:ring-offset-0
                     ${errors.question && touched.question
                       ? 'border-red-300 focus:border-red-500 focus:ring-red-200'
-                      : 'border-gray-300 focus:border-indigo-500 focus:ring-indigo-200'
+                      : 'border-gray-200 focus:border-indigo-500 focus:ring-indigo-200'
                     }
                   `}
                 />
@@ -382,7 +417,7 @@ export default function QuestionEditor({
                   <motion.p
                     initial={{ opacity: 0, y: -5 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="mt-1 text-sm text-red-600"
+                    className="mt-1 text-xs text-red-600"
                   >
                     {errors.question}
                   </motion.p>
@@ -425,18 +460,16 @@ export default function QuestionEditor({
                 />
               )}
 
-              {/* Required toggle */}
-              <div className="flex items-center justify-between pt-2 border-t border-gray-100">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={question.required}
-                    onChange={(e) => updateRequired(e.target.checked)}
-                    className="w-4 h-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                  />
-                  <span className="text-sm text-gray-700">Required question</span>
-                </label>
-              </div>
+              {/* Required toggle - compact */}
+              <label className="flex items-center gap-2 cursor-pointer pt-2 border-t border-gray-100">
+                <input
+                  type="checkbox"
+                  checked={question.required}
+                  onChange={(e) => updateRequired(e.target.checked)}
+                  className="w-3.5 h-3.5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                />
+                <span className="text-xs text-gray-600">Required</span>
+              </label>
             </div>
           </motion.div>
         )}
@@ -445,7 +478,7 @@ export default function QuestionEditor({
   );
 }
 
-// Multiple Choice Fields Component
+// Multiple Choice Fields Component - Compact
 function MultipleChoiceFields({
   question,
   onUpdateOption,
@@ -463,11 +496,10 @@ function MultipleChoiceFields({
 }) {
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700 mb-2">
-        Options <span className="text-red-500">*</span>
-        <span className="text-gray-400 font-normal ml-1">(minimum 2)</span>
+      <label className="block text-xs font-medium text-gray-500 mb-2">
+        Options
       </label>
-      <div className="space-y-2">
+      <div className="space-y-1.5">
         {question.options.map((option, idx) => (
           <motion.div
             key={idx}
@@ -476,7 +508,7 @@ function MultipleChoiceFields({
             animate={{ opacity: 1, x: 0 }}
             className="flex items-center gap-2"
           >
-            <span className="w-6 h-6 flex items-center justify-center rounded-full border-2 border-gray-300 text-gray-400 text-xs">
+            <span className="w-5 h-5 flex items-center justify-center rounded-full border border-gray-300 text-gray-400 text-xs">
               {idx + 1}
             </span>
             <input
@@ -485,21 +517,20 @@ function MultipleChoiceFields({
               onChange={(e) => onUpdateOption(idx, e.target.value)}
               onBlur={onBlur}
               placeholder={`Option ${idx + 1}`}
-              className="flex-1 px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500"
+              className="flex-1 px-2.5 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-indigo-200 focus:border-indigo-500"
             />
             <button
               onClick={() => onDeleteOption(idx)}
               disabled={question.options.length <= 2}
               className={`
-                p-1.5 rounded transition-colors
+                p-1 rounded transition-colors
                 ${question.options.length <= 2
-                  ? 'text-gray-300 cursor-not-allowed'
-                  : 'text-gray-400 hover:text-red-500 hover:bg-red-50'
+                  ? 'text-gray-200 cursor-not-allowed'
+                  : 'text-gray-300 hover:text-red-500'
                 }
               `}
-              title={question.options.length <= 2 ? 'Minimum 2 options required' : 'Delete option'}
             >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
@@ -510,16 +541,16 @@ function MultipleChoiceFields({
         <motion.p
           initial={{ opacity: 0, y: -5 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mt-1 text-sm text-red-600"
+          className="mt-1 text-xs text-red-600"
         >
           {errors.options}
         </motion.p>
       )}
       <button
         onClick={onAddOption}
-        className="mt-2 text-sm text-indigo-600 hover:text-indigo-700 flex items-center gap-1 transition-colors"
+        className="mt-2 text-xs text-indigo-600 hover:text-indigo-700 flex items-center gap-1 transition-colors"
       >
-        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
         </svg>
         Add option
@@ -528,7 +559,7 @@ function MultipleChoiceFields({
   );
 }
 
-// Rating Fields Component
+// Rating Fields Component - Compact
 function RatingFields({
   question,
   onUpdateScale,
@@ -539,77 +570,77 @@ function RatingFields({
   onUpdateLabel: (field: 'startLabel' | 'endLabel', value: string) => void;
 }) {
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {/* Scale selector */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Rating Scale
+        <label className="block text-xs font-medium text-gray-500 mb-1.5">
+          Scale
         </label>
-        <div className="flex gap-3">
+        <div className="flex gap-2">
           {([5, 10] as const).map((scale) => (
             <button
               key={scale}
               onClick={() => onUpdateScale(scale)}
               className={`
-                px-4 py-2 rounded-lg border-2 transition-all
+                px-3 py-1 text-xs rounded-lg border transition-all
                 ${question.scale === scale
                   ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
                   : 'border-gray-200 hover:border-gray-300 text-gray-600'
                 }
               `}
             >
-              1 - {scale}
+              1-{scale}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Scale preview */}
-      <div className="bg-gray-50 rounded-lg p-3">
+      {/* Preview */}
+      <div className="bg-gray-50 rounded-lg p-2">
         <div className="flex items-center justify-between gap-2">
-          <span className="text-xs text-gray-500 w-16 text-center truncate">
+          <span className="text-[10px] text-gray-400 w-12 truncate">
             {question.startLabel || 'Low'}
           </span>
-          <div className="flex-1 flex justify-center gap-1">
+          <div className="flex-1 flex justify-center gap-0.5">
             {Array.from({ length: question.scale }, (_, i) => (
               <div
                 key={i}
-                className="w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs text-gray-400"
+                className="w-5 h-5 rounded-full border border-gray-300 flex items-center justify-center text-[10px] text-gray-400"
               >
                 {i + 1}
               </div>
             ))}
           </div>
-          <span className="text-xs text-gray-500 w-16 text-center truncate">
+          <span className="text-[10px] text-gray-400 w-12 text-right truncate">
             {question.endLabel || 'High'}
           </span>
         </div>
       </div>
 
       {/* Labels */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-2">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Start Label (optional)
+          <label className="block text-xs font-medium text-gray-500 mb-1">
+            Low label
           </label>
           <input
             type="text"
             value={question.startLabel || ''}
             onChange={(e) => onUpdateLabel('startLabel', e.target.value)}
-            placeholder="e.g., Not satisfied"
-            className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500"
+            placeholder="e.g., Poor"
+            className="w-full px-2.5 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-indigo-200 focus:border-indigo-500"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            End Label (optional)
+          <label className="block text-xs font-medium text-gray-500 mb-1">
+            High label
           </label>
           <input
             type="text"
             value={question.endLabel || ''}
             onChange={(e) => onUpdateLabel('endLabel', e.target.value)}
-            placeholder="e.g., Very satisfied"
-            className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500"
+            placeholder="e.g., Excellent"
+            className="w-full px-2.5 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-indigo-200 focus:border-indigo-500"
           />
         </div>
       </div>
@@ -617,7 +648,7 @@ function RatingFields({
   );
 }
 
-// Text Fields Component
+// Text Fields Component - Compact
 function TextFields({
   question,
   onUpdatePlaceholder,
@@ -628,27 +659,25 @@ function TextFields({
   onUpdateMaxLength: (maxLength: number | undefined) => void;
 }) {
   return (
-    <div className="space-y-4">
-      {/* Placeholder */}
+    <div className="space-y-3">
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Placeholder Text (optional)
+        <label className="block text-xs font-medium text-gray-500 mb-1">
+          Placeholder text
         </label>
         <input
           type="text"
           value={question.placeholder || ''}
           onChange={(e) => onUpdatePlaceholder(e.target.value)}
-          placeholder="e.g., Enter your answer here..."
-          className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500"
+          placeholder="e.g., Enter your answer..."
+          className="w-full px-2.5 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-indigo-200 focus:border-indigo-500"
         />
       </div>
 
-      {/* Max length */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Maximum Length (optional)
+        <label className="block text-xs font-medium text-gray-500 mb-1">
+          Max length
         </label>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <input
             type="number"
             value={question.maxLength || ''}
@@ -659,29 +688,10 @@ function TextFields({
             placeholder="No limit"
             min={1}
             max={10000}
-            className="w-32 px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500"
+            className="w-24 px-2.5 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-indigo-200 focus:border-indigo-500"
           />
-          <span className="text-sm text-gray-500">characters</span>
+          <span className="text-xs text-gray-400">characters</span>
         </div>
-        {question.maxLength && (
-          <p className="mt-1 text-xs text-gray-500">
-            Respondents can enter up to {question.maxLength.toLocaleString()} characters
-          </p>
-        )}
-      </div>
-
-      {/* Preview */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Preview
-        </label>
-        <textarea
-          disabled
-          placeholder={question.placeholder || 'Enter your answer...'}
-          maxLength={question.maxLength}
-          className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg bg-gray-50 text-gray-400 resize-none"
-          rows={3}
-        />
       </div>
     </div>
   );
@@ -711,7 +721,7 @@ export function isQuestionValid(question: Question): boolean {
   return Object.keys(errors).length === 0;
 }
 
-// Emoji Slider Fields Component
+// Emoji Slider Fields Component - Compact
 const DEFAULT_EMOJIS_5 = ['😢', '😕', '😐', '🙂', '😊'];
 
 function EmojiSliderFields({
@@ -727,87 +737,76 @@ function EmojiSliderFields({
   const scale = question.scale || 5;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {/* Scale selector */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-xs font-medium text-gray-500 mb-1.5">
           Scale
         </label>
-        <div className="flex gap-3">
+        <div className="flex gap-2">
           {([5, 10] as const).map((s) => (
             <button
               key={s}
               onClick={() => onUpdateScale(s)}
               className={`
-                px-4 py-2 rounded-lg border-2 transition-all
+                px-3 py-1 text-xs rounded-lg border transition-all
                 ${scale === s
                   ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
                   : 'border-gray-200 hover:border-gray-300 text-gray-600'
                 }
               `}
             >
-              1 - {s}
+              1-{s}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Emoji preview */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Preview
-        </label>
-        <div className="bg-gray-50 rounded-lg p-4">
-          <div className="flex justify-center items-center gap-2 mb-3">
-            {emojis.slice(0, scale).map((emoji, i) => (
-              <span
-                key={i}
-                className={`text-2xl ${i === Math.floor(scale / 2) ? 'transform scale-125' : 'opacity-60'}`}
-              >
-                {emoji}
-              </span>
-            ))}
-          </div>
-          <div className="flex justify-between text-xs text-gray-500">
-            <span>{question.labels?.start || 'Low'}</span>
-            <span>{question.labels?.end || 'High'}</span>
-          </div>
+      {/* Preview */}
+      <div className="bg-gray-50 rounded-lg p-2">
+        <div className="flex justify-center items-center gap-1 mb-1">
+          {emojis.slice(0, scale).map((emoji, i) => (
+            <span
+              key={i}
+              className={`text-lg ${i === Math.floor(scale / 2) ? 'transform scale-110' : 'opacity-50'}`}
+            >
+              {emoji}
+            </span>
+          ))}
+        </div>
+        <div className="flex justify-between text-[10px] text-gray-400">
+          <span>{question.labels?.start || 'Low'}</span>
+          <span>{question.labels?.end || 'High'}</span>
         </div>
       </div>
 
       {/* Labels */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-2">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Start Label (optional)
+          <label className="block text-xs font-medium text-gray-500 mb-1">
+            Low label
           </label>
           <input
             type="text"
             value={question.labels?.start || ''}
             onChange={(e) => onUpdateLabel('start', e.target.value)}
-            placeholder="e.g., Not satisfied"
-            className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500"
+            placeholder="e.g., Poor"
+            className="w-full px-2.5 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-indigo-200 focus:border-indigo-500"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            End Label (optional)
+          <label className="block text-xs font-medium text-gray-500 mb-1">
+            High label
           </label>
           <input
             type="text"
             value={question.labels?.end || ''}
             onChange={(e) => onUpdateLabel('end', e.target.value)}
-            placeholder="e.g., Very satisfied"
-            className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500"
+            placeholder="e.g., Excellent"
+            className="w-full px-2.5 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-indigo-200 focus:border-indigo-500"
           />
         </div>
       </div>
-
-      {/* Info text */}
-      <p className="text-xs text-gray-500">
-        The emoji slider provides a visual, engaging way for respondents to rate their answers.
-        Emojis will automatically match the adventure theme when the survey is taken.
-      </p>
     </div>
   );
 }
