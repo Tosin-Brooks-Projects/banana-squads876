@@ -79,10 +79,37 @@ export async function POST(request: NextRequest) {
     }
 
     // Get responses
-    const responses = await getSurveyResponses(surveyId);
+    let responses;
+    try {
+      responses = await getSurveyResponses(surveyId);
+    } catch (fetchError) {
+      console.error('Error fetching responses:', fetchError);
+      return NextResponse.json(
+        { error: 'Failed to fetch survey responses' },
+        { status: 500 }
+      );
+    }
 
     // Run AI analysis
-    const analysis: AIAnalysisResult = await analyzeResponses(survey, responses);
+    let analysis: AIAnalysisResult;
+    try {
+      analysis = await analyzeResponses(survey, responses);
+    } catch (aiError) {
+      console.error('AI analysis failed:', aiError);
+      const aiErrorMessage = aiError instanceof Error ? aiError.message : 'Unknown AI error';
+
+      if (aiErrorMessage.includes('ANTHROPIC_API_KEY')) {
+        return NextResponse.json(
+          { error: 'AI service is not properly configured. Please contact support.' },
+          { status: 503 }
+        );
+      }
+
+      return NextResponse.json(
+        { error: `AI analysis failed: ${aiErrorMessage}` },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json({
       success: true,
@@ -91,6 +118,24 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('AI analysis error:', error);
+
+    // Provide more specific error messages
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+
+    if (errorMessage.includes('ANTHROPIC_API_KEY')) {
+      return NextResponse.json(
+        { error: 'AI service is not properly configured. Please contact support.' },
+        { status: 503 }
+      );
+    }
+
+    if (errorMessage.includes('rate') || errorMessage.includes('limit')) {
+      return NextResponse.json(
+        { error: 'AI service is busy. Please try again in a few minutes.' },
+        { status: 429 }
+      );
+    }
+
     return NextResponse.json(
       { error: 'Failed to analyze responses. Please try again.' },
       { status: 500 }

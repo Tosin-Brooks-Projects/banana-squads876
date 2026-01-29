@@ -111,8 +111,14 @@ export async function analyzeResponses(
     };
   }
 
+  // Check for API key before making the call
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  if (!apiKey) {
+    throw new Error('ANTHROPIC_API_KEY is not configured');
+  }
+
   const anthropic = new Anthropic({
-    apiKey: process.env.ANTHROPIC_API_KEY,
+    apiKey,
   });
 
   const formattedData = formatResponsesForAnalysis(survey, responses);
