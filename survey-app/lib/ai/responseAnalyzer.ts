@@ -166,16 +166,23 @@ Guidelines:
 - Keep the summary concise but impactful
 - Return ONLY valid JSON, no markdown or additional text`;
 
-  const message = await anthropic.messages.create({
-    model: 'claude-sonnet-4-20250514',
-    max_tokens: 2000,
-    messages: [
-      {
-        role: 'user',
-        content: prompt,
-      },
-    ],
-  });
+  let message;
+  try {
+    message = await anthropic.messages.create({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 2000,
+      messages: [
+        {
+          role: 'user',
+          content: prompt,
+        },
+      ],
+    });
+  } catch (apiError) {
+    // Re-throw with more context about the Anthropic API error
+    const errorMessage = apiError instanceof Error ? apiError.message : 'Unknown Anthropic API error';
+    throw new Error(`Anthropic API call failed: ${errorMessage}`);
+  }
 
   const responseText = message.content[0].type === 'text' ? message.content[0].text : '';
 
