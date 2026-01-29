@@ -298,6 +298,10 @@ export async function getSurvey(surveyId: string): Promise<Survey | null> {
     createdAt: toDate(data.createdAt),
     updatedAt: toDate(data.updatedAt),
     publishedAt: toDateOrNull(data.publishedAt),
+    settings: data.settings ? {
+      ...data.settings,
+      expiresAt: toDateOrNull(data.settings.expiresAt),
+    } : undefined,
   } as Survey;
 }
 
@@ -320,6 +324,10 @@ export async function getSurveyBySlug(userId: string, slug: string): Promise<Sur
     createdAt: toDate(data.createdAt),
     updatedAt: toDate(data.updatedAt),
     publishedAt: toDateOrNull(data.publishedAt),
+    settings: data.settings ? {
+      ...data.settings,
+      expiresAt: toDateOrNull(data.settings.expiresAt),
+    } : undefined,
   } as Survey;
 }
 
@@ -388,6 +396,10 @@ export async function getUserSurveys(userId: string): Promise<Survey[]> {
       createdAt: toDate(data.createdAt),
       updatedAt: toDate(data.updatedAt),
       publishedAt: toDateOrNull(data.publishedAt),
+      settings: data.settings ? {
+        ...data.settings,
+        expiresAt: toDateOrNull(data.settings.expiresAt),
+      } : undefined,
     } as Survey;
   });
 }
