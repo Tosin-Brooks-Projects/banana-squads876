@@ -960,7 +960,7 @@ function FoundationSelection({
             transition={{ delay: index * 0.1 }}
           >
             <div className={`w-full ${option.height} ${option.color} rounded-sm mb-3`} />
-            <div className="font-medium text-gray-700 text-xs sm:text-sm text-center break-words leading-tight">{option.answerValue}</div>
+            <div className="font-medium text-gray-700 text-[11px] sm:text-sm text-center leading-snug line-clamp-3" style={{ hyphens: 'auto', wordBreak: 'break-word' }}>{option.answerValue}</div>
           </motion.button>
         ))}
       </div>
@@ -1050,7 +1050,7 @@ function WallsSelection({
             transition={{ delay: index * 0.1 }}
           >
             {renderPattern(option.pattern, option.color)}
-            <div className="font-medium text-gray-700 text-xs sm:text-sm text-center break-words leading-tight mt-3">{option.answerValue}</div>
+            <div className="font-medium text-gray-700 text-[11px] sm:text-sm text-center leading-snug line-clamp-3 mt-3" style={{ hyphens: 'auto', wordBreak: 'break-word' }}>{option.answerValue}</div>
           </motion.button>
         ))}
       </div>
@@ -1117,7 +1117,7 @@ function RoofSelection({
             transition={{ delay: index * 0.1 }}
           >
             <div className="mb-3">{renderRoofPreview(option.color)}</div>
-            <div className="font-medium text-gray-700 text-xs sm:text-sm text-center break-words leading-tight">{option.answerValue}</div>
+            <div className="font-medium text-gray-700 text-[11px] sm:text-sm text-center leading-snug line-clamp-3" style={{ hyphens: 'auto', wordBreak: 'break-word' }}>{option.answerValue}</div>
           </motion.button>
         ))}
       </div>
@@ -1354,7 +1354,7 @@ function WindowsDoorSelection({
               transition={{ delay: index * 0.05 }}
             >
               <div className={`w-8 h-10 mx-auto bg-sky-200 border-2 border-amber-700 ${option.shape} mb-2`} />
-              <div className="text-xs font-medium text-gray-600 text-center break-words leading-tight">{option.answerValue}</div>
+              <div className="text-[11px] font-medium text-gray-600 text-center leading-snug line-clamp-3" style={{ hyphens: 'auto', wordBreak: 'break-word' }}>{option.answerValue}</div>
             </motion.button>
           ))}
         </div>
@@ -1395,7 +1395,7 @@ function WindowsDoorSelection({
                   </div>
                 )}
               </div>
-              <div className="text-xs font-medium text-gray-600 text-center break-words leading-tight">{option.answerValue}</div>
+              <div className="text-[11px] font-medium text-gray-600 text-center leading-snug line-clamp-3" style={{ hyphens: 'auto', wordBreak: 'break-word' }}>{option.answerValue}</div>
             </motion.button>
           ))}
         </div>
@@ -1474,7 +1474,7 @@ function PaintLandscapeSelection({
               transition={{ delay: index * 0.05, type: 'spring' }}
             >
               <div className={`w-full h-8 ${option.color} ${option.border} border-2 rounded-md mb-2`} />
-              <div className="text-xs font-medium text-gray-600 text-center break-words leading-tight">{option.answerValue}</div>
+              <div className="text-[11px] font-medium text-gray-600 text-center leading-snug line-clamp-3" style={{ hyphens: 'auto', wordBreak: 'break-word' }}>{option.answerValue}</div>
             </motion.button>
           ))}
         </div>
@@ -1500,7 +1500,7 @@ function PaintLandscapeSelection({
               transition={{ delay: index * 0.05 }}
             >
               <div className="text-3xl mb-2">{option.emoji}</div>
-              <div className="text-xs font-medium text-gray-600 text-center break-words leading-tight">{option.answerValue}</div>
+              <div className="text-[11px] font-medium text-gray-600 text-center leading-snug line-clamp-3" style={{ hyphens: 'auto', wordBreak: 'break-word' }}>{option.answerValue}</div>
             </motion.button>
           ))}
         </div>

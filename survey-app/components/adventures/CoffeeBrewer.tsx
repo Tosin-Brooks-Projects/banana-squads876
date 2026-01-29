@@ -939,7 +939,7 @@ function BeansSelection({
               <div className="absolute top-2 left-1 right-1 h-1.5 bg-white/30 rounded-full" />
               <div className="absolute bottom-3 left-1/2 -translate-x-1/2 text-white text-lg">☕</div>
             </div>
-            <div className="font-medium text-gray-700 text-xs sm:text-sm text-center break-words leading-tight">{option.answerValue}</div>
+            <div className="font-medium text-gray-700 text-[11px] sm:text-sm text-center leading-snug line-clamp-3" style={{ hyphens: 'auto', wordBreak: 'break-word' }}>{option.answerValue}</div>
           </motion.button>
         ))}
       </div>
@@ -1027,7 +1027,7 @@ function GrindSelection({
                 />
               ))}
             </div>
-            <div className="font-medium text-gray-700 text-xs sm:text-sm text-center break-words leading-tight">{option.answerValue}</div>
+            <div className="font-medium text-gray-700 text-[11px] sm:text-sm text-center leading-snug line-clamp-3" style={{ hyphens: 'auto', wordBreak: 'break-word' }}>{option.answerValue}</div>
           </motion.button>
         ))}
       </div>
@@ -1113,7 +1113,7 @@ function MethodSelection({
             transition={{ delay: index * 0.1 }}
           >
             {renderMethodIcon(option.id)}
-            <div className="font-medium text-gray-700 text-xs sm:text-sm text-center break-words leading-tight">{option.answerValue}</div>
+            <div className="font-medium text-gray-700 text-[11px] sm:text-sm text-center leading-snug line-clamp-3" style={{ hyphens: 'auto', wordBreak: 'break-word' }}>{option.answerValue}</div>
           </motion.button>
         ))}
       </div>
@@ -1365,7 +1365,7 @@ function FinishingSelection({
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
             >
-              <div className="text-xs sm:text-sm font-medium text-gray-700 py-2 text-center break-words leading-tight">{option.answerValue}</div>
+              <div className="text-[11px] sm:text-sm font-medium text-gray-700 py-2 text-center leading-snug line-clamp-3" style={{ hyphens: 'auto', wordBreak: 'break-word' }}>{option.answerValue}</div>
               {isSelected && (
                 <motion.div
                   initial={{ scale: 0 }}
