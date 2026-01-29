@@ -216,7 +216,8 @@ export default function OnboardingPage() {
     setUsername(suggestion);
   };
 
-  if (loading || !firebaseUser) {
+  // Show loading while checking auth state or if user already has username (will redirect)
+  if (loading || !firebaseUser || user?.username) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-indigo-50 via-white to-pink-50 flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600" />
