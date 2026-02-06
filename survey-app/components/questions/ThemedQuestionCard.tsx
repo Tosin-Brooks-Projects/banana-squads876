@@ -131,11 +131,10 @@ export default function ThemedQuestionCard({
                     key={rating}
                     type="button"
                     onClick={() => onChange(rating)}
-                    className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl font-bold text-lg transition-all ${
-                      value === rating
-                        ? `${colors.ratingActive} scale-110 shadow-lg`
-                        : colors.ratingInactive
-                    }`}
+                    className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl font-bold text-lg transition-all ${value === rating
+                      ? `${colors.ratingActive} scale-110 shadow-lg`
+                      : colors.ratingInactive
+                      }`}
                     whileHover={{ scale: value === rating ? 1.1 : 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
@@ -156,7 +155,8 @@ export default function ThemedQuestionCard({
               onChange={(e) => onChange(e.target.value)}
               placeholder={question.placeholder || 'Type your answer here...'}
               maxLength={question.maxLength || 1000}
-              className={`w-full p-4 rounded-xl border-2 border-neutral-200 focus:${colors.accentBorder} ${colors.ring} focus:ring-2 outline-none transition-all resize-none min-h-[120px]`}
+              className={`w-full p-4 rounded-xl border-2 border-neutral-200 focus:${colors.accentBorder} ${colors.ring} focus:ring-2 outline-none transition-all resize-none min-h-[120px] !text-black`}
+              style={{ color: 'black' }}
             />
           );
         }
@@ -171,16 +171,15 @@ export default function ThemedQuestionCard({
                   key={index}
                   type="button"
                   onClick={() => onChange(option)}
-                  className={`w-full p-4 text-left rounded-xl border-2 transition-all ${
-                    value === option
-                      ? `${colors.accentBorder} ${colors.accent} ${colors.primaryText}`
-                      : 'border-neutral-200 bg-white hover:border-neutral-300 hover:bg-neutral-50'
-                  }`}
+                  className={`w-full p-4 text-left rounded-xl border-2 transition-all ${value === option
+                    ? `${colors.accentBorder} ${colors.accent} ${colors.primaryText}`
+                    : 'border-neutral-200 bg-white text-gray-900 hover:border-neutral-300 hover:bg-neutral-50'
+                    }`}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.05 }}
                 >
-                  <span className="font-medium leading-snug" style={{ hyphens: 'auto', wordBreak: 'break-word' }}>{option}</span>
+                  <span className="font-medium leading-snug !text-black" style={{ hyphens: 'auto', wordBreak: 'break-word', color: 'black' }}>{option}</span>
                 </motion.button>
               ))}
             </div>

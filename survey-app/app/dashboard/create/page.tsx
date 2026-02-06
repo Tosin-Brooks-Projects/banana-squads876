@@ -202,7 +202,7 @@ export default function CreateSurveyPage() {
       }, 500);
       return () => clearTimeout(timer);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentStep]);
 
   // Load draft from localStorage
@@ -764,9 +764,8 @@ export default function CreateSurveyPage() {
           </button>
           {index < 3 && (
             <div
-              className={`w-12 h-1 mx-1 rounded ${
-                step < currentStep ? 'bg-indigo-600' : 'bg-gray-200'
-              }`}
+              className={`w-12 h-1 mx-1 rounded ${step < currentStep ? 'bg-indigo-600' : 'bg-gray-200'
+                }`}
             />
           )}
         </div>
@@ -826,6 +825,7 @@ export default function CreateSurveyPage() {
                   placeholder="I run a coffee shop and want to know why morning regulars stopped coming. I'd like to understand if it's about the coffee quality, wait times, prices, or something else entirely..."
                   className={`
                     w-full px-4 py-3 rounded-lg border transition-colors min-h-[160px] resize-none
+                    bg-white text-gray-900
                     focus:outline-none focus:ring-2 focus:ring-offset-0
                     ${errors.context
                       ? 'border-red-300 focus:border-red-500 focus:ring-red-200'
@@ -1227,6 +1227,7 @@ export default function CreateSurveyPage() {
                         placeholder="my-survey"
                         className={`
                           w-full px-4 py-2 rounded-lg border transition-colors
+                          bg-white text-gray-900
                           focus:outline-none focus:ring-2 focus:ring-offset-0
                           ${errors.slug
                             ? 'border-red-300 focus:border-red-500 focus:ring-red-200'
@@ -1304,7 +1305,7 @@ export default function CreateSurveyPage() {
                     value={formData.thankYouMessage}
                     onChange={(e) => setFormData(prev => ({ ...prev, thankYouMessage: e.target.value }))}
                     placeholder="Thank you for taking the time to share your feedback! Your responses help us improve."
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 transition-colors min-h-[100px] resize-none focus:outline-none focus:ring-2 focus:ring-offset-0 focus:border-indigo-500 focus:ring-indigo-200"
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 transition-colors min-h-[100px] resize-none bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:border-indigo-500 focus:ring-indigo-200"
                     rows={3}
                   />
                 </div>

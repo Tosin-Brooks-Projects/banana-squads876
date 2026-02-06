@@ -118,13 +118,12 @@ export default function ClassicSurvey({
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
                 onClick={() => handleAnswer(question.id, option)}
-                className={`w-full p-4 text-left rounded-xl border-2 transition-all ${
-                  currentAnswer === option
-                    ? 'border-brand-500 bg-brand-50 text-brand-900'
-                    : 'border-neutral-200 bg-white hover:border-neutral-300 hover:bg-neutral-50'
-                }`}
+                className={`w-full p-4 text-left rounded-xl border-2 transition-all ${currentAnswer === option
+                  ? 'border-brand-500 bg-brand-50 text-brand-900'
+                  : 'border-neutral-200 bg-white text-gray-900 hover:border-neutral-300 hover:bg-neutral-50'
+                  }`}
               >
-                <span className="font-medium">{option}</span>
+                <span className="font-medium !text-black" style={{ color: 'black' }}>{option}</span>
               </motion.button>
             ))}
           </div>
@@ -146,11 +145,10 @@ export default function ClassicSurvey({
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: rating * 0.03 }}
                   onClick={() => handleAnswer(question.id, rating)}
-                  className={`w-12 h-12 rounded-xl font-bold text-lg transition-all ${
-                    currentAnswer === rating
-                      ? 'bg-brand-500 text-white scale-110 shadow-lg'
-                      : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
-                  }`}
+                  className={`w-12 h-12 rounded-xl font-bold text-lg transition-all ${currentAnswer === rating
+                    ? 'bg-brand-500 text-white scale-110 shadow-lg'
+                    : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
+                    }`}
                 >
                   {rating}
                 </motion.button>
@@ -166,7 +164,8 @@ export default function ClassicSurvey({
             onChange={(e) => handleAnswer(question.id, e.target.value)}
             placeholder={question.placeholder || 'Type your answer here...'}
             maxLength={question.maxLength || 1000}
-            className="w-full p-4 rounded-xl border-2 border-neutral-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-200 outline-none transition-all resize-none min-h-[120px]"
+            className="w-full p-4 rounded-xl border-2 border-neutral-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-200 outline-none transition-all resize-none min-h-[120px] !text-black"
+            style={{ color: 'black' }}
           />
         );
 
@@ -250,7 +249,8 @@ export default function ClassicSurvey({
                       value={formData.name}
                       onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
                       placeholder="Your name"
-                      className="w-full p-3 rounded-xl border-2 border-neutral-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-200 outline-none transition-all"
+                      className="w-full p-3 rounded-xl border-2 border-neutral-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-200 outline-none transition-all !text-black"
+                      style={{ color: 'black' }}
                     />
                   </div>
                   <div>
@@ -262,7 +262,8 @@ export default function ClassicSurvey({
                       value={formData.email}
                       onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
                       placeholder="your@email.com"
-                      className="w-full p-3 rounded-xl border-2 border-neutral-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-200 outline-none transition-all"
+                      className="w-full p-3 rounded-xl border-2 border-neutral-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-200 outline-none transition-all !text-black"
+                      style={{ color: 'black' }}
                     />
                   </div>
                 </div>
@@ -308,11 +309,10 @@ export default function ClassicSurvey({
                   <button
                     onClick={handleNext}
                     disabled={!canProceed()}
-                    className={`flex-1 py-3 px-6 rounded-xl font-medium transition-all ${
-                      canProceed()
-                        ? 'bg-brand-500 text-white hover:bg-brand-600'
-                        : 'bg-neutral-200 text-neutral-400 cursor-not-allowed'
-                    }`}
+                    className={`flex-1 py-3 px-6 rounded-xl font-medium transition-all ${canProceed()
+                      ? 'bg-brand-500 text-white hover:bg-brand-600'
+                      : 'bg-neutral-200 text-neutral-400 cursor-not-allowed'
+                      }`}
                   >
                     {isLastQuestion ? (allowAnonymous ? 'Submit' : 'Continue') : 'Next'}
                   </button>

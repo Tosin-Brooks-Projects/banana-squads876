@@ -534,10 +534,11 @@ export async function createResponse(
     }
 
     // Atomically increment the count and add the response
-    transaction.update(surveyRef, {
-      responseCount: currentCount + 1,
-      updatedAt: Timestamp.now(),
-    });
+    // NOTE: Commented out to avoid permission-denied errors until rules are deployed
+    // transaction.update(surveyRef, {
+    //   responseCount: currentCount + 1,
+    //   updatedAt: Timestamp.now(),
+    // });
     transaction.set(newDocRef, responseDoc);
   });
 

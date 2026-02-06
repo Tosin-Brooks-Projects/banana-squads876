@@ -32,6 +32,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
               ? 'border-red-300 focus:border-red-500 focus:ring-red-200'
               : 'border-neutral-300 focus:border-brand-500 focus:ring-brand-200'
             }
+            bg-white text-neutral-900
             ${className}
           `}
           {...props}

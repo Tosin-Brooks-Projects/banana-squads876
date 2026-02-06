@@ -83,8 +83,8 @@ service cloud.firestore {
 
       // Only owner can update their surveys
       // Cannot change the userId (owner)
-      allow update: if isOwner(resource.data.userId) &&
-                       request.resource.data.userId == resource.data.userId;
+      allow update: if (isOwner(resource.data.userId) && request.resource.data.userId == resource.data.userId) ||
+                       (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['responseCount', 'updatedAt']));
 
       // Only owner can delete their surveys
       allow delete: if isOwner(resource.data.userId);
