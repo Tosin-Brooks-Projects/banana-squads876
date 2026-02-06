@@ -32,7 +32,6 @@ import {
   savePartialResponse,
   getPartialResponse,
   deletePartialResponse,
-  getResponseCountFast,
 } from '@/lib/firebase/firestore';
 import {
   checkRateLimit,
@@ -533,7 +532,7 @@ export default function SurveyPage() {
 
       // Check if survey has reached response limit
       if (surveyData.responseLimit && surveyData.paymentStatus !== 'unpaid') {
-        const responseCount = await getResponseCountFast(surveyData.id);
+        const responseCount = surveyData.responseCount || 0;
         if (responseCount >= surveyData.responseLimit) {
           setError('This survey has reached its response limit');
           setErrorType('response_limit_reached');
@@ -557,7 +556,7 @@ export default function SurveyPage() {
     if (username && slug) {
       fetchSurvey();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [username, slug, isDemoMode]);
 
   const handleStart = () => {
@@ -724,9 +723,9 @@ export default function SurveyPage() {
         ...(survey.questions.map((q, i) => ({
           questionId: q.id,
           value: i === 0 ? finalSelections.bowl || '' :
-                 i === 1 ? finalSelections.scoop || '' :
-                 i === 2 ? finalSelections.sauce || '' :
-                 finalSelections.toppings || [],
+            i === 1 ? finalSelections.scoop || '' :
+              i === 2 ? finalSelections.sauce || '' :
+                finalSelections.toppings || [],
         }))),
       ]);
     }

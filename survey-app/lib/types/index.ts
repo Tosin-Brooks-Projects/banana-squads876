@@ -41,6 +41,7 @@ export interface Survey {
   paymentStatus?: 'unpaid' | 'paid' | 'free';
   paymentId?: string;
   dataExpiresAt?: Date;
+  responseCount?: number;
 }
 
 export type AdventureType =
