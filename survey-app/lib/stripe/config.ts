@@ -1,13 +1,15 @@
 import Stripe from 'stripe';
 
-if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error('STRIPE_SECRET_KEY is not set in environment variables');
+const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+
+if (!stripeSecretKey && process.env.NODE_ENV === 'production' && typeof window === 'undefined') {
+  console.warn('STRIPE_SECRET_KEY is not set in environment variables');
 }
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+export const stripe = stripeSecretKey ? new Stripe(stripeSecretKey, {
   apiVersion: '2025-12-15.clover',
   typescript: true,
-});
+}) : null as unknown as Stripe;
 
 // Stripe Price IDs - these will be created in your Stripe Dashboard
 // For now, we'll use dynamic pricing with Stripe Checkout

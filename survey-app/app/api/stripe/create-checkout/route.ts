@@ -4,7 +4,15 @@ import { PRICING_TIERS, PricingTier } from '@/lib/types';
 import { verifyAuthToken } from '@/lib/firebase/admin';
 import { checkServerRateLimit, rateLimitResponse, RATE_LIMIT_CONFIGS } from '@/lib/utils/serverRateLimit';
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(request: NextRequest) {
+  if (!stripe) {
+    return NextResponse.json(
+      { error: 'Stripe is not configured' },
+      { status: 500 }
+    );
+  }
   try {
     // Check rate limit
     const rateLimitResult = checkServerRateLimit(request, RATE_LIMIT_CONFIGS.stripeCheckout);

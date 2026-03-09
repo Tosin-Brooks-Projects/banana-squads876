@@ -4,7 +4,15 @@ import { verifyAuthToken, getSurveyAdmin, updateSurveyAdmin } from '@/lib/fireba
 import { checkServerRateLimit, rateLimitResponse, RATE_LIMIT_CONFIGS } from '@/lib/utils/serverRateLimit';
 import { PricingTier, PRICING_TIERS } from '@/lib/types';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
+  if (!stripe) {
+    return NextResponse.json(
+      { error: 'Stripe is not configured' },
+      { status: 500 }
+    );
+  }
   // Check rate limit
   const rateLimitResult = checkServerRateLimit(request, RATE_LIMIT_CONFIGS.default);
   if (!rateLimitResult.allowed) {
