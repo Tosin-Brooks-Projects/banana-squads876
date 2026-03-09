@@ -5,7 +5,7 @@ import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { CSVLink } from 'react-csv';
-import Button from '@/components/ui/Button';
+import Button from '@/components/ui/AnimatedButton';
 import Card from '@/components/ui/Card';
 import { Shimmer, TableSkeleton } from '@/components/ui/LoadingStates';
 import { QuestionCardSkeleton, OverviewSkeleton } from '@/components/charts/ChartSkeleton';

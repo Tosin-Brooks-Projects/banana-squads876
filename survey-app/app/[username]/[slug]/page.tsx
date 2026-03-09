@@ -10,7 +10,7 @@ import GardenGrower from '@/components/adventures/GardenGrower';
 import DreamHome from '@/components/adventures/DreamHome';
 import CoffeeBrewer from '@/components/adventures/CoffeeBrewer';
 import ResumeDialog from '@/components/survey/ResumeDialog';
-import Button from '@/components/ui/Button';
+import Button from '@/components/ui/AnimatedButton';
 import Card from '@/components/ui/Card';
 import { SurveySkeleton } from '@/components/ui/Skeleton';
 import {

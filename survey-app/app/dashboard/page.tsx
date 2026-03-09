@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
-import Button from '@/components/ui/Button';
+import Button from '@/components/ui/AnimatedButton';
 import Card from '@/components/ui/Card';
 import {
   SurveyCardSkeleton,

@@ -2,166 +2,212 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import Button from '@/components/ui/Button';
+import AnimatedButton from '@/components/ui/AnimatedButton';
 import Footer from '@/components/Footer';
-import PublicHeader from '@/components/PublicHeader';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Card, CardContent } from '@/components/ui/card';
+import { Marquee } from '@/components/ui/3d-testimonials';
+import { Navbar1 } from '@/components/ui/navbar-1';
+import { HeroSection03 } from '@/components/ui/hero-03';
+import DisplayCards from '@/components/ui/display-cards';
+import { CallToAction } from '@/components/ui/cta-3';
+import { Gamepad2, BarChart3, Rocket } from 'lucide-react';
 
-const adventures = [
-  { emoji: '🍨', name: 'Ice Cream Sundae', color: 'from-pink-400 to-pink-600' },
-  { emoji: '🍕', name: 'Pizza Builder', color: 'from-orange-400 to-red-500' },
-  { emoji: '🌻', name: 'Garden Grower', color: 'from-green-400 to-emerald-600' },
-  { emoji: '🏠', name: 'Dream Home', color: 'from-purple-400 to-indigo-600' },
-  { emoji: '☕', name: 'Coffee Brewer', color: 'from-amber-500 to-amber-700' },
+const featureCards = [
+  {
+    icon: <Gamepad2 className="size-4 text-orange-600" />,
+    title: "Gamified",
+    description: "Interactive adventures",
+    date: "Engagement Boosted",
+    iconClassName: "text-orange-600",
+    titleClassName: "text-orange-600",
+    className:
+      "[grid-area:stack] hover:-translate-y-10 before:absolute before:w-[100%] before:outline-1 before:rounded-xl before:outline-border before:h-[100%] before:content-[''] before:bg-blend-overlay before:bg-background/50 grayscale-[100%] hover:before:opacity-0 before:transition-opacity before:duration-700 hover:grayscale-0 before:left-0 before:top-0",
+  },
+  {
+    icon: <BarChart3 className="size-4 text-orange-600" />,
+    title: "Analytics",
+    description: "Real-time insights",
+    date: "Beautifully Visualized",
+    iconClassName: "text-orange-600",
+    titleClassName: "text-orange-600",
+    className:
+      "[grid-area:stack] translate-x-12 translate-y-10 hover:-translate-y-1 before:absolute before:w-[100%] before:outline-1 before:rounded-xl before:outline-border before:h-[100%] before:content-[''] before:bg-blend-overlay before:bg-background/50 grayscale-[100%] hover:before:opacity-0 before:transition-opacity before:duration-700 hover:grayscale-0 before:left-0 before:top-0",
+  },
+  {
+    icon: <Rocket className="size-4 text-orange-600" />,
+    title: "Conversion",
+    description: "3x Completion rates",
+    date: "Available Now",
+    iconClassName: "text-orange-600",
+    titleClassName: "text-orange-600",
+    className:
+      "[grid-area:stack] translate-x-24 translate-y-20 hover:translate-y-10",
+  },
 ];
+
+const testimonials = [
+  {
+    name: 'Ava Green',
+    username: '@ava',
+    body: 'Unboring Surveys made my workflow 10x faster!',
+    img: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=150',
+    country: '🇦🇺',
+  },
+  {
+    name: 'Ana Miller',
+    username: '@ana',
+    body: 'The 3x completion rate is real. Highly recommend!',
+    img: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=150',
+    country: '🇩🇪',
+  },
+  {
+    name: 'Mateo Rossi',
+    username: '@mat',
+    body: 'Animations are buttery smooth and engaging!',
+    img: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=150',
+    country: '🇮🇹',
+  },
+  {
+    name: 'Maya Patel',
+    username: '@maya',
+    body: 'Setup was a breeze! Best feedback tool ever.',
+    img: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=150',
+    country: '🇮🇳',
+  },
+  {
+    name: 'Noah Smith',
+    username: '@noah',
+    body: 'Finally, surveys people actually want to take!',
+    img: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=150',
+    country: '🇺🇸',
+  },
+  {
+    name: 'Lucas Stone',
+    username: '@luc',
+    body: 'Interactive adventures are a game changer.',
+    img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=150',
+    country: '🇫🇷',
+  },
+];
+
+function TestimonialCard({ img, name, username, body, country }: (typeof testimonials)[number]) {
+  return (
+    <Card className="w-64 border-neutral-200 bg-white/50 backdrop-blur-sm hover:border-orange-200 transition-colors">
+      <CardContent className="p-4">
+        <div className="flex items-center gap-3">
+          <Avatar className="size-10 border border-neutral-100">
+            <AvatarImage src={img} alt={name} />
+            <AvatarFallback>{name[0]}</AvatarFallback>
+          </Avatar>
+          <div className="flex flex-col">
+            <figcaption className="text-sm font-semibold text-neutral-900 flex items-center gap-1">
+              {name} <span className="text-xs grayscale">{country}</span>
+            </figcaption>
+            <p className="text-xs font-medium text-neutral-500">{username}</p>
+          </div>
+        </div>
+        <blockquote className="mt-3 text-sm text-neutral-600 leading-relaxed italic">"{body}"</blockquote>
+      </CardContent>
+    </Card>
+  );
+}
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-neutral-50">
-      <PublicHeader variant="transparent" />
+      <Navbar1 />
+      <HeroSection03 />
 
-      {/* Hero Section */}
-      <section className="container mx-auto px-6 pt-16 pb-24">
-        <div className="text-center max-w-4xl mx-auto">
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-neutral-900 mb-6"
-          >
-            Surveys people{' '}
-            <span className="relative inline-block">
-              <span className="relative z-10">actually finish</span>
-              <span className="absolute bottom-2 left-0 w-full h-3 bg-brand-200 -z-0"></span>
-            </span>
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="text-xl text-neutral-600 mb-6 max-w-2xl mx-auto"
-          >
-            Gamified surveys that boost completion rates by 3x.
-          </motion.p>
-
-          {/* Compact adventure icons strip */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.25 }}
-            className="flex justify-center gap-3 mb-8"
-          >
-            {adventures.map((adventure, index) => (
-              <motion.div
-                key={adventure.name}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.3 + index * 0.05 }}
-                className="text-2xl"
-                title={adventure.name}
-              >
-                {adventure.emoji}
-              </motion.div>
-            ))}
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center"
-          >
-            <Link href="/login">
-              <Button size="lg" className="w-full sm:w-auto">
-                Start for Free
-              </Button>
-            </Link>
-            <Link href="/pricing">
-              <Button variant="outline" size="lg" className="w-full sm:w-auto">
-                View Pricing
-              </Button>
-            </Link>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section className="bg-white py-24">
-        <div className="container mx-auto px-6">
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-4">
-              Why Choose Unboring Surveys?
-            </h2>
-            <p className="text-neutral-600 max-w-2xl mx-auto">
-              Interactive adventures make data collection fun.
-            </p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                icon: '🎮',
-                title: 'Gamified Experience',
-                description: 'Interactive adventures that keep respondents engaged.',
-              },
-              {
-                icon: '📊',
-                title: 'Rich Analytics',
-                description: 'Beautiful charts and exportable reports.',
-              },
-              {
-                icon: '🚀',
-                title: 'Higher Completion Rates',
-                description: '3x higher completion rates vs. traditional forms.',
-              },
-            ].map((feature, index) => (
-              <motion.div
-                key={feature.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="bg-neutral-50 rounded-2xl p-8 text-center border border-neutral-100"
-              >
-                <div className="text-4xl mb-4">{feature.icon}</div>
-                <h3 className="text-xl font-semibold text-neutral-900 mb-2">
-                  {feature.title}
-                </h3>
-                <p className="text-neutral-600">{feature.description}</p>
-              </motion.div>
-            ))}
+      <div className="font-outfit">
+        {/* Features Section */}
+        <section className="bg-white py-32 overflow-hidden">
+          <div className="container mx-auto px-6">
+            <div className="flex flex-col lg:flex-row items-center gap-16">
+              <div className="flex-1 text-start">
+                <h2 className="text-3xl md:text-5xl font-bold text-neutral-900 mb-6">
+                  Why Choose <span className="text-orange-600">Unboring</span> Surveys?
+                </h2>
+                <p className="text-neutral-600 text-lg max-w-xl mb-8">
+                  Traditional forms are dead. Our interactive adventures keep respondents engaged,
+                  leading to cleaner data and much higher completion rates.
+                </p>
+                <Link href="/login">
+                  <AnimatedButton variant="outline" size="lg" className="border-orange-200 hover:bg-orange-50 text-orange-700">
+                    Explore Features
+                  </AnimatedButton>
+                </Link>
+              </div>
+              <div className="flex-1 flex justify-center py-12">
+                <DisplayCards cards={featureCards} />
+              </div>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* CTA Section */}
-      <section className="py-24 bg-neutral-50">
-        <div className="container mx-auto px-6">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center max-w-2xl mx-auto"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-4">
-              Ready to Make Surveys Fun?
-            </h2>
-            <p className="text-neutral-600 mb-8">
-              Start transforming how you collect feedback.
-            </p>
-            <Link href="/login">
-              <Button size="lg">
-                Start Creating for Free
-              </Button>
-            </Link>
-          </motion.div>
-        </div>
-      </section>
+        {/* Testimonials Section */}
+        <section className="py-24 bg-neutral-50 overflow-hidden">
+          <div className="container mx-auto px-6">
+            <div className="flex flex-col md:flex-row items-center gap-12">
+              <div className="flex-1 max-w-xl">
+                <h2 className="text-3xl md:text-5xl font-bold text-neutral-900 mb-6">
+                  Loved by teams <br /><span className="text-orange-600">worldwide.</span>
+                </h2>
+                <p className="text-neutral-600 text-lg mb-8">
+                  Join thousands of users who have transformed their feedback loops into
+                  engaging experiences that people actually finish.
+                </p>
+                <div className="flex gap-4">
+                  <div className="bg-white p-4 rounded-xl shadow-sm border border-neutral-100 flex-1">
+                    <div className="text-2xl font-bold text-orange-600 mb-1">98%</div>
+                    <div className="text-xs text-neutral-500 uppercase tracking-wider font-semibold">Satisfaction</div>
+                  </div>
+                  <div className="bg-white p-4 rounded-xl shadow-sm border border-neutral-100 flex-1">
+                    <div className="text-2xl font-bold text-orange-600 mb-1">3.5M+</div>
+                    <div className="text-xs text-neutral-500 uppercase tracking-wider font-semibold">Quests Done</div>
+                  </div>
+                </div>
+              </div>
+              <div className="flex-1 relative flex h-[500px] w-full flex-row items-center justify-center overflow-hidden gap-4 [perspective:1200px]">
+                <div
+                  className="flex flex-row items-center gap-4"
+                  style={{
+                    transform:
+                      'translateX(-50px) translateY(0px) translateZ(-100px) rotateX(15deg) rotateY(-15deg) rotateZ(10deg)',
+                  }}
+                >
+                  <Marquee vertical pauseOnHover repeat={3} className="[--duration:30s]">
+                    {testimonials.map((review) => (
+                      <TestimonialCard key={review.username} {...review} />
+                    ))}
+                  </Marquee>
+                  <Marquee vertical pauseOnHover reverse repeat={3} className="[--duration:25s]">
+                    {testimonials.map((review) => (
+                      <TestimonialCard key={review.username} {...review} />
+                    ))}
+                  </Marquee>
+                  <Marquee vertical pauseOnHover repeat={3} className="[--duration:35s] hidden sm:flex">
+                    {testimonials.map((review) => (
+                      <TestimonialCard key={review.username} {...review} />
+                    ))}
+                  </Marquee>
+                </div>
+
+                {/* Overlays */}
+                <div className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-neutral-50"></div>
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-neutral-50"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section className="py-32 bg-white relative overflow-hidden">
+          <div className="container mx-auto px-6">
+            <CallToAction />
+          </div>
+        </section>
+      </div>
 
       <Footer />
     </div>

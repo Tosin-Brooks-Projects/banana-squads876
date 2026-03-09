@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import Button from '@/components/ui/Button';
+import Button from '@/components/ui/AnimatedButton';
 import Card from '@/components/ui/Card';
 
 interface SentimentBreakdown {

@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import Button from '@/components/ui/Button';
+import Button from '@/components/ui/AnimatedButton';
 import Card from '@/components/ui/Card';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { updateUser, createUser, checkUsernameExists, isUsernameReserved } from '@/lib/firebase/firestore';

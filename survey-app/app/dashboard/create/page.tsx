@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence, Reorder } from 'framer-motion';
 import { useAuthContext } from '@/contexts/AuthContext';
-import Button from '@/components/ui/Button';
+import Button from '@/components/ui/AnimatedButton';
 import Input from '@/components/ui/Input';
 import Card from '@/components/ui/Card';
 import { Spinner } from '@/components/ui/LoadingStates';

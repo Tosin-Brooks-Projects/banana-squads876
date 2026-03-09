@@ -37,6 +37,10 @@ const config: Config = {
           900: '#1c1917',
         },
       },
+      fontFamily: {
+        sans: ["var(--font-inter)", "ui-sans-serif", "system-ui", "sans-serif"],
+        outfit: ["var(--font-outfit)", "ui-sans-serif", "system-ui", "sans-serif"],
+      },
     },
   },
   plugins: [],
