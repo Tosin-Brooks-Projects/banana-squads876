@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import PizzaBuilderV2 from '@/components/adventures/PizzaBuilderV2';
-import { Button } from '@/components/ui/AnimatedButton';
 
 export default function PizzaDesignDemo() {
     const [theme, setTheme] = useState<'neon' | 'artisan' | 'parallax'>('neon');
@@ -14,8 +13,8 @@ export default function PizzaDesignDemo() {
                 <button
                     onClick={() => setTheme('neon')}
                     className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${theme === 'neon'
-                            ? 'bg-pink-600 text-white shadow-[0_0_20px_rgba(236,72,153,0.5)]'
-                            : 'text-neutral-400 hover:text-white'
+                        ? 'bg-pink-600 text-white shadow-[0_0_20px_rgba(236,72,153,0.5)]'
+                        : 'text-neutral-400 hover:text-white'
                         }`}
                 >
                     Neon Arcade
@@ -23,8 +22,8 @@ export default function PizzaDesignDemo() {
                 <button
                     onClick={() => setTheme('artisan')}
                     className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${theme === 'artisan'
-                            ? 'bg-amber-600 text-white shadow-[0_0_20px_rgba(217,119,6,0.5)]'
-                            : 'text-neutral-400 hover:text-white'
+                        ? 'bg-amber-600 text-white shadow-[0_0_20px_rgba(217,119,6,0.5)]'
+                        : 'text-neutral-400 hover:text-white'
                         }`}
                 >
                     Artisan Reality
@@ -32,8 +31,8 @@ export default function PizzaDesignDemo() {
                 <button
                     onClick={() => setTheme('parallax')}
                     className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${theme === 'parallax'
-                            ? 'bg-blue-600 text-white shadow-[0_0_20px_rgba(37,99,235,0.5)]'
-                            : 'text-neutral-400 hover:text-white'
+                        ? 'bg-blue-600 text-white shadow-[0_0_20px_rgba(37,99,235,0.5)]'
+                        : 'text-neutral-400 hover:text-white'
                         }`}
                 >
                     3D Parallax

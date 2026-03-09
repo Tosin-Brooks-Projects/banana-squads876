@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/ui/AnimatedButton';
-import Card from '@/components/ui/Card';
+import { Card } from '@/components/ui/card';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { updateUser, createUser, checkUsernameExists, isUsernameReserved } from '@/lib/firebase/firestore';
 import { signOut } from '@/lib/firebase/auth';
@@ -265,7 +265,7 @@ export default function OnboardingPage() {
           </p>
         </div>
 
-        <Card padding="lg">
+        <Card className="p-8">
           {error && (
             <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
               {error}
@@ -289,8 +289,8 @@ export default function OnboardingPage() {
                     ${validationError || availabilityStatus === 'taken'
                       ? 'border-red-300 focus:border-red-500 focus:ring-red-200'
                       : availabilityStatus === 'available'
-                      ? 'border-green-300 focus:border-green-500 focus:ring-green-200'
-                      : 'border-gray-300 focus:border-indigo-500 focus:ring-indigo-200'
+                        ? 'border-green-300 focus:border-green-500 focus:ring-green-200'
+                        : 'border-gray-300 focus:border-indigo-500 focus:ring-indigo-200'
                     }
                   `}
                   maxLength={USERNAME_MAX_LENGTH}

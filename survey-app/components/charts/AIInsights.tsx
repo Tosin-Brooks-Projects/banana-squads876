@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Button from '@/components/ui/AnimatedButton';
-import Card from '@/components/ui/Card';
+import { Card } from '@/components/ui/card';
 
 interface SentimentBreakdown {
   positive: number;

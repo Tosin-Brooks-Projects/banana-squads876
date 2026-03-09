@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Button from '@/components/ui/AnimatedButton';
-import Card from '@/components/ui/Card';
+import { Card } from '@/components/ui/card';
 
 interface ResumeDialogProps {
   milestone: number;
@@ -22,7 +22,7 @@ export default function ResumeDialog({
         animate={{ opacity: 1, scale: 1 }}
         className="max-w-md w-full"
       >
-        <Card padding="lg">
+        <Card className="p-8">
           <div className="text-center">
             <div className="text-5xl mb-4">
               {milestone >= 75 ? '🏃' : milestone >= 50 ? '🚶' : '👋'}

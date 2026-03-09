@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import Card from '@/components/ui/Card';
+import { Card } from '@/components/ui/card';
 import Button from '@/components/ui/AnimatedButton';
 import Input from '@/components/ui/Input';
 import { Spinner } from '@/components/ui/LoadingStates';
@@ -96,7 +96,7 @@ export default function VerifyEmailPage() {
           </h2>
         </div>
 
-        <Card padding="lg">
+        <Card className="p-8">
           {error && (
             <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
               {error}

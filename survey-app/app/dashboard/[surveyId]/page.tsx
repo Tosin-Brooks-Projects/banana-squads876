@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { CSVLink } from 'react-csv';
 import Button from '@/components/ui/AnimatedButton';
-import Card from '@/components/ui/Card';
+import { Card } from '@/components/ui/card';
 import { Shimmer, TableSkeleton } from '@/components/ui/LoadingStates';
 import { QuestionCardSkeleton, OverviewSkeleton } from '@/components/charts/ChartSkeleton';
 import { useAuthContext } from '@/contexts/AuthContext';
@@ -956,11 +956,10 @@ export default function SurveyDetailPage() {
                         key={tier.id}
                         onClick={() => setSelectedPaymentTier(tier.id)}
                         disabled={processingPayment}
-                        className={`p-3 rounded-lg border-2 transition-all text-left ${
-                          isSelected
+                        className={`p-3 rounded-lg border-2 transition-all text-left ${isSelected
                             ? 'border-amber-500 bg-white shadow-sm'
                             : 'border-amber-200 bg-amber-50/50 hover:border-amber-300'
-                        } ${processingPayment ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                          } ${processingPayment ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                       >
                         <div className="font-semibold text-amber-900">${tier.price}</div>
                         <div className="text-xs text-amber-700">{tier.name}</div>
@@ -1069,9 +1068,8 @@ export default function SurveyDetailPage() {
           >
             <Card>
               <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-xl ${
-                  survey.status === 'published' ? 'bg-green-50' : survey.status === 'closed' ? 'bg-gray-50' : 'bg-yellow-50'
-                }`}>
+                <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-xl ${survey.status === 'published' ? 'bg-green-50' : survey.status === 'closed' ? 'bg-gray-50' : 'bg-yellow-50'
+                  }`}>
                   {survey.status === 'published' ? '🟢' : survey.status === 'closed' ? '🔴' : '🟡'}
                 </div>
                 <div>
@@ -1197,17 +1195,15 @@ export default function SurveyDetailPage() {
                 <button
                   onClick={handleStatusToggle}
                   disabled={updatingStatus || survey.status === 'draft'}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
-                    survey.status === 'published'
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${survey.status === 'published'
                       ? 'bg-indigo-600'
                       : 'bg-gray-200'
-                  } ${updatingStatus || survey.status === 'draft' ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                    } ${updatingStatus || survey.status === 'draft' ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                   title={survey.status === 'draft' ? 'Publish the survey first to enable this control' : ''}
                 >
                   <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                      survey.status === 'published' ? 'translate-x-6' : 'translate-x-1'
-                    }`}
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${survey.status === 'published' ? 'translate-x-6' : 'translate-x-1'
+                      }`}
                   />
                 </button>
               </div>
@@ -1219,8 +1215,8 @@ export default function SurveyDetailPage() {
                   <p className="text-xs text-gray-500 truncate">
                     {survey.settings?.expiresAt
                       ? (new Date(survey.settings.expiresAt) < new Date()
-                          ? `Expired ${formatDateTime(new Date(survey.settings.expiresAt))}`
-                          : `Expires ${formatDateTime(new Date(survey.settings.expiresAt))}`)
+                        ? `Expired ${formatDateTime(new Date(survey.settings.expiresAt))}`
+                        : `Expires ${formatDateTime(new Date(survey.settings.expiresAt))}`)
                       : 'No expiration set'}
                   </p>
                 </div>
@@ -1230,11 +1226,11 @@ export default function SurveyDetailPage() {
                     type="datetime-local"
                     value={survey.settings?.expiresAt
                       ? (() => {
-                          const d = new Date(survey.settings.expiresAt);
-                          const offset = d.getTimezoneOffset();
-                          const local = new Date(d.getTime() - offset * 60000);
-                          return local.toISOString().slice(0, 16);
-                        })()
+                        const d = new Date(survey.settings.expiresAt);
+                        const offset = d.getTimezoneOffset();
+                        const local = new Date(d.getTime() - offset * 60000);
+                        return local.toISOString().slice(0, 16);
+                      })()
                       : ''
                     }
                     onChange={handleExpirationChange}
@@ -1413,7 +1409,7 @@ export default function SurveyDetailPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: responses.length > 0 ? 0.6 : 0.5 }}
         >
-          <Card padding="none">
+          <Card >
             <div className="p-4 sm:p-6 border-b border-gray-200">
               <h2 className="text-lg font-semibold text-gray-900">Responses</h2>
               <p className="text-gray-500 text-sm mt-1">
@@ -1591,11 +1587,10 @@ export default function SurveyDetailPage() {
                             <button
                               key={pageNum}
                               onClick={() => setCurrentPage(pageNum)}
-                              className={`w-8 h-8 rounded text-sm font-medium ${
-                                currentPage === pageNum
+                              className={`w-8 h-8 rounded text-sm font-medium ${currentPage === pageNum
                                   ? 'bg-indigo-600 text-white'
                                   : 'text-gray-600 hover:bg-gray-100'
-                              }`}
+                                }`}
                             >
                               {pageNum}
                             </button>

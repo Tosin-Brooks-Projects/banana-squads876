@@ -6,7 +6,7 @@ import { motion, AnimatePresence, Reorder } from 'framer-motion';
 import { useAuthContext } from '@/contexts/AuthContext';
 import Button from '@/components/ui/AnimatedButton';
 import Input from '@/components/ui/Input';
-import Card from '@/components/ui/Card';
+import { Card } from '@/components/ui/card';
 import { Spinner } from '@/components/ui/LoadingStates';
 import QuestionEditor, { isQuestionValid } from '@/components/QuestionEditor';
 import SurveySuccessModal from '@/components/SurveySuccessModal';
@@ -795,7 +795,7 @@ export default function CreateSurveyPage() {
         )}
       </div>
 
-      <Card padding="lg">
+      <Card className="p-8">
         <StepIndicator />
 
         <AnimatePresence mode="wait">

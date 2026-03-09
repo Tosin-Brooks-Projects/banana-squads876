@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import Button from '@/components/ui/AnimatedButton';
-import Card from '@/components/ui/Card';
+import { Card } from '@/components/ui/card';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { updateUser, checkUsernameExists, isUsernameReserved } from '@/lib/firebase/firestore';
 import { signOut } from '@/lib/firebase/auth';
@@ -271,11 +271,10 @@ function DeleteAccountModal({
                   <button
                     onClick={onConfirm}
                     disabled={!isConfirmValid || isDeleting}
-                    className={`flex-1 px-4 py-2 rounded-lg font-semibold transition-colors ${
-                      isConfirmValid && !isDeleting
-                        ? 'bg-red-600 text-white hover:bg-red-700'
-                        : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                    }`}
+                    className={`flex-1 px-4 py-2 rounded-lg font-semibold transition-colors ${isConfirmValid && !isDeleting
+                      ? 'bg-red-600 text-white hover:bg-red-700'
+                      : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                      }`}
                   >
                     {isDeleting ? (
                       <span className="flex items-center justify-center gap-2">
@@ -616,7 +615,7 @@ export default function SettingsPage() {
         </AnimatePresence>
 
         {/* Account Settings Card */}
-        <Card padding="lg" className="mb-6">
+        <Card className="p-8 mb-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Account</h2>
 
           {/* Current Username Display */}
@@ -679,8 +678,8 @@ export default function SettingsPage() {
                             ${validationError || availabilityStatus === 'taken' || availabilityStatus === 'same'
                               ? 'border-red-300 focus:border-red-500 focus:ring-red-200'
                               : availabilityStatus === 'available'
-                              ? 'border-green-300 focus:border-green-500 focus:ring-green-200'
-                              : 'border-gray-300 focus:border-indigo-500 focus:ring-indigo-200'
+                                ? 'border-green-300 focus:border-green-500 focus:ring-green-200'
+                                : 'border-gray-300 focus:border-indigo-500 focus:ring-indigo-200'
                             }
                           `}
                           maxLength={USERNAME_MAX_LENGTH}
@@ -775,7 +774,7 @@ export default function SettingsPage() {
         </Card>
 
         {/* Data & Privacy Card */}
-        <Card padding="lg" className="mb-6">
+        <Card className="p-8 mb-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Data & Privacy</h2>
 
           {exportError && (
@@ -822,7 +821,7 @@ export default function SettingsPage() {
         </Card>
 
         {/* Danger Zone Card */}
-        <Card padding="lg" className="border-red-200">
+        <Card className="p-8 border-red-200">
           <h2 className="text-lg font-semibold text-red-600 mb-4">Danger Zone</h2>
 
           {deleteError && (

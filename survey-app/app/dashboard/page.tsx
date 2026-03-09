@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import Button from '@/components/ui/AnimatedButton';
-import Card from '@/components/ui/Card';
+import { Card } from '@/components/ui/card';
 import {
   SurveyCardSkeleton,
   StatCardSkeleton,
@@ -232,7 +232,7 @@ export default function DashboardPage() {
   }, []);
 
   const loadSurveys = useCallback(() => {
-    if (!firebaseUser) return () => {};
+    if (!firebaseUser) return () => { };
 
     setLoading(true);
     setError(null);
@@ -271,7 +271,7 @@ export default function DashboardPage() {
       console.error('Error loading surveys:', err);
       setError('Failed to load surveys');
       setLoading(false);
-      return () => {};
+      return () => { };
     }
   }, [firebaseUser]);
 
@@ -476,7 +476,7 @@ export default function DashboardPage() {
               transition={{ delay: index * 0.05 }}
             >
               <Link href={`/dashboard/${survey.id}`}>
-                <Card hover>
+                <Card className="transition-all hover:shadow-md hover:border-brand-200">
                   {/* Main content */}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3 sm:gap-4 min-w-0">
@@ -501,23 +501,22 @@ export default function DashboardPage() {
                         <p className="text-sm font-semibold text-neutral-900">{survey.stats.totalResponses}</p>
                       </div>
                       <span
-                        className={`px-2 sm:px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap ${
-                          survey.status === 'published'
-                            ? 'bg-green-100 text-green-700'
-                            : survey.status === 'closed'
+                        className={`px-2 sm:px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap ${survey.status === 'published'
+                          ? 'bg-green-100 text-green-700'
+                          : survey.status === 'closed'
                             ? 'bg-neutral-100 text-neutral-700'
                             : survey.paymentStatus === 'unpaid'
-                            ? 'bg-amber-100 text-amber-700'
-                            : 'bg-yellow-100 text-yellow-700'
-                        }`}
+                              ? 'bg-amber-100 text-amber-700'
+                              : 'bg-yellow-100 text-yellow-700'
+                          }`}
                       >
                         {survey.status === 'published'
                           ? 'Active'
                           : survey.status === 'closed'
-                          ? 'Closed'
-                          : survey.paymentStatus === 'unpaid'
-                          ? <><span className="sm:hidden">Unpaid</span><span className="hidden sm:inline">Payment Required</span></>
-                          : 'Draft'}
+                            ? 'Closed'
+                            : survey.paymentStatus === 'unpaid'
+                              ? <><span className="sm:hidden">Unpaid</span><span className="hidden sm:inline">Payment Required</span></>
+                              : 'Draft'}
                       </span>
                       {/* Delete button */}
                       <button

@@ -11,7 +11,7 @@ import DreamHome from '@/components/adventures/DreamHome';
 import CoffeeBrewer from '@/components/adventures/CoffeeBrewer';
 import ResumeDialog from '@/components/survey/ResumeDialog';
 import Button from '@/components/ui/AnimatedButton';
-import Card from '@/components/ui/Card';
+import { Card } from '@/components/ui/card';
 import { SurveySkeleton } from '@/components/ui/Skeleton';
 import {
   SurveyNotFound,
@@ -921,7 +921,7 @@ export default function SurveyPage() {
           animate={{ opacity: 1, scale: 1 }}
           className="max-w-md w-full"
         >
-          <Card padding="lg">
+          <Card className="p-8">
             <div className="text-center">
               <motion.div
                 animate={{ rotate: [0, 10, -10, 0] }}
@@ -974,7 +974,7 @@ export default function SurveyPage() {
           animate={{ opacity: 1, scale: 1 }}
           className="max-w-md w-full"
         >
-          <Card padding="lg">
+          <Card className="p-8">
             <div className="text-center">
               {/* Show celebration icon with adventure-specific emoji */}
               <motion.div

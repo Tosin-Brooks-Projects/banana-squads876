@@ -1,6 +1,5 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import Link from 'next/link';
 import AnimatedButton from '@/components/ui/AnimatedButton';
 import Footer from '@/components/Footer';
@@ -107,7 +106,7 @@ function TestimonialCard({ img, name, username, body, country }: (typeof testimo
             <p className="text-xs font-medium text-neutral-500">{username}</p>
           </div>
         </div>
-        <blockquote className="mt-3 text-sm text-neutral-600 leading-relaxed italic">"{body}"</blockquote>
+        <blockquote className="mt-3 text-sm text-neutral-600 leading-relaxed italic">&quot;{body}&quot;</blockquote>
       </CardContent>
     </Card>
   );

@@ -1,9 +1,7 @@
 'use client';
-
 import { motion } from 'framer-motion';
-import Button from './Button';
-import Card from './Card';
-
+import { Button } from './button';
+import { Card } from './card';
 interface ErrorStateProps {
   title?: string;
   message?: string;
@@ -12,7 +10,6 @@ interface ErrorStateProps {
   onBack?: () => void;
   showCreateLink?: boolean;
 }
-
 // Survey not found (404)
 export function SurveyNotFound({
   title = 'Survey Not Found',
@@ -27,7 +24,7 @@ export function SurveyNotFound({
         animate={{ opacity: 1, scale: 1 }}
         className="max-w-md w-full"
       >
-        <Card padding="lg">
+        <Card className="p-8">
           <div className="text-center">
             <motion.div
               initial={{ scale: 0, rotate: -20 }}
@@ -53,7 +50,6 @@ export function SurveyNotFound({
             >
               {message}
             </motion.p>
-
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -63,7 +59,6 @@ export function SurveyNotFound({
               {onBack && (
                 <Button
                   variant="outline"
-                  size="md"
                   className="w-full"
                   onClick={onBack}
                 >
@@ -73,7 +68,6 @@ export function SurveyNotFound({
               {showCreateLink && (
                 <Button
                   variant="ghost"
-                  size="md"
                   className="w-full"
                   onClick={() => window.location.href = '/dashboard'}
                 >
@@ -87,7 +81,6 @@ export function SurveyNotFound({
     </div>
   );
 }
-
 // Network/connection error
 export function NetworkError({
   title = "Couldn't Load Survey",
@@ -101,7 +94,7 @@ export function NetworkError({
         animate={{ opacity: 1, scale: 1 }}
         className="max-w-md w-full"
       >
-        <Card padding="lg">
+        <Card className="p-8">
           <div className="text-center">
             <motion.div
               initial={{ scale: 0 }}
@@ -127,14 +120,13 @@ export function NetworkError({
             >
               {message}
             </motion.p>
-
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4 }}
             >
               {onRetry && (
-                <Button size="md" className="w-full" onClick={onRetry}>
+                <Button  className="w-full" onClick={onRetry}>
                   <span className="flex items-center justify-center gap-2">
                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -150,7 +142,6 @@ export function NetworkError({
     </div>
   );
 }
-
 // Survey expired
 export function SurveyExpired({
   title = 'Survey Has Expired',
@@ -164,7 +155,7 @@ export function SurveyExpired({
         animate={{ opacity: 1, scale: 1 }}
         className="max-w-md w-full"
       >
-        <Card padding="lg">
+        <Card className="p-8">
           <div className="text-center">
             <motion.div
               initial={{ scale: 0 }}
@@ -190,14 +181,13 @@ export function SurveyExpired({
             >
               {message}
             </motion.p>
-
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4 }}
             >
               {onBack && (
-                <Button variant="outline" size="md" className="w-full" onClick={onBack}>
+                <Button variant="outline"  className="w-full" onClick={onBack}>
                   Go Back
                 </Button>
               )}
@@ -208,7 +198,6 @@ export function SurveyExpired({
     </div>
   );
 }
-
 // Survey response limit reached
 export function ResponseLimitReached({
   title = 'Survey Full',
@@ -222,7 +211,7 @@ export function ResponseLimitReached({
         animate={{ opacity: 1, scale: 1 }}
         className="max-w-md w-full"
       >
-        <Card padding="lg">
+        <Card className="p-8">
           <div className="text-center">
             <motion.div
               initial={{ scale: 0 }}
@@ -248,14 +237,13 @@ export function ResponseLimitReached({
             >
               {message}
             </motion.p>
-
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4 }}
             >
               {onBack && (
-                <Button variant="outline" size="md" className="w-full" onClick={onBack}>
+                <Button variant="outline"  className="w-full" onClick={onBack}>
                   Go Back
                 </Button>
               )}
@@ -266,7 +254,6 @@ export function ResponseLimitReached({
     </div>
   );
 }
-
 // Survey not published/unavailable
 export function SurveyUnavailable({
   title = 'Survey Not Available',
@@ -280,7 +267,7 @@ export function SurveyUnavailable({
         animate={{ opacity: 1, scale: 1 }}
         className="max-w-md w-full"
       >
-        <Card padding="lg">
+        <Card className="p-8">
           <div className="text-center">
             <motion.div
               initial={{ scale: 0 }}
@@ -306,14 +293,13 @@ export function SurveyUnavailable({
             >
               {message}
             </motion.p>
-
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4 }}
             >
               {onBack && (
-                <Button variant="outline" size="md" className="w-full" onClick={onBack}>
+                <Button variant="outline"  className="w-full" onClick={onBack}>
                   Go Back
                 </Button>
               )}
@@ -324,7 +310,6 @@ export function SurveyUnavailable({
     </div>
   );
 }
-
 // Submission error
 export function SubmissionError({
   title = 'Failed to Save Response',
@@ -339,7 +324,7 @@ export function SubmissionError({
         animate={{ opacity: 1, scale: 1 }}
         className="max-w-md w-full"
       >
-        <Card padding="lg">
+        <Card className="p-8">
           <div className="text-center">
             <motion.div
               initial={{ scale: 0 }}
@@ -365,7 +350,6 @@ export function SubmissionError({
             >
               {message}
             </motion.p>
-
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -373,12 +357,12 @@ export function SubmissionError({
               className="space-y-3"
             >
               {onRetry && (
-                <Button size="md" className="w-full" onClick={onRetry}>
+                <Button  className="w-full" onClick={onRetry}>
                   Try Again
                 </Button>
               )}
               {onSkip && (
-                <Button variant="ghost" size="md" className="w-full" onClick={onSkip}>
+                <Button variant="ghost"  className="w-full" onClick={onSkip}>
                   Skip and Continue
                 </Button>
               )}
@@ -389,7 +373,6 @@ export function SubmissionError({
     </div>
   );
 }
-
 // Inline form validation error
 export function InlineError({ message }: { message: string }) {
   return (
@@ -406,7 +389,6 @@ export function InlineError({ message }: { message: string }) {
     </motion.p>
   );
 }
-
 // Success indicator (for saving states)
 export function SavingIndicator({ message = 'Saving...' }: { message?: string }) {
   return (
@@ -452,7 +434,6 @@ export function SavingIndicator({ message = 'Saving...' }: { message?: string })
     </div>
   );
 }
-
 // Compact saving indicator for inline use
 export function InlineSavingIndicator({ message = 'Saving...' }: { message?: string }) {
   return (
@@ -470,7 +451,6 @@ export function InlineSavingIndicator({ message = 'Saving...' }: { message?: str
     </motion.div>
   );
 }
-
 const ErrorStates = {
   SurveyNotFound,
   NetworkError,
@@ -482,5 +462,4 @@ const ErrorStates = {
   SavingIndicator,
   InlineSavingIndicator,
 };
-
 export default ErrorStates;
