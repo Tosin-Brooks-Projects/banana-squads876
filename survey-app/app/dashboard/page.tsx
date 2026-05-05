@@ -55,54 +55,48 @@ function SurveyItem({ survey, index, onDelete }: { survey: SurveyWithStats; inde
       className="group"
     >
       <Link href={`/dashboard/${survey.id}`}>
-        <div className="relative p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 transition-all duration-300 bg-white border-4 border-gray-100 rounded-[32px] shadow-[8px_8px_0px_0px_rgba(0,0,0,0.03)] hover:shadow-none hover:translate-y-[4px] hover:border-orange-200">
-          <div className="flex items-center gap-6 min-w-0">
-            <div className="w-16 h-16 bg-gray-50 border-2 border-gray-100 rounded-2xl flex items-center justify-center group-hover:scale-105 transition-all p-2 group-hover:border-orange-100">
-              <img 
-                src={getAdventureImage(survey.adventureType)} 
-                alt={survey.adventureType} 
-                className="w-full h-full object-contain"
-              />
-            </div>
-            <div className="min-w-0">
-              <div className="flex items-center gap-3 mb-1">
-                <h3 className="text-xl font-black text-gray-900 truncate tracking-tight group-hover:text-orange-600 transition-colors">
-                  {survey.title}
-                </h3>
-                <StatusBadge status={survey.status} paymentStatus={survey.paymentStatus} />
-              </div>
-              <p className="text-gray-400 text-[10px] font-black uppercase tracking-widest">
-                {getAdventureLabel(survey.adventureType)} • Launched {formatDate(survey.createdAt)}
-              </p>
-            </div>
+        <div className="relative p-4 sm:p-6 flex items-center gap-3 sm:gap-6 transition-all duration-300 bg-white border-4 border-gray-100 rounded-2xl sm:rounded-[32px] shadow-[4px_4px_0px_0px_rgba(0,0,0,0.03)] sm:shadow-[8px_8px_0px_0px_rgba(0,0,0,0.03)] hover:shadow-none hover:translate-y-[4px] hover:border-orange-200">
+          {/* Icon */}
+          <div className="w-12 h-12 sm:w-16 sm:h-16 flex-shrink-0 bg-gray-50 border-2 border-gray-100 rounded-xl sm:rounded-2xl flex items-center justify-center group-hover:scale-105 transition-all p-1.5 sm:p-2 group-hover:border-orange-100">
+            <img
+              src={getAdventureImage(survey.adventureType)}
+              alt={survey.adventureType}
+              className="w-full h-full object-contain"
+            />
           </div>
 
-          <div className="flex items-center gap-8 md:gap-12 ml-0 md:ml-auto shrink-0">
-             <div className="text-center md:text-right">
-                <p className="text-3xl font-black text-gray-900 tabular-nums leading-none">
-                  {survey.stats.totalResponses}
-                </p>
-                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-1">Responses</p>
-             </div>
- 
-             <div className="hidden lg:block text-right">
-                <p className="text-xl font-black text-gray-900 tabular-nums leading-none">
-                  {survey.stats.completionRate}%
-                </p>
-                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-1">Completion</p>
-             </div>
- 
-             <div className="flex items-center gap-2">
-                <button
-                  onClick={(e) => onDelete(e, survey)}
-                  className="p-3 text-gray-300 hover:text-red-500 transition-colors"
-                >
-                  <Trash2 className="w-5 h-5" />
-                </button>
-                <div className="p-4 rounded-2xl bg-orange-500 text-white shadow-[0_4px_0_#c2410c] group-hover:bg-orange-600 transition-all">
-                  <ChevronRight className="w-5 h-5" strokeWidth={4} />
-                </div>
-             </div>
+          {/* Title + meta */}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-0.5">
+              <h3 className="text-sm sm:text-xl font-black text-gray-900 truncate tracking-tight group-hover:text-orange-600 transition-colors">
+                {survey.title}
+              </h3>
+              <StatusBadge status={survey.status} paymentStatus={survey.paymentStatus} />
+            </div>
+            <p className="text-gray-400 text-[9px] sm:text-[10px] font-black uppercase tracking-widest truncate">
+              {getAdventureLabel(survey.adventureType)} · {formatDate(survey.createdAt)}
+            </p>
+          </div>
+
+          {/* Stats + actions */}
+          <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
+            <div className="text-right hidden sm:block">
+              <p className="text-2xl font-black text-gray-900 tabular-nums leading-none">{survey.stats.totalResponses}</p>
+              <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-0.5">Responses</p>
+            </div>
+            <div className="text-right sm:hidden">
+              <p className="text-lg font-black text-gray-900 tabular-nums">{survey.stats.totalResponses}</p>
+              <p className="text-[8px] font-black text-gray-400 uppercase">resp.</p>
+            </div>
+            <button
+              onClick={(e) => onDelete(e, survey)}
+              className="p-2 text-gray-300 hover:text-red-500 transition-colors"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+            <div className="p-2 sm:p-3 rounded-xl sm:rounded-2xl bg-orange-500 text-white shadow-[0_4px_0_#c2410c] group-hover:bg-orange-600 transition-all">
+              <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={4} />
+            </div>
           </div>
         </div>
       </Link>
@@ -202,16 +196,16 @@ export default function DashboardPage() {
             rotate: [0, 5, -5, 0]
           }}
           transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-          className="w-48 h-48 bg-orange-50 rounded-[40px] border-4 border-orange-100 p-8 flex items-center justify-center mb-10 shadow-xl relative"
+          className="w-32 h-32 sm:w-48 sm:h-48 bg-orange-50 rounded-[40px] border-4 border-orange-100 p-6 sm:p-8 flex items-center justify-center mb-8 sm:mb-10 shadow-xl relative"
         >
           <div className="absolute inset-4 bg-orange-200 blur-2xl opacity-20 rounded-full" />
           <img src="/orange-kea-mascot.png" alt="Mascot" className="w-full h-full object-contain relative z-10" />
         </motion.div>
         
-        <h1 className="text-4xl font-black tracking-tight text-gray-900 mb-4">
+        <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-gray-900 mb-3 sm:mb-4">
           No adventures yet!
         </h1>
-        <p className="text-gray-500 text-lg max-w-md mb-10 font-medium">
+        <p className="text-gray-500 text-base sm:text-lg max-w-md mb-8 sm:mb-10 font-medium">
           Ready to turn boring forms into engaging quests? Create your first survey adventure in seconds.
         </p>
         <Link href="/dashboard/create?new=true">
@@ -224,78 +218,79 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="space-y-12 py-10">
+    <div className="space-y-6 py-2 sm:space-y-12 sm:py-10">
       {/* Header */}
-      <header className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <header className="flex items-center justify-between gap-4">
         <div>
-           <div className="flex items-center gap-3 mb-2">
-              <div className="w-4 h-4 rounded-full bg-orange-500 shadow-[0_2px_0_rgba(0,0,0,0.1)]" />
-              <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Command Center</span>
+           <div className="flex items-center gap-2 mb-1">
+              <div className="w-3 h-3 rounded-full bg-orange-500" />
+              <span className="text-[9px] font-black uppercase tracking-widest text-gray-400">Command Center</span>
            </div>
-           <h1 className="text-5xl font-black tracking-tight text-gray-900">
+           <h1 className="text-2xl sm:text-5xl font-black tracking-tight text-gray-900">
              Quest <span className="text-orange-500">Board</span>
            </h1>
         </div>
         <Link href="/dashboard/create?new=true">
-          <button className="px-8 py-4 bg-orange-500 hover:bg-orange-600 text-white rounded-2xl font-black text-sm uppercase tracking-widest border-b-4 border-orange-700 transition-all active:border-b-0 active:translate-y-1 shadow-lg shadow-orange-500/20 flex items-center gap-2">
-            <PlusCircle className="w-5 h-5" />
-            New Mission
+          <button className="flex-shrink-0 px-4 sm:px-8 py-3 sm:py-4 bg-orange-500 hover:bg-orange-600 text-white rounded-2xl font-black text-xs sm:text-sm uppercase tracking-widest border-b-4 border-orange-700 transition-all active:border-b-0 active:translate-y-1 shadow-lg shadow-orange-500/20 flex items-center gap-2">
+            <PlusCircle className="w-4 h-4 sm:w-5 sm:h-5" />
+            <span className="hidden sm:inline">New Mission</span>
+            <span className="sm:hidden">New</span>
           </button>
         </Link>
       </header>
 
       {/* Stats Tactile Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
         {/* Total Responses */}
-        <div className="bg-white border-4 border-gray-100 rounded-[32px] p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.02)] group hover:border-indigo-100 transition-all">
-           <div className="flex items-center justify-between mb-8">
-              <div className="p-3 rounded-2xl bg-indigo-50 text-indigo-600 border-2 border-indigo-100">
-                <BarChart3 className="w-6 h-6" />
+        <div className="bg-white border-4 border-gray-100 rounded-2xl sm:rounded-[32px] p-4 sm:p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.02)] group hover:border-indigo-100 transition-all">
+           <div className="flex items-center justify-between mb-4 sm:mb-8">
+              <div className="p-2 sm:p-3 rounded-xl sm:rounded-2xl bg-indigo-50 text-indigo-600 border-2 border-indigo-100">
+                <BarChart3 className="w-4 h-4 sm:w-6 sm:h-6" />
               </div>
-              <span className="text-[10px] font-black text-indigo-300 uppercase tracking-widest">Global XP</span>
+              <span className="text-[9px] font-black text-indigo-300 uppercase tracking-widest hidden sm:block">Global XP</span>
            </div>
            <div>
-              <p className="text-5xl font-black text-gray-900 tabular-nums leading-none">
+              <p className="text-3xl sm:text-5xl font-black text-gray-900 tabular-nums leading-none">
                 {totalResponses}
               </p>
-              <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-3">Total Responses</p>
+              <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-2 sm:mt-3">Total Responses</p>
            </div>
         </div>
 
         {/* Active Surveys */}
-        <div className="bg-white border-4 border-gray-100 rounded-[32px] p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.02)] group hover:border-green-100 transition-all">
-           <div className="flex items-center justify-between mb-8">
-              <div className="p-3 rounded-2xl bg-green-50 text-green-600 border-2 border-green-100">
-                <CheckCircle2 className="w-6 h-6" />
+        <div className="bg-white border-4 border-gray-100 rounded-2xl sm:rounded-[32px] p-4 sm:p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.02)] group hover:border-green-100 transition-all">
+           <div className="flex items-center justify-between mb-4 sm:mb-8">
+              <div className="p-2 sm:p-3 rounded-xl sm:rounded-2xl bg-green-50 text-green-600 border-2 border-green-100">
+                <CheckCircle2 className="w-4 h-4 sm:w-6 sm:h-6" />
               </div>
-              <span className="text-[10px] font-black text-green-300 uppercase tracking-widest">Active Quests</span>
+              <span className="text-[9px] font-black text-green-300 uppercase tracking-widest hidden sm:block">Active Quests</span>
            </div>
            <div>
-              <p className="text-5xl font-black text-gray-900 tabular-nums leading-none">
+              <p className="text-3xl sm:text-5xl font-black text-gray-900 tabular-nums leading-none">
                 {activeSurveys}
               </p>
-              <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-3">Currently Live</p>
+              <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-2 sm:mt-3">Currently Live</p>
            </div>
         </div>
 
         {/* Total Surveys */}
-        <div className="bg-white border-4 border-gray-100 rounded-[32px] p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.02)] group hover:border-orange-100 transition-all">
-           <div className="flex items-center justify-between mb-8">
-              <div className="p-3 rounded-2xl bg-orange-50 text-orange-600 border-2 border-orange-100">
-                <Clock className="w-6 h-6" />
+        <div className="bg-white border-4 border-gray-100 rounded-2xl sm:rounded-[32px] p-4 sm:p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.02)] group hover:border-orange-100 transition-all">
+           <div className="flex items-center justify-between mb-4 sm:mb-8">
+              <div className="p-2 sm:p-3 rounded-xl sm:rounded-2xl bg-orange-50 text-orange-600 border-2 border-orange-100">
+                <Clock className="w-4 h-4 sm:w-6 sm:h-6" />
               </div>
-              <span className="text-[10px] font-black text-orange-300 uppercase tracking-widest">Mission History</span>
+              <span className="text-[9px] font-black text-orange-300 uppercase tracking-widest hidden sm:block">Mission History</span>
            </div>
            <div>
-              <p className="text-5xl font-black text-gray-900 tabular-nums leading-none">
+              <p className="text-3xl sm:text-5xl font-black text-gray-900 tabular-nums leading-none">
                 {surveys.length}
               </p>
-              <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-3">Total Created</p>
+              <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-2 sm:mt-3">Total Created</p>
            </div>
         </div>
 
         {/* Mascot Card */}
-        <div className="bg-gray-900 border-4 border-gray-900 rounded-[32px] p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.1)] flex flex-col justify-between relative overflow-hidden group">
+        <div className="bg-gray-900 border-4 border-gray-900 rounded-2xl sm:rounded-[32px] p-4 sm:p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.1)] flex flex-col justify-between relative overflow-hidden group">
            <div className="absolute bottom-[-15%] right-[-10%] w-32 h-32 opacity-30 group-hover:scale-110 group-hover:-rotate-6 transition-all duration-700 pointer-events-none">
               <img src="/orange-kea-mascot.png" alt="" className="w-full h-full object-contain" />
            </div>

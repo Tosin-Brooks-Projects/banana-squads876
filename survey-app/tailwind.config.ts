@@ -20,7 +20,18 @@ const config: Config = {
           graphite: "#777777",
           charcoal: "#4b4b4b",
           black: "#3c3c3c",
+          silver: "#afafaf",
         },
+        // DESIGN.md flat token aliases
+        "cloud-gray": "#e5e5e5",
+        "almost-black": "#3c3c3c",
+        graphite: "#777777",
+        charcoal: "#4b4b4b",
+        silver: "#afafaf",
+        "sky-blue": "#1cb0f6",
+        "sunshine-yellow": "#ffc700",
+        "grape-soda": "#a570ff",
+        "bubblegum-pink": "#cc348d",
         brand: {
           50: '#fef7f4',
           100: '#fdeee8',

@@ -81,7 +81,7 @@ export default function SurveySuccessModal({
                   className="w-48 h-48 mx-auto mb-6"
                 >
                   <img 
-                    src="/success-mascot.png" 
+                    src="/orange-kea-mascot-success.png"
                     alt="Celebration!" 
                     className="w-full h-full object-contain"
                   />

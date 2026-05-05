@@ -24,6 +24,7 @@ import { Spinner } from '@/components/ui/LoadingStates';
 import QuestionEditor, { isQuestionValid } from '@/components/QuestionEditor';
 import SurveySuccessModal from '@/components/SurveySuccessModal';
 import { AdventureType, Question, MultipleChoiceQuestion, PricingTier, PRICING_TIERS, FREE_TIER_THEMES, SurveySettings } from '@/lib/types';
+import { getAdventureLabel } from '@/lib/utils/helpers';
 import {
   createSurvey as createSurveyInFirestore,
   createFreeSurveyAtomic,
@@ -304,9 +305,9 @@ export default function CreateSurveyPage() {
   ];
 
   return (
-    <div className="max-w-4xl mx-auto py-12 px-6">
+    <div className="max-w-4xl mx-auto py-4 sm:py-12">
       {/* Header / Progress */}
-      <div className="flex items-center gap-6 mb-16">
+      <div className="flex items-center gap-4 sm:gap-6 mb-8 sm:mb-16">
         <button
           onClick={() => currentStep > 1 ? setCurrentStep(currentStep - 1) : router.push('/dashboard')}
           className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white border-2 border-duo-gray shadow-[0_4px_0_#e5e5e5] text-duo-graphite transition-all active:translate-y-[2px] active:shadow-none"
@@ -343,10 +344,10 @@ export default function CreateSurveyPage() {
             </div>
 
             <div className="space-y-4">
-              <h1 className="text-4xl font-fredoka font-bold tracking-tight text-duo-black text-center md:text-left">
+              <h1 className="text-2xl sm:text-4xl font-fredoka font-bold tracking-tight text-duo-black text-center md:text-left">
                 What&apos;s the goal of this <span className="text-duo-green">Quest?</span>
               </h1>
-              <p className="text-duo-graphite text-lg font-fredoka font-medium text-center md:text-left">
+              <p className="text-duo-graphite text-base sm:text-lg font-fredoka font-medium text-center md:text-left">
                 Describe your project. Our AI will build the entire adventure for you.
               </p>
             </div>
@@ -356,7 +357,7 @@ export default function CreateSurveyPage() {
                 value={formData.context}
                 onChange={(e) => setFormData(prev => ({ ...prev, context: e.target.value }))}
                 placeholder="e.g. I want to collect feedback on our new ice cream flavors from kids aged 5-12..."
-                className="w-full h-64 p-8 bg-white rounded-[2rem] border-2 border-duo-gray focus:border-duo-blue focus:ring-0 text-xl font-fredoka font-medium placeholder:text-duo-silver resize-none shadow-[0_6px_0_#e5e5e5] transition-all outline-none"
+                className="w-full h-48 sm:h-64 p-5 sm:p-8 bg-white rounded-[2rem] border-2 border-duo-gray focus:border-duo-blue focus:ring-0 text-base sm:text-xl font-fredoka font-medium placeholder:text-duo-silver resize-none shadow-[0_6px_0_#e5e5e5] transition-all outline-none"
               />
             </div>
 
@@ -394,7 +395,7 @@ export default function CreateSurveyPage() {
             className="space-y-12"
           >
             <div className="space-y-4">
-              <h1 className="text-4xl font-fredoka font-bold tracking-tight text-duo-black text-center md:text-left">
+              <h1 className="text-2xl sm:text-4xl font-fredoka font-bold tracking-tight text-duo-black text-center md:text-left">
                 Select your <span className="text-duo-blue">World</span>
               </h1>
               <p className="text-duo-graphite text-lg font-fredoka font-medium text-center md:text-left">
@@ -449,7 +450,7 @@ export default function CreateSurveyPage() {
             className="space-y-12"
           >
             <div className="space-y-4">
-              <h1 className="text-4xl font-fredoka font-bold tracking-tight text-duo-black text-center md:text-left">
+              <h1 className="text-2xl sm:text-4xl font-fredoka font-bold tracking-tight text-duo-black text-center md:text-left">
                 Configure your <span className="text-duo-purple">Quest</span>
               </h1>
               <p className="text-duo-graphite text-lg font-fredoka font-medium text-center md:text-left">
@@ -578,7 +579,7 @@ export default function CreateSurveyPage() {
             className="space-y-16 pb-24 max-w-4xl mx-auto"
           >
             <div className="text-center space-y-4">
-              <h1 className="text-5xl font-fredoka font-bold tracking-tight text-duo-black">
+              <h1 className="text-2xl sm:text-5xl font-fredoka font-bold tracking-tight text-duo-black">
                 Your Quest is <span className="text-duo-green">Ready!</span>
               </h1>
               <p className="text-duo-graphite text-lg font-fredoka font-medium">
@@ -635,7 +636,7 @@ export default function CreateSurveyPage() {
                      <div className="absolute -bottom-4 -right-4 w-48 h-48 opacity-20 pointer-events-none group-hover:opacity-40 transition-opacity z-0">
                         <img 
                           src="/orange-kea-mascot.png" 
-                          alt={getAdventureLabel(formData.adventureType)}
+                          alt={getAdventureLabel(formData.theme)}
                           className="w-full h-full object-contain relative z-10 drop-shadow-xl"
                         />
                      </div>

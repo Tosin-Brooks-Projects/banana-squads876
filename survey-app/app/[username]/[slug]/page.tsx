@@ -305,31 +305,24 @@ function RedirectToast({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: -50 }}
+      initial={{ opacity: 0, y: -40 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -50 }}
-      className="fixed top-4 left-1/2 -translate-x-1/2 z-50 max-w-md w-full mx-4"
+      exit={{ opacity: 0, y: -40 }}
+      className="fixed top-4 left-1/2 -translate-x-1/2 z-50 max-w-sm w-[calc(100%-2rem)]"
     >
-      <div className="bg-white rounded-lg shadow-lg border border-indigo-200 p-4 flex items-center gap-3">
-        <div className="flex-shrink-0 w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center">
-          <svg className="w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+      <div className="bg-white rounded-2xl border-2 border-duo-gray shadow-[0_4px_0_#e5e5e5] p-4 flex items-center gap-3">
+        <div className="flex-shrink-0 w-9 h-9 bg-sky-blue/10 rounded-xl flex items-center justify-center">
+          <svg className="w-4 h-4 text-sky-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
           </svg>
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-gray-900">
-            This survey has moved
-          </p>
-          <p className="text-sm text-gray-500 truncate">
-            New location: <span className="font-mono text-indigo-600">{newUsername}</span>
-          </p>
+          <p className="text-xs font-black uppercase tracking-wider text-almost-black">Survey moved</p>
+          <p className="text-[10px] font-bold text-graphite truncate">Now at: <span className="text-sky-blue">{newUsername}</span></p>
         </div>
-        <button
-          onClick={onDismiss}
-          className="flex-shrink-0 text-gray-400 hover:text-gray-600"
-        >
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+        <button onClick={onDismiss} className="flex-shrink-0 text-silver hover:text-graphite transition-colors">
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
       </div>
@@ -905,8 +898,14 @@ export default function SurveyPage() {
     }
 
     return (
-      <div className="min-h-screen bg-gradient-to-b from-indigo-50 via-white to-pink-50 flex items-center justify-center p-6">
-        {/* Redirect toast notification */}
+      <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6 relative overflow-hidden">
+        {/* Subtle background texture */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-0 left-0 w-64 h-64 bg-duo-green/5 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
+          <div className="absolute bottom-0 right-0 w-64 h-64 bg-sky-blue/5 rounded-full blur-3xl translate-x-1/2 translate-y-1/2" />
+        </div>
+
+        {/* Redirect toast */}
         <AnimatePresence>
           {redirectedFrom && (
             <RedirectToast
@@ -917,30 +916,74 @@ export default function SurveyPage() {
         </AnimatePresence>
 
         <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="max-w-md w-full"
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, ease: 'easeOut' }}
+          className="max-w-sm w-full relative z-10"
         >
-          <Card className="p-8">
-            <div className="text-center">
-              <motion.div
-                animate={{ rotate: [0, 10, -10, 0] }}
-                transition={{ repeat: Infinity, duration: 2 }}
-                className="text-6xl mb-6"
-              >
-                {emoji}
-              </motion.div>
-              <h1 className="text-2xl font-bold text-gray-900 mb-2">
-                {survey.title}
-              </h1>
-              {survey.description && (
-                <p className="text-gray-600 mb-6">{survey.description}</p>
-              )}
-              <Button size="lg" className="w-full" onClick={handleStart}>
-                Start Adventure
-              </Button>
+          {/* Brand */}
+          <div className="text-center mb-8">
+            <span className="font-fredoka text-2xl font-bold tracking-tight text-almost-black">
+              Unboring<span className="text-duo-green">.</span>
+            </span>
+          </div>
+
+          {/* Adventure icon */}
+          <div className="flex justify-center mb-6">
+            <motion.div
+              animate={{ y: [0, -10, 0] }}
+              transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+              className="w-32 h-32 bg-white rounded-[2.5rem] border-4 border-cloud-gray shadow-[0_8px_0_#e5e5e5] flex items-center justify-center"
+            >
+              <span className="text-6xl">{emoji}</span>
+            </motion.div>
+          </div>
+
+          {/* Adventure type pill */}
+          <div className="flex justify-center mb-5">
+            <span className="px-3 py-1 bg-duo-green/10 text-duo-green text-[10px] font-black uppercase tracking-widest rounded-full border border-duo-green/20">
+              {getAdventureLabel(survey.adventureType)}
+            </span>
+          </div>
+
+          {/* Title & description */}
+          <div className="text-center mb-8 px-2">
+            <h1 className="font-fredoka text-3xl font-bold tracking-tight text-almost-black mb-3 leading-tight">
+              {survey.title}
+            </h1>
+            {survey.description && (
+              <p className="text-graphite text-sm font-medium leading-relaxed">
+                {survey.description}
+              </p>
+            )}
+          </div>
+
+          {/* Question count badge */}
+          <div className="flex items-center justify-center gap-4 mb-8">
+            <div className="flex items-center gap-2 px-4 py-2 bg-cloud-gray/40 rounded-2xl border-2 border-cloud-gray">
+              <span className="text-[10px] font-black text-graphite uppercase tracking-widest">
+                {survey.questions.length} Questions
+              </span>
             </div>
-          </Card>
+            <div className="flex items-center gap-2 px-4 py-2 bg-cloud-gray/40 rounded-2xl border-2 border-cloud-gray">
+              <span className="text-[10px] font-black text-graphite uppercase tracking-widest">
+                {survey.settings?.allowAnonymous === false ? 'Name & Email' : 'Anonymous'}
+              </span>
+            </div>
+          </div>
+
+          {/* CTA button — Duolingo 3D style */}
+          <motion.button
+            whileTap={{ scale: 0.97 }}
+            onClick={handleStart}
+            className="w-full py-5 bg-duo-green text-white font-fredoka font-bold text-xl uppercase tracking-widest rounded-2xl border-b-4 border-[#46a302] shadow-[0_4px_0_#3f8f01] transition-all hover:brightness-105 active:translate-y-[3px] active:shadow-none active:border-b-0"
+          >
+            Start Adventure! 🚀
+          </motion.button>
+
+          <p className="text-center text-[10px] text-silver font-bold uppercase tracking-widest mt-6">
+            free · no account needed
+          </p>
         </motion.div>
       </div>
     );
@@ -968,54 +1011,94 @@ export default function SurveyPage() {
     void _adventureLabel;
 
     return (
-      <div className="min-h-screen bg-gradient-to-b from-green-50 via-white to-emerald-50 flex items-center justify-center p-6">
+      <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6 relative overflow-hidden">
+        {/* Background accents */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-0 left-0 w-72 h-72 bg-duo-green/8 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
+          <div className="absolute bottom-0 right-0 w-72 h-72 bg-sunshine-yellow/10 rounded-full blur-3xl translate-x-1/2 translate-y-1/2" />
+        </div>
+
         <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="max-w-md w-full"
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="max-w-sm w-full relative z-10 text-center"
         >
-          <Card className="p-8">
-            <div className="text-center">
-              {/* Show celebration icon with adventure-specific emoji */}
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ type: 'spring', bounce: 0.5 }}
-                className="text-6xl mb-6"
-              >
-                {getAdventureEmoji(survey.adventureType)}
-              </motion.div>
+          {/* Brand */}
+          <div className="mb-8">
+            <span className="font-fredoka text-2xl font-bold tracking-tight text-almost-black">
+              Unboring<span className="text-duo-green">.</span>
+            </span>
+          </div>
 
-              <motion.h1
-                className="text-2xl font-bold text-gray-900 mb-4"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-              >
-                Thanks for completing this challenge!
-              </motion.h1>
-
-              <motion.p
-                className="text-gray-600 mb-6"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.4 }}
-              >
-                Your response has been recorded.
-              </motion.p>
-
-              <motion.div
-                className="space-y-3"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.7 }}
-              >
-                <p className="text-sm text-gray-500">
-                  You can safely close this tab now.
-                </p>
-              </motion.div>
+          {/* Success mascot */}
+          <motion.div
+            initial={{ scale: 0, rotate: -10 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ type: 'spring', bounce: 0.5, delay: 0.1 }}
+            className="w-36 h-36 mx-auto mb-6 relative"
+          >
+            <div className="w-full h-full bg-duo-green/10 rounded-[2.5rem] border-4 border-duo-green/20 flex items-center justify-center">
+              <img src="/orange-kea-mascot-success.png" alt="Quest complete!" className="w-24 h-24 object-contain" />
             </div>
-          </Card>
+            {/* Sparkle badges */}
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.5, type: 'spring' }}
+              className="absolute -top-3 -right-3 w-10 h-10 bg-sunshine-yellow rounded-full border-4 border-white shadow-lg flex items-center justify-center text-lg"
+            >
+              ⭐
+            </motion.div>
+          </motion.div>
+
+          {/* Headline */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25 }}
+          >
+            <h1 className="font-fredoka text-4xl font-bold tracking-tight text-almost-black mb-2">
+              Quest <span className="text-duo-green">Complete!</span>
+            </h1>
+            <p className="text-graphite text-sm font-bold uppercase tracking-widest mb-8">
+              Your response has been recorded ✓
+            </p>
+          </motion.div>
+
+          {/* XP card */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="bg-duo-green/10 rounded-3xl border-2 border-duo-green/20 p-6 mb-8"
+          >
+            <p className="text-[10px] font-black text-duo-green uppercase tracking-widest mb-3">Achievement Unlocked</p>
+            <div className="flex items-center justify-center gap-4">
+              <div className="text-center">
+                <p className="text-3xl font-black text-almost-black">{survey.questions.length}</p>
+                <p className="text-[9px] font-black text-graphite uppercase tracking-widest mt-0.5">Questions</p>
+              </div>
+              <div className="w-px h-8 bg-duo-green/20" />
+              <div className="text-center">
+                <p className="text-3xl">🏆</p>
+                <p className="text-[9px] font-black text-graphite uppercase tracking-widest mt-0.5">Adventure Done</p>
+              </div>
+              <div className="w-px h-8 bg-duo-green/20" />
+              <div className="text-center">
+                <p className="text-3xl font-black text-almost-black">{getAdventureEmoji(survey.adventureType)}</p>
+                <p className="text-[9px] font-black text-graphite uppercase tracking-widest mt-0.5">Collected</p>
+              </div>
+            </div>
+          </motion.div>
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6 }}
+            className="text-[11px] text-silver font-bold uppercase tracking-widest"
+          >
+            You can safely close this tab
+          </motion.p>
         </motion.div>
       </div>
     );

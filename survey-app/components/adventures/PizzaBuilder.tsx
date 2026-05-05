@@ -39,133 +39,40 @@ interface AnswerMap {
   };
 }
 
-// Animation variants
-const stageVariants = {
-  hidden: { opacity: 0, x: 50 },
-  visible: {
-    opacity: 1,
-    x: 0,
-    transition: { duration: 0.4, ease: 'easeOut' as const }
-  },
-  exit: {
-    opacity: 0,
-    x: -50,
-    transition: { duration: 0.3, ease: 'easeIn' as const }
-  }
-};
-
-const buttonHoverVariants = {
-  hover: {
-    scale: 1.05,
-    boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)',
-    transition: { duration: 0.2 }
-  },
-  tap: { scale: 0.98 }
-};
-
-const pizzaBaseVariants = {
-  hidden: { scale: 0, rotate: -180 },
-  visible: {
-    scale: 1,
-    rotate: 0,
-    transition: {
-      type: 'spring' as const,
-      stiffness: 200,
-      damping: 20
-    }
-  }
-};
-
-const sauceSpreadVariants = {
-  hidden: { scale: 0, opacity: 0 },
-  visible: {
-    scale: 1,
-    opacity: 1,
-    transition: {
-      duration: 0.6,
-      ease: 'easeOut' as const
-    }
-  }
-};
-
-const cheeseVariants = {
-  hidden: { opacity: 0, scale: 0.8 },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    transition: {
-      duration: 0.5,
-      ease: 'easeOut' as const
-    }
-  }
-};
-
-const toppingVariants = {
-  hidden: { scale: 0, opacity: 0, y: -30 },
-  visible: (i: number) => ({
-    scale: 1,
-    opacity: 1,
-    y: 0,
-    transition: {
-      type: 'spring' as const,
-      stiffness: 400,
-      damping: 15,
-      delay: i * 0.08
-    }
-  })
-};
-
-const steamVariants = {
-  hidden: { opacity: 0, y: 0 },
-  visible: {
-    opacity: [0, 0.6, 0],
-    y: -40,
-    transition: {
-      duration: 2,
-      repeat: Infinity,
-      ease: 'easeOut' as const
-    }
-  }
-};
-
-const confettiColors = ['#ef4444', '#f97316', '#eab308', '#22c55e', '#3b82f6', '#8b5cf6', '#ec4899'];
-
 // Visual options
 const crustOptions = [
-  { id: 'thin', name: 'Thin', color: 'bg-amber-100', borderColor: 'border-amber-900/20', thickness: 'h-2' },
-  { id: 'regular', name: 'Regular', color: 'bg-amber-200', borderColor: 'border-amber-900/30', thickness: 'h-3' },
-  { id: 'thick', name: 'Thick', color: 'bg-amber-300', borderColor: 'border-amber-900/40', thickness: 'h-4' },
+  { id: 'thin', name: 'Thin', emoji: '🪶', color: 'bg-amber-100', thickness: 'h-1.5' },
+  { id: 'regular', name: 'Regular', emoji: '⚖️', color: 'bg-amber-200', thickness: 'h-3' },
+  { id: 'thick', name: 'Thick', emoji: '🏔️', color: 'bg-amber-300', thickness: 'h-5' },
 ];
 
 const sauceOptions = [
-  { id: 'tomato', name: 'Tomato', color: 'bg-red-500' },
-  { id: 'white', name: 'White', color: 'bg-red-100' },
-  { id: 'pesto', name: 'Pesto', color: 'bg-green-600' },
+  { id: 'tomato', name: 'Tomato', emoji: '🍅', color: 'bg-red-500' },
+  { id: 'white', name: 'White', emoji: '🧄', color: 'bg-yellow-50 border border-amber-200' },
+  { id: 'pesto', name: 'Pesto', emoji: '🌿', color: 'bg-green-600' },
 ];
 
 const cheeseOptions = [
-  { id: 'mozzarella', name: 'Mozzarella', color: 'bg-yellow-100', dots: 'bg-yellow-200' },
-  { id: 'cheddar', name: 'Cheddar', color: 'bg-orange-200', dots: 'bg-orange-300' },
-  { id: 'none', name: 'No Cheese', color: 'bg-transparent', dots: 'bg-transparent' },
+  { id: 'mozzarella', name: 'Mozzarella', emoji: '🧀', color: 'bg-yellow-100' },
+  { id: 'cheddar', name: 'Cheddar', emoji: '🟡', color: 'bg-orange-200' },
+  { id: 'none', name: 'No Cheese', emoji: '🚫', color: 'bg-gray-100' },
 ];
 
 const toppingOptions = [
-  { id: 'pepperoni', name: 'Pepperoni', emoji: '🥓', color: 'bg-red-700', shape: 'rounded-full border-2 border-red-900' },
-  { id: 'mushrooms', name: 'Mushrooms', emoji: '🍄', color: 'bg-stone-200', shape: 'rounded-md border-2 border-stone-400' },
-  { id: 'peppers', name: 'Peppers', emoji: '🫑', color: 'bg-green-500', shape: 'rounded-sm border-2 border-green-700' },
-  { id: 'olives', name: 'Olives', emoji: '🫒', color: 'bg-neutral-900', shape: 'rounded-full border-2 border-black' },
-  { id: 'onions', name: 'Onions', emoji: '🧅', color: 'bg-purple-100', shape: 'rounded-full border-2 border-purple-300' },
+  { id: 'pepperoni', name: 'Pepperoni', emoji: '🥩', color: 'bg-red-700' },
+  { id: 'mushrooms', name: 'Mushrooms', emoji: '🍄', color: 'bg-stone-300' },
+  { id: 'peppers', name: 'Peppers', emoji: '🫑', color: 'bg-green-500' },
+  { id: 'olives', name: 'Olives', emoji: '🫒', color: 'bg-neutral-900' },
+  { id: 'onions', name: 'Onions', emoji: '🧅', color: 'bg-purple-200' },
 ];
+
+const STAGE_EMOJIS = ['🍕', '🥣', '🍅', '🧀', '🥓'];
+
+const confettiColors = ['#58cc02', '#ffc700', '#1cb0f6', '#a570ff', '#cc348d', '#e67348'];
 
 function getQuestionOptions(question: Question | undefined): string[] {
   if (!question) return [];
-
-  // Multiple choice questions have options array
-  if ('options' in question && question.options) {
-    return question.options;
-  }
-
-  // Rating questions need generated options based on scale
+  if ('options' in question && question.options) return question.options;
   if (question.type === 'rating' && 'scale' in question) {
     const scale = question.scale || 5;
     return Array.from({ length: scale }, (_, i) => {
@@ -175,8 +82,6 @@ function getQuestionOptions(question: Question | undefined): string[] {
       return String(value);
     });
   }
-
-  // Emoji slider questions - use scale with optional labels
   if (question.type === 'emoji-slider' && 'scale' in question) {
     const scale = question.scale || 5;
     return Array.from({ length: scale }, (_, i) => {
@@ -186,7 +91,6 @@ function getQuestionOptions(question: Question | undefined): string[] {
       return String(value);
     });
   }
-
   return [];
 }
 
@@ -195,283 +99,145 @@ function mapQuestionToVisualOptions<T extends { id: string; name: string }>(
   visualOptions: T[]
 ): Array<T & { answerValue: string; uniqueId: string }> {
   const questionOptions = getQuestionOptions(question);
-
-  // If no question options, return empty - don't use visual names as answers
-  if (questionOptions.length === 0) {
-    return [];
-  }
-
-  // Map question options to visual options, cycling through visuals if needed
+  if (questionOptions.length === 0) return [];
   return questionOptions.map((option, index) => {
     const visualOption = visualOptions[index % visualOptions.length];
-    return {
-      ...visualOption,
-      answerValue: option,
-      // Use unique ID combining index to prevent collisions when options > visual options
-      uniqueId: `${visualOption.id}-${index}`,
-    };
+    return { ...visualOption, answerValue: option, uniqueId: `${visualOption.id}-${index}` };
   });
 }
 
-// Confetti Component
+// PickedBadge micro-feedback
+function PickedBadge({ show }: { show: boolean }) {
+  return (
+    <AnimatePresence>
+      {show && (
+        <motion.span
+          initial={{ opacity: 0, scale: 0.7, y: 4 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.7 }}
+          className="inline-flex items-center gap-1 px-2 py-0.5 bg-duo-green text-white text-[10px] font-black uppercase tracking-wider rounded-full"
+        >
+          <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+          </svg>
+          Picked!
+        </motion.span>
+      )}
+    </AnimatePresence>
+  );
+}
+
+// Confetti
 function Confetti({ isActive }: { isActive: boolean }) {
-  const [particles, setParticles] = useState<Array<{
-    id: number;
-    x: number;
-    color: string;
-    delay: number;
-    duration: number;
-  }>>([]);
+  const [particles, setParticles] = useState<Array<{ id: number; x: number; color: string; delay: number; duration: number }>>([]);
 
   useEffect(() => {
     if (isActive) {
-      const newParticles = Array.from({ length: 50 }, (_, i) => ({
+      setParticles(Array.from({ length: 50 }, (_, i) => ({
         id: i,
         x: Math.random() * 100,
         color: confettiColors[Math.floor(Math.random() * confettiColors.length)],
         delay: Math.random() * 0.5,
         duration: 2 + Math.random() * 2,
-      }));
-      setParticles(newParticles);
+      })));
     }
   }, [isActive]);
 
   if (!isActive) return null;
-
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden z-50">
-      {particles.map((particle) => (
+      {particles.map((p) => (
         <motion.div
-          key={particle.id}
+          key={p.id}
           className="absolute w-3 h-3 rounded-sm"
-          style={{
-            left: `${particle.x}%`,
-            top: -20,
-            backgroundColor: particle.color,
-          }}
+          style={{ left: `${p.x}%`, top: -20, backgroundColor: p.color }}
           initial={{ y: -20, rotate: 0, opacity: 1 }}
-          animate={{
-            y: typeof window !== 'undefined' ? window.innerHeight + 50 : 800,
-            rotate: 360 * (Math.random() > 0.5 ? 1 : -1),
-            opacity: [1, 1, 0],
-          }}
-          transition={{
-            duration: particle.duration,
-            delay: particle.delay,
-            ease: 'linear',
-          }}
+          animate={{ y: typeof window !== 'undefined' ? window.innerHeight + 50 : 800, rotate: 360, opacity: [1, 1, 0] }}
+          transition={{ duration: p.duration, delay: p.delay, ease: 'linear' }}
         />
       ))}
     </div>
   );
 }
 
-// Pizza Display Component
-function PizzaDisplay({
-  currentStage,
-  selectedChoices,
-  isBaking,
-  isDone,
-}: {
-  currentStage: number;
-  selectedChoices: SelectedChoices;
-  isBaking: boolean;
-  isDone: boolean;
-}) {
-  const crust = crustOptions.find(c => c.id === selectedChoices.crust) || crustOptions[1];
-  const sauce = sauceOptions.find(s => s.id === selectedChoices.sauce);
-  const cheese = cheeseOptions.find(c => c.id === selectedChoices.cheese);
+// Pizza visual preview
+function PizzaDisplay({ selectedChoices, stage }: { selectedChoices: SelectedChoices; stage: number }) {
+  const crust = crustOptions.find(c => c.id === selectedChoices.crust.replace(/-\d+$/, ''));
+  const sauce = sauceOptions.find(s => s.id === selectedChoices.sauce.replace(/-\d+$/, ''));
+  const cheese = cheeseOptions.find(c => c.id === selectedChoices.cheese.replace(/-\d+$/, ''));
 
-  // Generate random positions for toppings - using deterministic positions based on topping id
-  // Keep toppings within the circular sauce area (not square bounds)
   const toppingPositions = selectedChoices.toppings.flatMap((uniqueId, toppingIndex) => {
-    // Extract base visual ID from uniqueId (e.g., "pepperoni-0" -> "pepperoni")
-    const baseVisualId = uniqueId.replace(/-\d+$/, '');
-    // First try to match by ID, then fall back to cycling through toppings by index
-    let topping = toppingOptions.find(t => t.id === baseVisualId);
-    if (!topping) {
-      // Use index from uniqueId to pick a visual (cycles through available toppings)
-      const indexMatch = uniqueId.match(/-(\d+)$/);
-      const visualIndex = indexMatch ? parseInt(indexMatch[1], 10) : toppingIndex;
-      topping = toppingOptions[visualIndex % toppingOptions.length];
-    }
-    if (!topping) return [];
-
-    // Generate 4-6 pieces per topping with deterministic positions
-    const pieces = 5;
-    return Array.from({ length: pieces }, (_, i) => {
-      // Use deterministic positioning based on indices
-      const angle = ((toppingIndex * pieces + i) * 137.5) % 360; // Golden angle distribution
-      // Radius ranges from 8-38% from center, keeping toppings within the sauce circle
-      const radius = 8 + ((toppingIndex * pieces + i) % 4) * 10;
-      const x = 50 + radius * Math.cos(angle * Math.PI / 180);
-      const y = 50 + radius * Math.sin(angle * Math.PI / 180);
-
+    const baseId = uniqueId.replace(/-\d+$/, '');
+    const topping = toppingOptions.find(t => t.id === baseId) || toppingOptions[toppingIndex % toppingOptions.length];
+    return Array.from({ length: 5 }, (_, i) => {
+      const angle = ((toppingIndex * 5 + i) * 137.5) % 360;
+      const radius = 10 + ((toppingIndex * 5 + i) % 3) * 10;
       return {
-        id: `${uniqueId}-piece-${i}`,
-        topping,
-        x,
-        y,
-        rotation: (toppingIndex * 45 + i * 72) % 360,
-        index: toppingIndex * pieces + i,
+        id: `${uniqueId}-${i}`,
+        emoji: topping ? toppingOptions.find(t => t.id === topping.id)?.emoji || '🍕' : '🍕',
+        x: 50 + radius * Math.cos(angle * Math.PI / 180),
+        y: 50 + radius * Math.sin(angle * Math.PI / 180),
       };
     });
   });
 
   return (
-    <div className="relative w-40 h-40 sm:w-48 sm:h-48 md:w-56 md:h-56 mx-auto">
-      {/* Shadow */}
-      <motion.div
-        className="absolute bottom-0 left-1/2 -translate-x-1/2 w-32 sm:w-40 md:w-48 h-4 bg-gray-300 rounded-full blur-sm"
-        initial={{ opacity: 0.3, scaleX: 0.5 }}
-        animate={{
-          opacity: currentStage >= 1 ? 0.5 : 0.3,
-          scaleX: currentStage >= 1 ? 1 : 0.5
-        }}
-        transition={{ duration: 0.3 }}
-      />
+    <div className="flex flex-col items-center gap-3">
+      {/* Pizza circle */}
+      <div className="relative w-36 h-36 mx-auto">
+        {/* Base */}
+        <div className={`absolute inset-0 rounded-full ${crust ? crust.color : 'bg-amber-50 border-2 border-dashed border-cloud-gray'} border-4 border-amber-900/20 shadow-[0_4px_0_rgba(0,0,0,0.08)]`} />
 
-      {/* Steam when done */}
-      <AnimatePresence>
-        {isDone && (
-          <>
-            {[0, 1, 2].map((i) => (
-              <motion.div
-                key={i}
-                className="absolute -top-4 text-2xl"
-                style={{ left: `${25 + i * 25}%` }}
-                variants={steamVariants}
-                initial="hidden"
-                animate="visible"
-                transition={{ delay: i * 0.3 }}
-              >
-                ♨️
-              </motion.div>
-            ))}
-          </>
-        )}
-      </AnimatePresence>
-
-      {/* Pizza Base (Crust) */}
-      <AnimatePresence>
-        {currentStage >= 1 && (
+        {/* Sauce */}
+        {sauce && stage >= 1 && (
           <motion.div
-            className="absolute inset-2 sm:inset-3 md:inset-4"
-            variants={pizzaBaseVariants}
-            initial="hidden"
-            animate="visible"
-          >
-            {/* Outer crust ring */}
-            <div
-              className={`absolute inset-0 rounded-full ${crust.color} ${crust.borderColor} border-4 sm:border-6 shadow-lg`}
-              style={{
-                background: isDone
-                  ? 'linear-gradient(135deg, #d97706 0%, #b45309 50%, #92400e 100%)'
-                  : undefined
-              }}
-            />
-
-            {/* Inner dough area */}
-            <div
-              className={`absolute inset-3 sm:inset-4 md:inset-5 rounded-full ${
-                isDone ? 'bg-amber-600' : 'bg-amber-100'
-              }`}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Sauce */}
-      <AnimatePresence>
-        {currentStage >= 2 && sauce && (
-          <motion.div
-            className="absolute inset-6 sm:inset-8 md:inset-10"
-            variants={sauceSpreadVariants}
-            initial="hidden"
-            animate="visible"
-          >
-            <div className={`w-full h-full rounded-full ${sauce.color} shadow-inner`} />
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Cheese */}
-      <AnimatePresence>
-        {currentStage >= 3 && cheese && cheese.id !== 'none' && (
-          <motion.div
-            className="absolute inset-7 sm:inset-9 md:inset-11"
-            variants={cheeseVariants}
-            initial="hidden"
-            animate="visible"
-          >
-            <div className={`w-full h-full rounded-full ${cheese.color} shadow-inner relative overflow-hidden`}>
-              {/* Cheese texture dots */}
-              {Array.from({ length: 12 }).map((_, i) => (
-                <div
-                  key={i}
-                  className={`absolute w-2 h-2 sm:w-3 sm:h-3 rounded-full ${cheese.dots}`}
-                  style={{
-                    left: `${15 + (i % 4) * 22}%`,
-                    top: `${15 + Math.floor(i / 4) * 28}%`,
-                  }}
-                />
-              ))}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Toppings - show as soon as they're selected (stage 4+) */}
-      <AnimatePresence>
-        {currentStage >= 4 && selectedChoices.toppings.length > 0 && (
-          <div className="absolute inset-6 sm:inset-8 md:inset-10">
-            {toppingPositions.map((item) => (
-              <motion.div
-                key={item.id}
-                className={`absolute w-3 h-3 sm:w-4 sm:h-4 ${item.topping.color} ${item.topping.shape} shadow-sm flex items-center justify-center`}
-                style={{
-                  left: `${item.x}%`,
-                  top: `${item.y}%`,
-                  transform: `translate(-50%, -50%) rotate(${item.rotation}deg)`,
-                }}
-                variants={toppingVariants}
-                initial="hidden"
-                animate="visible"
-                exit={{ scale: 0, opacity: 0 }}
-                custom={item.index}
-              />
-            ))}
-          </div>
-        )}
-      </AnimatePresence>
-
-      {/* Baking overlay */}
-      <AnimatePresence>
-        {isBaking && (
-          <motion.div
-            className="absolute inset-0 bg-orange-500/30 rounded-full"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: [0.3, 0.6, 0.3] }}
-            transition={{ duration: 1, repeat: Infinity }}
+            className={`absolute inset-4 rounded-full ${sauce.color}`}
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: 'spring', bounce: 0.4 }}
           />
         )}
-      </AnimatePresence>
 
-      {/* Empty state */}
-      <AnimatePresence>
-        {currentStage === 0 && (
+        {/* Cheese */}
+        {cheese && cheese.id !== 'none' && stage >= 2 && (
           <motion.div
-            className="absolute inset-0 flex items-center justify-center"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <p className="text-gray-400 text-xs sm:text-sm text-center">
-              Your pizza will<br />appear here!
-            </p>
-          </motion.div>
+            className={`absolute inset-7 rounded-full ${cheese.color}`}
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: 'spring', bounce: 0.4 }}
+          />
         )}
-      </AnimatePresence>
+
+        {/* Toppings */}
+        {stage >= 4 && toppingPositions.map((t) => (
+          <motion.div
+            key={t.id}
+            className="absolute text-[10px] leading-none"
+            style={{ left: `${t.x}%`, top: `${t.y}%`, transform: 'translate(-50%,-50%)' }}
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ type: 'spring', bounce: 0.5 }}
+          >
+            {t.emoji}
+          </motion.div>
+        ))}
+
+        {/* Empty hint */}
+        {!crust && stage === 0 && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <span className="text-2xl opacity-30">🍕</span>
+          </div>
+        )}
+      </div>
+
+      {/* Stage breadcrumb */}
+      <div className="flex items-center gap-1.5">
+        {STAGE_EMOJIS.map((emoji, i) => (
+          <span key={i} className={`text-sm transition-all ${i < stage ? 'opacity-100' : 'opacity-20'}`}>
+            {emoji}
+          </span>
+        ))}
+      </div>
     </div>
   );
 }
@@ -479,100 +245,68 @@ function PizzaDisplay({
 export default function PizzaBuilder({ questions, onComplete, onProgress, initialState, allowAnonymous = false }: PizzaBuilderProps) {
   const [currentStage, setCurrentStage] = useState(initialState?.currentStage ?? 0);
   const [selectedChoices, setSelectedChoices] = useState<SelectedChoices>(
-    initialState?.selectedChoices ?? {
-      crust: '',
-      sauce: '',
-      cheese: '',
-      toppings: [],
-    }
+    initialState?.selectedChoices ?? { crust: '', sauce: '', cheese: '', toppings: [] }
   );
   const [answerMap, setAnswerMap] = useState<AnswerMap>(initialState?.answerMap ?? {});
-  const [formData, setFormData] = useState<FormData>(
-    initialState?.formData ?? {
-      name: '',
-      email: '',
-    }
-  );
+  const [formData, setFormData] = useState<FormData>(initialState?.formData ?? { name: '', email: '' });
   const [showConfetti, setShowConfetti] = useState(false);
   const [isBaking, setIsBaking] = useState(false);
   const [bakingProgress, setBakingProgress] = useState(0);
   const [isDone, setIsDone] = useState(false);
   const [additionalThoughts, setAdditionalThoughts] = useState('');
+  const [pickedId, setPickedId] = useState<string | null>(null);
 
   const reportProgress = useCallback(() => {
     if (!onProgress || currentStage === 0 || currentStage >= 6) return;
-
-    const answers: Answer[] = questions.map((question) => {
-      const entry = answerMap[question.id];
-      return {
-        questionId: question.id,
-        value: entry?.answerValue || '',
-      };
+    const answers: Answer[] = questions.map((q) => {
+      const entry = answerMap[q.id];
+      return { questionId: q.id, value: entry?.answerValue || '' };
     });
-
     onProgress({
       currentStage,
       totalStages: allowAnonymous ? 6 : 7,
       answers,
-      adventureState: {
-        currentStage,
-        selectedChoices,
-        answerMap,
-        formData,
-      },
+      adventureState: { currentStage, selectedChoices, answerMap, formData },
       respondentName: allowAnonymous ? undefined : (formData.name || undefined),
       respondentEmail: allowAnonymous ? undefined : (formData.email || undefined),
     });
   }, [onProgress, currentStage, questions, answerMap, selectedChoices, formData, allowAnonymous]);
 
-  useEffect(() => {
-    reportProgress();
-  }, [currentStage, reportProgress]);
+  useEffect(() => { reportProgress(); }, [currentStage, reportProgress]);
 
   const mappedCrustOptions = mapQuestionToVisualOptions(questions[0], crustOptions);
   const mappedSauceOptions = mapQuestionToVisualOptions(questions[1], sauceOptions);
   const mappedCheeseOptions = mapQuestionToVisualOptions(questions[2], cheeseOptions);
   const mappedToppingOptions = mapQuestionToVisualOptions(questions[3], toppingOptions);
 
-  const handleCrustSelect = (visualId: string, answerValue: string) => {
-    setSelectedChoices(prev => ({ ...prev, crust: visualId }));
-    if (questions[0]) {
-      setAnswerMap(prev => ({
-        ...prev,
-        [questions[0].id]: { visualId, answerValue },
-      }));
-    }
-    setCurrentStage(1);
+  const pickWithBadge = (uniqueId: string, advance: () => void) => {
+    setPickedId(uniqueId);
+    setTimeout(() => {
+      setPickedId(null);
+      advance();
+    }, 600);
   };
 
-  const handleSauceSelect = (visualId: string, answerValue: string) => {
-    setSelectedChoices(prev => ({ ...prev, sauce: visualId }));
-    if (questions[1]) {
-      setAnswerMap(prev => ({
-        ...prev,
-        [questions[1].id]: { visualId, answerValue },
-      }));
-    }
-    setCurrentStage(2);
+  const handleCrustSelect = (uniqueId: string, answerValue: string) => {
+    setSelectedChoices(prev => ({ ...prev, crust: uniqueId }));
+    if (questions[0]) setAnswerMap(prev => ({ ...prev, [questions[0].id]: { visualId: uniqueId, answerValue } }));
+    pickWithBadge(uniqueId, () => setCurrentStage(1));
   };
 
-  const handleCheeseSelect = (visualId: string, answerValue: string) => {
-    setSelectedChoices(prev => ({ ...prev, cheese: visualId }));
-    if (questions[2]) {
-      setAnswerMap(prev => ({
-        ...prev,
-        [questions[2].id]: { visualId, answerValue },
-      }));
-    }
-    // Skip FormCapture stage if anonymous
-    setCurrentStage(allowAnonymous ? 4 : 3);
+  const handleSauceSelect = (uniqueId: string, answerValue: string) => {
+    setSelectedChoices(prev => ({ ...prev, sauce: uniqueId }));
+    if (questions[1]) setAnswerMap(prev => ({ ...prev, [questions[1].id]: { visualId: uniqueId, answerValue } }));
+    pickWithBadge(uniqueId, () => setCurrentStage(2));
   };
 
-  const handleFormSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (formData.name.trim()) {
-      setCurrentStage(4);
-    }
+  const handleCheeseSelect = (uniqueId: string, answerValue: string) => {
+    setSelectedChoices(prev => ({ ...prev, cheese: uniqueId }));
+    if (questions[2]) setAnswerMap(prev => ({ ...prev, [questions[2].id]: { visualId: uniqueId, answerValue } }));
+    pickWithBadge(uniqueId, () => setCurrentStage(allowAnonymous ? 4 : 3));
+  };
+
+  const handleFormSubmit = () => {
+    setCurrentStage(4);
   };
 
   const handleToppingToggle = (uniqueId: string, answerValue: string) => {
@@ -582,30 +316,17 @@ export default function PizzaBuilder({ questions, onComplete, onProgress, initia
         : [...prev.toppings, uniqueId];
       return { ...prev, toppings: newToppings };
     });
-
     if (questions[3]) {
       setAnswerMap(prev => {
-        const currentEntry = prev[questions[3].id];
-        const currentVisualIds = (currentEntry?.visualId as string[]) || [];
-        const currentAnswerValues = (currentEntry?.answerValue as string[]) || [];
-
-        const visualIndex = currentVisualIds.indexOf(uniqueId);
-        let newVisualIds: string[];
-        let newAnswerValues: string[];
-
-        if (visualIndex > -1) {
-          newVisualIds = currentVisualIds.filter((_, i) => i !== visualIndex);
-          newAnswerValues = currentAnswerValues.filter((_, i) => i !== visualIndex);
-        } else {
-          newVisualIds = [...currentVisualIds, uniqueId];
-          newAnswerValues = [...currentAnswerValues, answerValue];
-        }
-
+        const entry = prev[questions[3].id];
+        const vids = (entry?.visualId as string[]) || [];
+        const avals = (entry?.answerValue as string[]) || [];
+        const idx = vids.indexOf(uniqueId);
         return {
           ...prev,
           [questions[3].id]: {
-            visualId: newVisualIds,
-            answerValue: newAnswerValues,
+            visualId: idx > -1 ? vids.filter((_, i) => i !== idx) : [...vids, uniqueId],
+            answerValue: idx > -1 ? avals.filter((_, i) => i !== idx) : [...avals, answerValue],
           },
         };
       });
@@ -614,27 +335,15 @@ export default function PizzaBuilder({ questions, onComplete, onProgress, initia
 
   const handleBack = () => {
     if (currentStage > 0) {
-      // Skip FormCapture stage (3) when going back if anonymous
-      if (allowAnonymous && currentStage === 4) {
-        setCurrentStage(2);
-      } else {
-        setCurrentStage(prev => prev - 1);
-      }
+      if (allowAnonymous && currentStage === 4) setCurrentStage(2);
+      else setCurrentStage(prev => prev - 1);
     }
   };
 
-  // Go to final thoughts stage
-  const handleGoToFinalThoughts = () => {
-    setCurrentStage(5);
-  };
-
-  // Actually start baking (after final thoughts)
   const handleBake = () => {
     setCurrentStage(6);
     setIsBaking(true);
     setBakingProgress(0);
-
-    // Simulate baking progress
     const interval = setInterval(() => {
       setBakingProgress(prev => {
         if (prev >= 100) {
@@ -642,29 +351,18 @@ export default function PizzaBuilder({ questions, onComplete, onProgress, initia
           setIsBaking(false);
           setIsDone(true);
           setShowConfetti(true);
-
-          // Complete after showing done state
           setTimeout(() => {
-            const answers: Answer[] = questions.map((question) => {
-              const entry = answerMap[question.id];
-              return {
-                questionId: question.id,
-                value: entry?.answerValue || '',
-              };
+            const answers: Answer[] = questions.map((q) => {
+              const entry = answerMap[q.id];
+              return { questionId: q.id, value: entry?.answerValue || '' };
             });
-
-            // Only include name/email if not anonymous
             if (!allowAnonymous) {
-              answers.push(
-                { questionId: 'respondent_name', value: formData.name },
-                { questionId: 'respondent_email', value: formData.email }
-              );
+              answers.push({ questionId: 'respondent_name', value: formData.name });
+              answers.push({ questionId: 'respondent_email', value: formData.email });
             }
             answers.push({ questionId: 'additional_thoughts', value: additionalThoughts });
-
             onComplete(answers);
           }, 2000);
-
           setTimeout(() => setShowConfetti(false), 4000);
           return 100;
         }
@@ -673,142 +371,131 @@ export default function PizzaBuilder({ questions, onComplete, onProgress, initia
     }, 60);
   };
 
-  const renderStage = () => {
-    switch (currentStage) {
-      case 0:
-        return (
-          <CrustSelection
-            question={questions[0]}
-            options={mappedCrustOptions}
-            onSelect={handleCrustSelect}
-          />
-        );
-      case 1:
-        return (
-          <SauceSelection
-            question={questions[1]}
-            options={mappedSauceOptions}
-            onSelect={handleSauceSelect}
-            onBack={handleBack}
-          />
-        );
-      case 2:
-        return (
-          <CheeseSelection
-            question={questions[2]}
-            options={mappedCheeseOptions}
-            onSelect={handleCheeseSelect}
-            onBack={handleBack}
-          />
-        );
-      case 3:
-        return (
-          <FormCapture
-            formData={formData}
-            setFormData={setFormData}
-            onSubmit={handleFormSubmit}
-            onBack={handleBack}
-          />
-        );
-      case 4:
-        return (
-          <ToppingsSelection
-            question={questions[3]}
-            options={mappedToppingOptions}
-            selectedToppings={selectedChoices.toppings}
-            onToggle={handleToppingToggle}
-            onBake={handleGoToFinalThoughts}
-            onBack={handleBack}
-          />
-        );
-      case 5:
-        return (
-          <FinalThoughts
-            value={additionalThoughts}
-            onChange={setAdditionalThoughts}
-            onContinue={handleBake}
-            onBack={handleBack}
-            theme="pizza"
-            respondentName={formData.name}
-          />
-        );
-      case 6:
-        return (
-          <BakingStage
-            isBaking={isBaking}
-            progress={bakingProgress}
-            isDone={isDone}
-            name={formData.name}
-          />
-        );
-      default:
-        return null;
-    }
-  };
+  // Progress bar (stages 1-5 only)
+  const totalDisplayStages = allowAnonymous ? 5 : 6;
+  const displayStage = allowAnonymous && currentStage >= 4 ? currentStage : currentStage;
+  const progressPct = Math.min((displayStage / totalDisplayStages) * 100, 100);
+  const showTopBar = currentStage >= 1 && currentStage < 6;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-orange-100 via-red-50 to-yellow-100 flex flex-col items-center justify-start md:justify-center p-3 sm:p-6 lg:p-8">
+    <div className="min-h-screen bg-white flex flex-col">
       <Confetti isActive={showConfetti} />
 
-      {/* Header */}
-      <motion.div
-        className="text-center mb-3 sm:mb-4 pt-2 sm:pt-0"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-orange-600 mb-1 sm:mb-2">
-          Build Your Perfect Pizza! 🍕
-        </h1>
-        {currentStage < 6 && (
-          <motion.p
-            className="text-gray-600 text-sm sm:text-base"
-            key={currentStage}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-          >
-            {(() => {
-              const totalStages = allowAnonymous ? 5 : 6;
-              // Adjust displayed stage number when anonymous (skip stage 3)
-              const displayStage = allowAnonymous && currentStage >= 4 ? currentStage : currentStage + 1;
-              return `Stage ${displayStage} of ${totalStages}`;
-            })()}
-          </motion.p>
-        )}
-      </motion.div>
+      {/* Top bar */}
+      {showTopBar && (
+        <div className="w-full px-4 pt-6 pb-4 max-w-lg mx-auto">
+          <div className="flex items-center gap-4 mb-4">
+            <button
+              onClick={handleBack}
+              disabled={currentStage <= 1}
+              className="flex-shrink-0 w-10 h-10 rounded-2xl border-2 border-cloud-gray shadow-[0_3px_0_#e5e5e5] flex items-center justify-center text-graphite disabled:opacity-30 transition-all active:translate-y-[2px] active:shadow-none"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <div className="flex-1 h-4 bg-cloud-gray rounded-full overflow-hidden border-2 border-cloud-gray">
+              <motion.div
+                className="h-full bg-duo-green rounded-full"
+                initial={{ width: 0 }}
+                animate={{ width: `${progressPct}%` }}
+                transition={{ duration: 0.4, ease: 'easeOut' }}
+              />
+            </div>
+            <span className="flex-shrink-0 text-[10px] font-black text-graphite uppercase tracking-wider">
+              {Math.min(currentStage, totalDisplayStages)}/{totalDisplayStages}
+            </span>
+          </div>
+        </div>
+      )}
 
       {/* Main content */}
-      <div className="w-full max-w-4xl flex flex-col md:flex-row items-center md:items-start gap-4 md:gap-6 lg:gap-8">
-        {/* Pizza Display */}
-        <motion.div
-          className="flex-shrink-0 bg-white/50 rounded-2xl p-3 sm:p-4 lg:p-6 backdrop-blur-sm w-full md:w-auto"
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.4 }}
-        >
-          <PizzaDisplay
-            currentStage={currentStage}
-            selectedChoices={selectedChoices}
-            isBaking={isBaking}
-            isDone={isDone}
-          />
-        </motion.div>
+      <div className="flex-1 flex flex-col px-4 max-w-lg mx-auto w-full pb-8">
+        {/* Pizza display (stages 0-5) */}
+        {currentStage < 6 && (
+          <div className="py-6 flex justify-center">
+            <PizzaDisplay selectedChoices={selectedChoices} stage={currentStage} />
+          </div>
+        )}
 
-        {/* Stage content */}
-        <div className="w-full md:max-w-lg flex-grow">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={currentStage}
-              variants={stageVariants}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-            >
-              {renderStage()}
-            </motion.div>
-          </AnimatePresence>
-        </div>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentStage}
+            initial={{ opacity: 0, x: 30 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -30 }}
+            transition={{ duration: 0.25 }}
+          >
+            {currentStage === 0 && (
+              <CrustSelection
+                question={questions[0]}
+                options={mappedCrustOptions}
+                onSelect={handleCrustSelect}
+                pickedId={pickedId}
+              />
+            )}
+            {currentStage === 1 && (
+              <SauceSelection
+                question={questions[1]}
+                options={mappedSauceOptions}
+                onSelect={handleSauceSelect}
+                pickedId={pickedId}
+              />
+            )}
+            {currentStage === 2 && (
+              <CheeseSelection
+                question={questions[2]}
+                options={mappedCheeseOptions}
+                onSelect={handleCheeseSelect}
+                pickedId={pickedId}
+              />
+            )}
+            {currentStage === 3 && !allowAnonymous && (
+              <FormCapture
+                formData={formData}
+                setFormData={setFormData}
+                onSubmit={handleFormSubmit}
+              />
+            )}
+            {currentStage === 4 && (
+              <ToppingsSelection
+                question={questions[3]}
+                options={mappedToppingOptions}
+                selectedToppings={selectedChoices.toppings}
+                onToggle={handleToppingToggle}
+                onBake={() => setCurrentStage(5)}
+              />
+            )}
+            {currentStage === 5 && (
+              <FinalThoughts
+                value={additionalThoughts}
+                onChange={setAdditionalThoughts}
+                onContinue={handleBake}
+                onBack={handleBack}
+                theme="pizza"
+                respondentName={formData.name}
+              />
+            )}
+            {currentStage === 6 && (
+              <BakingStage
+                isBaking={isBaking}
+                progress={bakingProgress}
+                isDone={isDone}
+              />
+            )}
+          </motion.div>
+        </AnimatePresence>
       </div>
+
+      {/* Footer */}
+      {currentStage < 6 && (
+        <div className="py-6 text-center">
+          <a href="https://unboringsurveys.com" target="_blank" rel="noopener noreferrer"
+            className="font-fredoka text-sm font-bold text-silver hover:text-duo-green transition-colors">
+            Unboring<span className="text-duo-green">.</span>
+          </a>
+        </div>
+      )}
     </div>
   );
 }
@@ -818,39 +505,50 @@ function CrustSelection({
   question,
   options,
   onSelect,
+  pickedId,
 }: {
   question?: Question;
-  options: Array<typeof crustOptions[0] & { answerValue: string }>;
-  onSelect: (visualId: string, answerValue: string) => void;
+  options: Array<typeof crustOptions[0] & { answerValue: string; uniqueId: string }>;
+  onSelect: (uniqueId: string, answerValue: string) => void;
+  pickedId: string | null;
 }) {
   return (
-    <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8">
-      <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4 sm:mb-6">
-        {question?.question || 'Choose Your Crust'}
+    <div>
+      <div className="mb-4">
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-duo-green/10 text-duo-green text-[10px] font-black uppercase tracking-widest rounded-full border border-duo-green/20">
+          🍕 Crust First
+        </span>
+      </div>
+      <h2 className="font-fredoka text-2xl sm:text-3xl font-bold text-almost-black leading-tight mb-7">
+        {question?.question || 'Pick your crust'}
       </h2>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-        {options.map((option, index) => (
-          <motion.button
-            key={option.id}
-            onClick={() => onSelect(option.id, option.answerValue)}
-            className="min-h-[5rem] sm:min-h-0 p-4 sm:p-6 rounded-xl border-2 border-gray-200
-              transition-colors focus:outline-none focus:ring-2 focus:ring-orange-400 cursor-pointer
-              active:bg-orange-100 active:border-orange-500
-              [@media(hover:hover)]:hover:border-orange-400 [@media(hover:hover)]:hover:bg-orange-50"
-            variants={buttonHoverVariants}
-            whileHover="hover"
-            whileTap="tap"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1 }}
-          >
-            {/* Crust visual */}
-            <div className="flex justify-center mb-2">
-              <div className={`w-16 ${option.thickness} ${option.color} ${option.borderColor} border-2 rounded-full`} />
-            </div>
-            <div className="font-medium text-gray-700 text-[11px] sm:text-sm text-center leading-snug line-clamp-3" style={{ hyphens: 'auto', wordBreak: 'break-word' }}>{option.answerValue}</div>
-          </motion.button>
-        ))}
+      <div className="grid grid-cols-3 gap-3">
+        {options.map((option, index) => {
+          const isPicked = pickedId === option.uniqueId;
+          return (
+            <motion.button
+              key={option.uniqueId}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.06 }}
+              onClick={() => onSelect(option.uniqueId, option.answerValue)}
+              whileTap={{ scale: 0.97 }}
+              className={`p-4 rounded-2xl border-2 text-center transition-all ${
+                isPicked
+                  ? 'bg-duo-green/10 border-duo-green shadow-[0_3px_0_#46a302]'
+                  : 'bg-white border-cloud-gray shadow-[0_3px_0_#e5e5e5] hover:border-duo-green/40'
+              }`}
+            >
+              <div className="flex justify-center mb-2">
+                <div className={`w-14 ${option.thickness} ${option.color} rounded-full`} />
+              </div>
+              <div className="font-fredoka font-bold text-almost-black text-sm leading-snug">{option.answerValue}</div>
+              <div className="mt-1.5 h-5 flex justify-center">
+                <PickedBadge show={isPicked} />
+              </div>
+            </motion.button>
+          );
+        })}
       </div>
     </div>
   );
@@ -861,55 +559,53 @@ function SauceSelection({
   question,
   options,
   onSelect,
-  onBack,
+  pickedId,
 }: {
   question?: Question;
-  options: Array<typeof sauceOptions[0] & { answerValue: string }>;
-  onSelect: (visualId: string, answerValue: string) => void;
-  onBack?: () => void;
+  options: Array<typeof sauceOptions[0] & { answerValue: string; uniqueId: string }>;
+  onSelect: (uniqueId: string, answerValue: string) => void;
+  pickedId: string | null;
 }) {
   return (
-    <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8">
-      {onBack && (
-        <button
-          onClick={onBack}
-          className="flex items-center gap-1 text-gray-500 hover:text-gray-700 mb-3 text-sm transition-colors"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-          Back
-        </button>
-      )}
-      <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4 sm:mb-6">
-        {question?.question || 'Spread the Sauce'}
+    <div>
+      <div className="mb-4">
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-duo-green/10 text-duo-green text-[10px] font-black uppercase tracking-widest rounded-full border border-duo-green/20">
+          🍅 Sauce Time
+        </span>
+      </div>
+      <h2 className="font-fredoka text-2xl sm:text-3xl font-bold text-almost-black leading-tight mb-7">
+        {question?.question || 'Spread the sauce'}
       </h2>
-      <div className="grid grid-cols-3 gap-2 sm:gap-4">
-        {options.map((option, index) => (
-          <motion.button
-            key={option.id}
-            onClick={() => onSelect(option.id, option.answerValue)}
-            className="p-3 sm:p-4 min-h-[5rem] sm:min-h-0 rounded-xl border-2 border-gray-200
-              transition-colors focus:outline-none focus:ring-2 focus:ring-orange-400 cursor-pointer touch-manipulation
-              active:bg-orange-100 active:border-orange-500
-              [@media(hover:hover)]:hover:border-orange-400 [@media(hover:hover)]:hover:bg-orange-50"
-            variants={buttonHoverVariants}
-            whileHover="hover"
-            whileTap="tap"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1 }}
-          >
-            {/* Sauce spread animation */}
-            <motion.div
-              className={`w-12 h-12 sm:w-16 sm:h-16 mx-auto rounded-full ${option.color} mb-1 sm:mb-2 shadow-inner`}
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.2 + index * 0.1, duration: 0.3, type: 'spring' }}
-            />
-            <div className="font-medium text-gray-700 text-[11px] sm:text-sm text-center leading-snug line-clamp-3" style={{ hyphens: 'auto', wordBreak: 'break-word' }}>{option.answerValue}</div>
-          </motion.button>
-        ))}
+      <div className="grid grid-cols-3 gap-3">
+        {options.map((option, index) => {
+          const isPicked = pickedId === option.uniqueId;
+          return (
+            <motion.button
+              key={option.uniqueId}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.06 }}
+              onClick={() => onSelect(option.uniqueId, option.answerValue)}
+              whileTap={{ scale: 0.97 }}
+              className={`p-4 rounded-2xl border-2 text-center transition-all ${
+                isPicked
+                  ? 'bg-duo-green/10 border-duo-green shadow-[0_3px_0_#46a302]'
+                  : 'bg-white border-cloud-gray shadow-[0_3px_0_#e5e5e5] hover:border-duo-green/40'
+              }`}
+            >
+              <motion.div
+                className={`w-12 h-12 mx-auto rounded-full ${option.color} mb-2`}
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.15 + index * 0.06, type: 'spring' }}
+              />
+              <div className="font-fredoka font-bold text-almost-black text-sm leading-snug">{option.answerValue}</div>
+              <div className="mt-1.5 h-5 flex justify-center">
+                <PickedBadge show={isPicked} />
+              </div>
+            </motion.button>
+          );
+        })}
       </div>
     </div>
   );
@@ -920,90 +616,50 @@ function CheeseSelection({
   question,
   options,
   onSelect,
-  onBack,
+  pickedId,
 }: {
   question?: Question;
-  options: Array<typeof cheeseOptions[0] & { answerValue: string }>;
-  onSelect: (visualId: string, answerValue: string) => void;
-  onBack?: () => void;
+  options: Array<typeof cheeseOptions[0] & { answerValue: string; uniqueId: string }>;
+  onSelect: (uniqueId: string, answerValue: string) => void;
+  pickedId: string | null;
 }) {
   return (
-    <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8">
-      {onBack && (
-        <button
-          onClick={onBack}
-          className="flex items-center gap-1 text-gray-500 hover:text-gray-700 mb-3 text-sm transition-colors"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-          Back
-        </button>
-      )}
-      <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4 sm:mb-6">
-        {question?.question || 'Add the Cheese'}
+    <div>
+      <div className="mb-4">
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-duo-green/10 text-duo-green text-[10px] font-black uppercase tracking-widest rounded-full border border-duo-green/20">
+          🧀 Cheese Layer
+        </span>
+      </div>
+      <h2 className="font-fredoka text-2xl sm:text-3xl font-bold text-almost-black leading-tight mb-7">
+        {question?.question || 'Add the cheese'}
       </h2>
-      <div className="grid grid-cols-3 gap-2 sm:gap-4">
-        {options.map((option, index) => (
-          <motion.button
-            key={option.id}
-            onClick={() => onSelect(option.id, option.answerValue)}
-            className="p-3 sm:p-4 min-h-[5rem] sm:min-h-0 rounded-xl border-2 border-gray-200
-              transition-colors focus:outline-none focus:ring-2 focus:ring-orange-400 cursor-pointer touch-manipulation
-              active:bg-orange-100 active:border-orange-500
-              [@media(hover:hover)]:hover:border-orange-400 [@media(hover:hover)]:hover:bg-orange-50"
-            variants={buttonHoverVariants}
-            whileHover="hover"
-            whileTap="tap"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: index * 0.1, type: 'spring' }}
-          >
-            {/* Cheese visual with melting effect */}
-            <div className="relative w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-1 sm:mb-2">
-              <motion.div
-                className={`w-full h-full rounded-full ${option.color} border-2 border-orange-400 relative overflow-hidden`}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-              >
-                {/* Cheese dots/texture */}
-                {Array.from({ length: 6 }).map((_, i) => (
-                  <motion.div
-                    key={i}
-                    className={`absolute w-2 h-2 rounded-full ${option.dots}`}
-                    style={{
-                      left: `${20 + (i % 3) * 25}%`,
-                      top: `${20 + Math.floor(i / 3) * 35}%`,
-                    }}
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ delay: 0.3 + i * 0.05 }}
-                  />
-                ))}
-              </motion.div>
-            </div>
-            <div className="font-medium text-gray-700 text-[11px] sm:text-sm text-center leading-snug line-clamp-3" style={{ hyphens: 'auto', wordBreak: 'break-word' }}>{option.answerValue}</div>
-          </motion.button>
-        ))}
+      <div className="grid grid-cols-3 gap-3">
+        {options.map((option, index) => {
+          const isPicked = pickedId === option.uniqueId;
+          return (
+            <motion.button
+              key={option.uniqueId}
+              initial={{ opacity: 0, scale: 0.85 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: index * 0.06, type: 'spring' }}
+              onClick={() => onSelect(option.uniqueId, option.answerValue)}
+              whileTap={{ scale: 0.97 }}
+              className={`p-4 rounded-2xl border-2 text-center transition-all ${
+                isPicked
+                  ? 'bg-duo-green/10 border-duo-green shadow-[0_3px_0_#46a302]'
+                  : 'bg-white border-cloud-gray shadow-[0_3px_0_#e5e5e5] hover:border-duo-green/40'
+              }`}
+            >
+              <div className="text-3xl mb-2">{option.emoji}</div>
+              <div className="font-fredoka font-bold text-almost-black text-sm leading-snug">{option.answerValue}</div>
+              <div className="mt-1.5 h-5 flex justify-center">
+                <PickedBadge show={isPicked} />
+              </div>
+            </motion.button>
+          );
+        })}
       </div>
     </div>
-  );
-}
-
-// Inline error component for form validation
-function InlineFormError({ message }: { message: string }) {
-  return (
-    <motion.p
-      initial={{ opacity: 0, y: -5 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -5 }}
-      className="text-red-500 text-sm mt-1 flex items-center gap-1"
-    >
-      <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-      </svg>
-      {message}
-    </motion.p>
   );
 }
 
@@ -1012,164 +668,61 @@ function FormCapture({
   formData,
   setFormData,
   onSubmit,
-  onBack,
 }: {
   formData: FormData;
   setFormData: React.Dispatch<React.SetStateAction<FormData>>;
-  onSubmit: (e: React.FormEvent) => void;
-  onBack?: () => void;
+  onSubmit: () => void;
 }) {
-  const [errors, setErrors] = useState<{ name?: string; email?: string }>({});
-  const [touched, setTouched] = useState<{ name?: boolean; email?: boolean }>({});
-
-  const validateName = (value: string) => {
-    if (!value.trim()) return 'Name is required';
-    if (value.trim().length < 2) return 'Name must be at least 2 characters';
-    return undefined;
-  };
-
-  const validateEmail = (value: string) => {
-    if (!value) return undefined;
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(value)) return 'Please enter a valid email address';
-    return undefined;
-  };
-
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setFormData(prev => ({ ...prev, name: value }));
-    if (touched.name) {
-      setErrors(prev => ({ ...prev, name: validateName(value) }));
-    }
-  };
-
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setFormData(prev => ({ ...prev, email: value }));
-    if (touched.email) {
-      setErrors(prev => ({ ...prev, email: validateEmail(value) }));
-    }
-  };
-
-  const handleNameBlur = () => {
-    setTouched(prev => ({ ...prev, name: true }));
-    setErrors(prev => ({ ...prev, name: validateName(formData.name) }));
-  };
-
-  const handleEmailBlur = () => {
-    setTouched(prev => ({ ...prev, email: true }));
-    setErrors(prev => ({ ...prev, email: validateEmail(formData.email) }));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const nameError = validateName(formData.name);
-    const emailError = validateEmail(formData.email);
-
-    setErrors({ name: nameError, email: emailError });
-    setTouched({ name: true, email: true });
-
-    if (!nameError && !emailError) {
-      onSubmit(e);
-    }
-  };
-
   return (
-    <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8">
-      {onBack && (
-        <button
-          type="button"
-          onClick={onBack}
-          className="flex items-center gap-1 text-gray-500 hover:text-gray-700 mb-3 text-sm transition-colors"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-          Back
-        </button>
-      )}
-      <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-1 sm:mb-2">
-        Before we add toppings...
-      </h2>
-      <p className="text-gray-500 text-sm sm:text-base mb-4 sm:mb-6">Who&apos;s making this pizza?</p>
-      <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
+    <div>
+      <div className="text-center mb-8">
         <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.1 }}
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ type: 'spring', bounce: 0.5 }}
+          className="w-20 h-20 bg-duo-green/10 rounded-[1.5rem] border-2 border-duo-green/20 flex items-center justify-center mx-auto mb-5"
         >
-          <label htmlFor="name" className="block text-sm sm:text-base font-medium text-gray-700 mb-1">
-            Name <span className="text-orange-500">*</span>
+          <span className="text-4xl">🍕</span>
+        </motion.div>
+        <h2 className="font-fredoka text-3xl font-bold text-almost-black mb-2">
+          Before the toppings…
+        </h2>
+        <p className="text-graphite text-sm font-medium">Who&apos;s building this pizza?</p>
+      </div>
+
+      <div className="space-y-4 mb-8">
+        <div>
+          <label className="block text-[10px] font-black text-graphite uppercase tracking-widest mb-2 ml-1">
+            Name <span className="text-silver">(optional)</span>
           </label>
           <input
             type="text"
-            id="name"
             value={formData.name}
-            onChange={handleNameChange}
-            onBlur={handleNameBlur}
-            className={`w-full px-4 py-3 sm:py-3 text-base rounded-lg border-2
-              focus:outline-none transition-colors
-              min-h-[48px] touch-manipulation
-              ${errors.name && touched.name
-                ? 'border-red-400 focus:border-red-500 bg-red-50'
-                : 'border-gray-200 focus:border-orange-400'
-              }`}
+            onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
             placeholder="Your name"
-            aria-invalid={errors.name && touched.name ? 'true' : 'false'}
+            className="w-full p-4 rounded-2xl border-2 border-cloud-gray focus:border-duo-green focus:ring-0 outline-none transition-all text-almost-black font-bold text-sm shadow-[0_3px_0_#e5e5e5] focus:shadow-[0_3px_0_#46a302]"
           />
-          <AnimatePresence>
-            {errors.name && touched.name && (
-              <InlineFormError message={errors.name} />
-            )}
-          </AnimatePresence>
-        </motion.div>
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.2 }}
-        >
-          <label htmlFor="email" className="block text-sm sm:text-base font-medium text-gray-700 mb-1">
-            Email <span className="text-gray-400">(optional)</span>
+        </div>
+        <div>
+          <label className="block text-[10px] font-black text-graphite uppercase tracking-widest mb-2 ml-1">
+            Email <span className="text-silver">(optional)</span>
           </label>
           <input
             type="email"
-            id="email"
             value={formData.email}
-            onChange={handleEmailChange}
-            onBlur={handleEmailBlur}
-            className={`w-full px-4 py-3 sm:py-3 text-base rounded-lg border-2
-              focus:outline-none transition-colors
-              min-h-[48px] touch-manipulation
-              ${errors.email && touched.email
-                ? 'border-red-400 focus:border-red-500 bg-red-50'
-                : 'border-gray-200 focus:border-orange-400'
-              }`}
+            onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
             placeholder="your@email.com"
-            aria-invalid={errors.email && touched.email ? 'true' : 'false'}
+            className="w-full p-4 rounded-2xl border-2 border-cloud-gray focus:border-duo-green focus:ring-0 outline-none transition-all text-almost-black font-bold text-sm shadow-[0_3px_0_#e5e5e5] focus:shadow-[0_3px_0_#46a302]"
           />
-          <AnimatePresence>
-            {errors.email && touched.email && (
-              <InlineFormError message={errors.email} />
-            )}
-          </AnimatePresence>
-        </motion.div>
-        <motion.button
-          type="submit"
-          className="w-full py-3 sm:py-3 px-6 min-h-[48px] bg-orange-500 text-white font-semibold rounded-lg
-            transition-colors focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-offset-2
-            cursor-pointer touch-manipulation
-            active:bg-orange-700
-            [@media(hover:hover)]:hover:bg-orange-600"
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-        >
-          Continue Building
-        </motion.button>
-      </form>
+        </div>
+      </div>
+
+      <button
+        onClick={onSubmit}
+        className="w-full py-5 bg-duo-green text-white font-fredoka font-bold text-xl uppercase tracking-widest rounded-2xl border-b-4 border-[#46a302] shadow-[0_4px_0_#3f8f01] transition-all hover:brightness-105 active:translate-y-[3px] active:shadow-none active:border-b-0"
+      >
+        Add Toppings 🥓
+      </button>
     </div>
   );
 }
@@ -1181,223 +734,133 @@ function ToppingsSelection({
   selectedToppings,
   onToggle,
   onBake,
-  onBack,
 }: {
   question?: Question;
   options: Array<typeof toppingOptions[0] & { answerValue: string; uniqueId: string }>;
   selectedToppings: string[];
   onToggle: (uniqueId: string, answerValue: string) => void;
   onBake: () => void;
-  onBack?: () => void;
 }) {
+  const count = selectedToppings.length;
   return (
-    <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8">
-      {onBack && (
-        <button
-          onClick={onBack}
-          className="flex items-center gap-1 text-gray-500 hover:text-gray-700 mb-3 text-sm transition-colors"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-          Back
-        </button>
-      )}
-      <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-1">
-        {question?.question || 'Add Your Toppings'}
+    <div>
+      <div className="mb-4 flex items-center gap-2">
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-duo-green/10 text-duo-green text-[10px] font-black uppercase tracking-widest rounded-full border border-duo-green/20">
+          🥓 Toppings
+        </span>
+        {count > 0 && (
+          <motion.span
+            key={count}
+            initial={{ scale: 0.7 }}
+            animate={{ scale: 1 }}
+            className="inline-flex items-center px-2.5 py-1 bg-duo-green text-white text-[10px] font-black uppercase tracking-wider rounded-full"
+          >
+            {count} picked
+          </motion.span>
+        )}
+      </div>
+      <h2 className="font-fredoka text-2xl sm:text-3xl font-bold text-almost-black leading-tight mb-7">
+        {question?.question || 'Pick your toppings'}
       </h2>
-      <p className="text-sm text-gray-500 mb-4 sm:mb-6">Select all that apply</p>
-      <div className="grid grid-cols-2 gap-2 sm:gap-4 mb-4 sm:mb-6">
+
+      <div className="grid grid-cols-2 gap-3 mb-6">
         {options.map((option, index) => {
           const isSelected = selectedToppings.includes(option.uniqueId);
           return (
             <motion.button
               key={option.uniqueId}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.05 }}
               onClick={() => onToggle(option.uniqueId, option.answerValue)}
-              className={`p-3 sm:p-4 min-h-[3.5rem] sm:min-h-0 rounded-xl border-2 transition-colors
-                focus:outline-none focus:ring-2 focus:ring-orange-400 cursor-pointer touch-manipulation
-                active:scale-95 ${
-                isSelected
-                  ? 'border-orange-500 bg-orange-50'
-                  : 'border-gray-200 [@media(hover:hover)]:hover:border-orange-300'
-              }`}
-              whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: index * 0.1, type: 'spring' }}
+              className={`p-4 rounded-2xl border-2 text-left transition-all active:translate-y-[2px] ${
+                isSelected
+                  ? 'bg-duo-green/10 border-duo-green shadow-[0_3px_0_#46a302]'
+                  : 'bg-white border-cloud-gray shadow-[0_3px_0_#e5e5e5] hover:border-duo-green/40'
+              }`}
             >
-              <div className="flex items-center gap-2 sm:gap-3">
-                <motion.div
-                  className={`w-5 h-5 sm:w-6 sm:h-6 rounded border-2 flex items-center justify-center flex-shrink-0 ${
-                    isSelected
-                      ? 'bg-orange-500 border-orange-500'
-                      : 'border-gray-300'
-                  }`}
-                  animate={{ scale: isSelected ? [1, 1.2, 1] : 1 }}
-                  transition={{ duration: 0.2 }}
-                >
+              <div className="flex items-center gap-3">
+                <span className={`w-5 h-5 rounded border-2 flex-shrink-0 flex items-center justify-center transition-all ${
+                  isSelected ? 'border-duo-green bg-duo-green' : 'border-cloud-gray'
+                }`}>
                   {isSelected && (
-                    <motion.svg
-                      className="w-3 h-3 sm:w-4 sm:h-4 text-white"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ type: 'spring', stiffness: 500 }}
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clipRule="evenodd"
-                      />
-                    </motion.svg>
+                    <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                    </svg>
                   )}
-                </motion.div>
-                <span className="text-xl sm:text-2xl">{option.emoji}</span>
-                <span className="font-medium text-gray-700 text-[11px] sm:text-sm leading-snug line-clamp-2" style={{ hyphens: 'auto', wordBreak: 'break-word' }}>{option.answerValue}</span>
+                </span>
+                <span className="text-xl">{option.emoji}</span>
+                <span className="font-bold text-almost-black text-xs leading-snug">{option.answerValue}</span>
               </div>
             </motion.button>
           );
         })}
       </div>
+
       <motion.button
         onClick={onBake}
-        className="w-full py-3 px-6 min-h-[48px] bg-orange-500 text-white font-semibold rounded-lg
-          transition-colors focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-offset-2
-          flex items-center justify-center gap-2 cursor-pointer touch-manipulation
-          active:bg-orange-700
-          [@media(hover:hover)]:hover:bg-orange-600"
-        whileHover={{ scale: 1.02, boxShadow: '0 10px 25px -5px rgba(249, 115, 22, 0.4)' }}
-        whileTap={{ scale: 0.98 }}
+        whileTap={{ scale: 0.97 }}
+        className="w-full py-5 bg-duo-green text-white font-fredoka font-bold text-xl uppercase tracking-widest rounded-2xl border-b-4 border-[#46a302] shadow-[0_4px_0_#3f8f01] transition-all hover:brightness-105 active:translate-y-[3px] active:shadow-none active:border-b-0 flex items-center justify-center gap-2"
       >
         <motion.span
-          animate={{ scale: [1, 1.2, 1] }}
-          transition={{ duration: 0.5, repeat: Infinity, repeatDelay: 1 }}
+          animate={{ rotate: [0, -10, 10, -5, 0] }}
+          transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 1 }}
         >
           🔥
         </motion.span>
-        <span className="text-sm sm:text-base">Put in Oven!</span>
+        Put in Oven!
       </motion.button>
     </div>
   );
 }
 
-// Stage 5: Baking Stage
-function BakingStage({
-  isBaking,
-  progress,
-  isDone,
-  name,
-}: {
-  isBaking: boolean;
-  progress: number;
-  isDone: boolean;
-  name: string;
-}) {
+// Stage 6: Baking Stage
+function BakingStage({ isBaking, progress, isDone }: { isBaking: boolean; progress: number; isDone: boolean }) {
   if (isDone) {
-    void name; // Unused but kept for API compatibility
     return (
       <motion.div
-        className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8 text-center"
+        className="text-center py-12"
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ type: 'spring', stiffness: 200, damping: 15 }}
       >
         <motion.div
-          className="text-5xl sm:text-6xl mb-4"
-          animate={{
-            scale: [1, 1.2, 1],
-            rotate: [0, -10, 10, -10, 0]
-          }}
-          transition={{
-            duration: 0.6,
-            repeat: 2,
-            repeatDelay: 0.5
-          }}
+          className="text-7xl mb-6"
+          animate={{ scale: [1, 1.2, 1], rotate: [0, -10, 10, 0] }}
+          transition={{ duration: 0.6, repeat: 2, repeatDelay: 0.5 }}
         >
           🍕
         </motion.div>
-        <motion.h2
-          className="text-xl sm:text-2xl font-bold text-orange-600"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-        >
-          Pizza Ready!
-        </motion.h2>
+        <h2 className="font-fredoka text-4xl font-bold text-duo-green mb-2">Pizza Ready!</h2>
+        <p className="text-graphite font-bold text-sm uppercase tracking-widest">Quest Complete!</p>
       </motion.div>
     );
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8 text-center">
-      {/* Oven visualization */}
-      <div className="relative w-48 h-40 sm:w-56 sm:h-48 mx-auto mb-4">
-        {/* Oven body */}
-        <div className="absolute inset-0 bg-gray-800 rounded-lg shadow-lg">
-          {/* Oven window */}
-          <motion.div
-            className="absolute top-4 left-4 right-4 bottom-12 bg-orange-500/80 rounded-md overflow-hidden"
-            animate={{
-              backgroundColor: isBaking
-                ? ['rgba(249, 115, 22, 0.8)', 'rgba(239, 68, 68, 0.9)', 'rgba(249, 115, 22, 0.8)']
-                : 'rgba(249, 115, 22, 0.8)'
-            }}
-            transition={{ duration: 1, repeat: Infinity }}
-          >
-            {/* Flames at bottom */}
-            <div className="absolute bottom-0 left-0 right-0 flex justify-center gap-2">
-              {[0, 1, 2, 3, 4].map((i) => (
-                <motion.div
-                  key={i}
-                  className="w-4 h-6 bg-yellow-400 rounded-t-full"
-                  animate={{
-                    height: [24, 32, 24],
-                    opacity: [0.8, 1, 0.8]
-                  }}
-                  transition={{
-                    duration: 0.3 + i * 0.05,
-                    repeat: Infinity,
-                    delay: i * 0.1
-                  }}
-                />
-              ))}
-            </div>
-          </motion.div>
-
-          {/* Oven controls */}
-          <div className="absolute bottom-2 left-4 right-4 flex justify-center gap-2">
-            <div className="w-4 h-4 rounded-full bg-red-500" />
-            <div className="w-4 h-4 rounded-full bg-gray-600" />
-            <div className="w-4 h-4 rounded-full bg-gray-600" />
-          </div>
-        </div>
-      </div>
-
-      <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-2">
-        Baking Your Pizza...
+    <div className="text-center py-12">
+      <motion.div
+        className="text-6xl mb-6"
+        animate={{ rotate: [0, 5, -5, 0] }}
+        transition={{ duration: 1, repeat: Infinity }}
+      >
+        🔥
+      </motion.div>
+      <h2 className="font-fredoka text-3xl font-bold text-almost-black mb-6">
+        Baking your pizza…
       </h2>
-
-      {/* Progress bar */}
-      <div className="w-full bg-gray-200 rounded-full h-4 mb-2 overflow-hidden">
+      <div className="w-full h-4 bg-cloud-gray rounded-full overflow-hidden border-2 border-cloud-gray mb-3">
         <motion.div
-          className="h-full bg-gradient-to-r from-orange-400 to-red-500 rounded-full"
+          className="h-full bg-duo-green rounded-full"
           initial={{ width: 0 }}
           animate={{ width: `${progress}%` }}
           transition={{ duration: 0.1 }}
         />
       </div>
-      <p className="text-gray-500 text-sm">{Math.round(progress)}% done</p>
-
-      {/* Timer countdown */}
-      <motion.p
-        className="text-2xl font-bold text-orange-600 mt-3"
-        animate={{ scale: [1, 1.05, 1] }}
-        transition={{ duration: 1, repeat: Infinity }}
-      >
-        {Math.ceil((100 - progress) * 0.03)}s
-      </motion.p>
+      <p className="font-black text-graphite text-sm uppercase tracking-widest">
+        {isBaking ? `${Math.round(progress)}% done` : 'Almost there…'}
+      </p>
     </div>
   );
 }

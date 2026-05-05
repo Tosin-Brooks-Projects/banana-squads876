@@ -599,7 +599,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto py-10 px-4">
+    <div className="max-w-3xl mx-auto py-4 sm:py-10">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -608,7 +608,7 @@ export default function SettingsPage() {
            <div className="w-12 h-12 rounded-2xl bg-orange-500 border-b-4 border-orange-700 flex items-center justify-center text-white shadow-lg">
               <Settings className="w-6 h-6" />
            </div>
-           <h1 className="text-4xl font-black tracking-tight text-gray-900">
+           <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-gray-900">
              Command <span className="text-orange-500">Center</span>
            </h1>
         </div>
@@ -623,12 +623,12 @@ export default function SettingsPage() {
         </AnimatePresence>
 
         {/* Account Settings Card */}
-        <div className="bg-white rounded-[32px] border-4 border-gray-100 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.02)] p-10 mb-8">
-          <div className="flex items-center gap-3 mb-8">
+        <div className="bg-white rounded-2xl sm:rounded-[32px] border-4 border-gray-100 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.02)] p-5 sm:p-10 mb-6 sm:mb-8">
+          <div className="flex items-center gap-3 mb-6 sm:mb-8">
             <div className="w-10 h-10 rounded-xl bg-indigo-50 border-2 border-indigo-100 flex items-center justify-center text-xl">
               👤
             </div>
-            <h2 className="text-2xl font-black text-gray-900 leading-tight uppercase tracking-tight">Identity</h2>
+            <h2 className="text-xl sm:text-2xl font-black text-gray-900 leading-tight uppercase tracking-tight">Identity</h2>
           </div>
 
           {/* Current Username Display */}
@@ -666,7 +666,7 @@ export default function SettingsPage() {
                 exit={{ opacity: 0, height: 0 }}
                 className="overflow-hidden mb-8"
               >
-                <div className="border-4 border-orange-100 rounded-3xl p-8 bg-orange-50/30">
+                <div className="border-4 border-orange-100 rounded-2xl sm:rounded-3xl p-5 sm:p-8 bg-orange-50/30">
                   <h3 className="text-lg font-black text-gray-900 mb-6 uppercase tracking-tight">New Codename Selection</h3>
 
                   {error && (
@@ -787,12 +787,12 @@ export default function SettingsPage() {
         </div>
 
         {/* Data & Privacy Card */}
-        <div className="bg-white rounded-[32px] border-4 border-gray-100 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.02)] p-10 mb-8">
-          <div className="flex items-center gap-3 mb-8">
+        <div className="bg-white rounded-2xl sm:rounded-[32px] border-4 border-gray-100 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.02)] p-5 sm:p-10 mb-6 sm:mb-8">
+          <div className="flex items-center gap-3 mb-6 sm:mb-8">
             <div className="w-10 h-10 rounded-xl bg-green-50 border-2 border-green-100 flex items-center justify-center text-xl">
               📦
             </div>
-            <h2 className="text-2xl font-black text-gray-900 leading-tight uppercase tracking-tight">Mission Data</h2>
+            <h2 className="text-xl sm:text-2xl font-black text-gray-900 leading-tight uppercase tracking-tight">Mission Data</h2>
           </div>
 
           {exportError && (
@@ -801,7 +801,7 @@ export default function SettingsPage() {
             </div>
           )}
 
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 p-8 bg-gray-50 rounded-[32px] border-4 border-gray-100 group hover:border-indigo-100 transition-all">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 sm:p-8 bg-gray-50 rounded-2xl sm:rounded-[32px] border-4 border-gray-100 group hover:border-indigo-100 transition-all">
             <div className="max-w-md">
               <p className="text-lg font-black text-gray-900 leading-tight uppercase tracking-tight mb-1">Archive Mission History</p>
               <p className="text-xs font-bold text-gray-400 uppercase tracking-wider leading-relaxed">
@@ -824,12 +824,12 @@ export default function SettingsPage() {
         </div>
 
         {/* Danger Zone */}
-        <div className="bg-red-50/30 rounded-[32px] border-4 border-red-50 p-10 mb-12">
-          <div className="flex items-center gap-3 mb-8">
+        <div className="bg-red-50/30 rounded-2xl sm:rounded-[32px] border-4 border-red-50 p-5 sm:p-10 mb-8 sm:mb-12">
+          <div className="flex items-center gap-3 mb-6 sm:mb-8">
             <div className="w-10 h-10 rounded-xl bg-red-100 border-2 border-red-200 flex items-center justify-center text-xl">
               ⚠️
             </div>
-            <h2 className="text-2xl font-black text-red-600 leading-tight uppercase tracking-tight">Danger Zone</h2>
+            <h2 className="text-xl sm:text-2xl font-black text-red-600 leading-tight uppercase tracking-tight">Danger Zone</h2>
           </div>
 
           {deleteError && (
@@ -838,7 +838,7 @@ export default function SettingsPage() {
             </div>
           )}
 
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 p-8 bg-white rounded-[32px] border-4 border-red-100 shadow-[8px_8px_0px_0px_rgba(239,68,68,0.05)]">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 sm:p-8 bg-white rounded-2xl sm:rounded-[32px] border-4 border-red-100 shadow-[8px_8px_0px_0px_rgba(239,68,68,0.05)]">
             <div className="max-w-md">
               <p className="text-lg font-black text-gray-900 leading-tight uppercase tracking-tight mb-1">Erase account realm</p>
               <p className="text-xs font-bold text-gray-400 uppercase tracking-wider leading-relaxed">

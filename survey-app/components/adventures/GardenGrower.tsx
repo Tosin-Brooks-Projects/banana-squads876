@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Question, Answer, OnProgressCallback } from '@/lib/types';
 import FinalThoughts from './shared/FinalThoughts';
@@ -34,459 +34,166 @@ interface SelectedChoices {
 
 interface AnswerMap {
   [questionId: string]: {
-    visualId: string;
-    answerValue: string;
+    visualId: string | string[];
+    answerValue: string | string[];
   };
 }
 
-// Animation variants
-const stageVariants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.5, ease: 'easeOut' as const }
-  },
-  exit: {
-    opacity: 0,
-    y: -30,
-    transition: { duration: 0.3, ease: 'easeIn' as const }
-  }
-};
-
-const buttonHoverVariants = {
-  hover: {
-    scale: 1.05,
-    boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)',
-    transition: { duration: 0.2 }
-  },
-  tap: { scale: 0.98 }
-};
-
-const confettiColors = ['#22c55e', '#16a34a', '#15803d', '#fbbf24', '#f97316', '#ec4899', '#8b5cf6'];
-
 // Visual options
 const soilOptions = [
-  { id: 'rich', name: 'Rich Soil', color: 'bg-amber-900', description: 'Dark and nutrient-rich' },
-  { id: 'sandy', name: 'Sandy Soil', color: 'bg-amber-300', description: 'Light and well-draining' },
-  { id: 'clay', name: 'Clay Soil', color: 'bg-orange-700', description: 'Dense and moisture-holding' },
+  { id: 'rich', name: 'Rich Soil', emoji: '🟫', color: 'bg-amber-900' },
+  { id: 'sandy', name: 'Sandy Soil', emoji: '🏜️', color: 'bg-amber-300' },
+  { id: 'clay', name: 'Clay Soil', emoji: '🧱', color: 'bg-orange-700' },
 ];
 
 const seedOptions = [
-  { id: 'sunflower', name: 'Sunflower', emoji: '🌻', color: 'bg-yellow-400', petalColor: '#facc15', centerColor: '#92400e' },
-  { id: 'rose', name: 'Rose', emoji: '🌹', color: 'bg-red-500', petalColor: '#ef4444', centerColor: '#fcd34d' },
-  { id: 'daisy', name: 'Daisy', emoji: '🌼', color: 'bg-white', petalColor: '#ffffff', centerColor: '#facc15' },
+  { id: 'sunflower', name: 'Sunflower', emoji: '🌻' },
+  { id: 'rose', name: 'Rose', emoji: '🌹' },
+  { id: 'daisy', name: 'Daisy', emoji: '🌼' },
 ];
+
+const STAGE_EMOJIS = ['🌱', '💧', '☀️', '🌸'];
+
+const confettiColors = ['#58cc02', '#ffc700', '#1cb0f6', '#a570ff', '#cc348d', '#e67348'];
 
 function getQuestionOptions(question: Question | undefined): string[] {
   if (!question) return [];
-
-  // Multiple choice questions have options array
-  if ('options' in question && question.options) {
-    return question.options;
-  }
-
-  // Rating questions need generated options based on scale
+  if ('options' in question && question.options) return question.options;
   if (question.type === 'rating' && 'scale' in question) {
     const scale = question.scale || 5;
     return Array.from({ length: scale }, (_, i) => {
-      const value = i + 1;
-      if (value === 1 && question.startLabel) return question.startLabel;
-      if (value === scale && question.endLabel) return question.endLabel;
-      return String(value);
+      const v = i + 1;
+      if (v === 1 && question.startLabel) return question.startLabel;
+      if (v === scale && question.endLabel) return question.endLabel;
+      return String(v);
     });
   }
-
-  // Emoji slider questions - use scale with optional labels
   if (question.type === 'emoji-slider' && 'scale' in question) {
     const scale = question.scale || 5;
     return Array.from({ length: scale }, (_, i) => {
-      const value = i + 1;
-      if (value === 1 && question.labels?.start) return question.labels.start;
-      if (value === scale && question.labels?.end) return question.labels.end;
-      return String(value);
+      const v = i + 1;
+      if (v === 1 && question.labels?.start) return question.labels.start;
+      if (v === scale && question.labels?.end) return question.labels.end;
+      return String(v);
     });
   }
-
   return [];
 }
 
 function mapQuestionToVisualOptions<T extends { id: string; name: string }>(
   question: Question | undefined,
   visualOptions: T[]
-): Array<T & { answerValue: string }> {
-  const questionOptions = getQuestionOptions(question);
-
-  // If no question options, return empty - don't use visual names as answers
-  if (questionOptions.length === 0) {
-    return [];
-  }
-
-  // Map question options to visual options, cycling through visuals if needed
-  return questionOptions.map((option, index) => {
-    const visualOption = visualOptions[index % visualOptions.length];
-    return {
-      ...visualOption,
-      answerValue: option,
-    };
+): Array<T & { answerValue: string; uniqueId: string }> {
+  const opts = getQuestionOptions(question);
+  if (opts.length === 0) return [];
+  return opts.map((option, index) => {
+    const v = visualOptions[index % visualOptions.length];
+    return { ...v, answerValue: option, uniqueId: `${v.id}-${index}` };
   });
 }
 
-// Confetti Component
-function Confetti({ isActive }: { isActive: boolean }) {
-  const [particles, setParticles] = useState<Array<{
-    id: number;
-    x: number;
-    color: string;
-    delay: number;
-    duration: number;
-  }>>([]);
+// PickedBadge micro-feedback
+function PickedBadge({ show }: { show: boolean }) {
+  return (
+    <AnimatePresence>
+      {show && (
+        <motion.span
+          initial={{ opacity: 0, scale: 0.7, y: 4 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.7 }}
+          className="inline-flex items-center gap-1 px-2 py-0.5 bg-duo-green text-white text-[10px] font-black uppercase tracking-wider rounded-full"
+        >
+          <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+          </svg>
+          Picked!
+        </motion.span>
+      )}
+    </AnimatePresence>
+  );
+}
 
+function Confetti({ isActive }: { isActive: boolean }) {
+  const [particles, setParticles] = useState<Array<{ id: number; x: number; color: string; delay: number; duration: number }>>([]);
   useEffect(() => {
     if (isActive) {
-      const newParticles = Array.from({ length: 50 }, (_, i) => ({
-        id: i,
-        x: Math.random() * 100,
+      setParticles(Array.from({ length: 50 }, (_, i) => ({
+        id: i, x: Math.random() * 100,
         color: confettiColors[Math.floor(Math.random() * confettiColors.length)],
-        delay: Math.random() * 0.5,
-        duration: 2 + Math.random() * 2,
-      }));
-      setParticles(newParticles);
+        delay: Math.random() * 0.5, duration: 2 + Math.random() * 2,
+      })));
     }
   }, [isActive]);
-
   if (!isActive) return null;
-
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden z-50">
-      {particles.map((particle) => (
-        <motion.div
-          key={particle.id}
-          className="absolute w-3 h-3 rounded-sm"
-          style={{
-            left: `${particle.x}%`,
-            top: -20,
-            backgroundColor: particle.color,
-          }}
+      {particles.map((p) => (
+        <motion.div key={p.id} className="absolute w-3 h-3 rounded-sm"
+          style={{ left: `${p.x}%`, top: -20, backgroundColor: p.color }}
           initial={{ y: -20, rotate: 0, opacity: 1 }}
-          animate={{
-            y: typeof window !== 'undefined' ? window.innerHeight + 50 : 800,
-            rotate: 360 * (Math.random() > 0.5 ? 1 : -1),
-            opacity: [1, 1, 0],
-          }}
-          transition={{
-            duration: particle.duration,
-            delay: particle.delay,
-            ease: 'linear',
-          }}
+          animate={{ y: typeof window !== 'undefined' ? window.innerHeight + 50 : 800, rotate: 360, opacity: [1, 1, 0] }}
+          transition={{ duration: p.duration, delay: p.delay, ease: 'linear' }}
         />
       ))}
     </div>
   );
 }
 
-// Garden Display Component
-function GardenDisplay({
-  currentStage,
-  selectedChoices,
-  growthProgress,
-  isGrowing: _isGrowing,
-}: {
-  currentStage: number;
-  selectedChoices: SelectedChoices;
-  growthProgress: number;
-  isGrowing: boolean;
-}) {
-  void _isGrowing;
-  const soil = soilOptions.find(s => s.id === selectedChoices.soil) || soilOptions[0];
-  const seed = seedOptions.find(s => s.id === selectedChoices.seed);
-  const sunPosition = selectedChoices.sunlight; // 0-100
+// Garden visual display
+function GardenDisplay({ selectedChoices, stage }: { selectedChoices: SelectedChoices; stage: number }) {
+  const seed = seedOptions.find(s => selectedChoices.seed.startsWith(s.id));
+  const soilBase = soilOptions.find(s => selectedChoices.soil.startsWith(s.id));
+
+  const plantEmoji = stage >= 5 ? (seed?.emoji || '🌱') : stage >= 3 ? '🌿' : stage >= 2 ? '🌱' : '🫘';
 
   return (
-    <div className="relative w-full h-64 sm:h-72 md:h-80 mx-auto overflow-hidden rounded-2xl bg-gradient-to-b from-sky-300 via-sky-200 to-sky-100">
-      {/* Clouds */}
-      <motion.div
-        className="absolute top-4 left-10 text-4xl opacity-80"
-        animate={{ x: [0, 20, 0] }}
-        transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-      >
-        ☁️
-      </motion.div>
-      <motion.div
-        className="absolute top-8 right-16 text-3xl opacity-70"
-        animate={{ x: [0, -15, 0] }}
-        transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
-      >
-        ☁️
-      </motion.div>
-
-      {/* Sun */}
-      <motion.div
-        className="absolute text-5xl sm:text-6xl"
-        style={{
-          top: '10%',
-          left: `${20 + sunPosition * 0.6}%`,
-        }}
-        animate={{
-          scale: currentStage >= 4 ? [1, 1.1, 1] : 1,
-          filter: currentStage >= 4 ? 'drop-shadow(0 0 20px rgba(250, 204, 21, 0.8))' : 'none',
-        }}
-        transition={{ duration: 2, repeat: currentStage >= 4 ? Infinity : 0 }}
-      >
-        ☀️
-      </motion.div>
-
-      {/* Ground / Soil */}
-      <div className="absolute bottom-0 left-0 right-0">
-        {/* Grass line */}
-        <div className="h-4 bg-gradient-to-b from-green-500 to-green-600" />
-
-        {/* Soil layer */}
-        <AnimatePresence>
-          {currentStage >= 1 && (
+    <div className="flex flex-col items-center gap-3">
+      {/* Garden pot */}
+      <div className="relative w-24 h-24">
+        {/* Sky/soil background */}
+        <div className={`absolute inset-0 rounded-2xl overflow-hidden border-2 border-cloud-gray shadow-[0_4px_0_rgba(0,0,0,0.08)] ${soilBase ? soilBase.color : 'bg-amber-100'}`}>
+          {/* Plant */}
+          {stage >= 1 && (
             <motion.div
-              className={`h-16 sm:h-20 ${soil.color}`}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5 }}
+              className="absolute bottom-0 left-0 right-0 flex justify-center pb-1"
+              initial={{ scale: 0, y: 10 }}
+              animate={{ scale: 1, y: 0 }}
+              transition={{ type: 'spring', bounce: 0.5 }}
             >
-              {/* Soil texture */}
-              <div className="w-full h-full relative overflow-hidden">
-                {Array.from({ length: 8 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className="absolute w-3 h-3 rounded-full bg-black/10"
-                    style={{
-                      left: `${10 + i * 12}%`,
-                      top: `${20 + (i % 3) * 25}%`,
-                    }}
-                  />
-                ))}
-              </div>
+              <span className="text-3xl">{plantEmoji}</span>
             </motion.div>
           )}
-        </AnimatePresence>
-      </div>
-
-      {/* Water droplets animation */}
-      <AnimatePresence>
-        {currentStage === 2 && selectedChoices.watered && (
-          <div className="absolute bottom-20 left-1/2 -translate-x-1/2">
-            {[0, 1, 2, 3, 4].map((i) => (
-              <motion.div
-                key={i}
-                className="absolute text-blue-500 text-lg"
-                style={{ left: `${-20 + i * 10}px` }}
-                initial={{ y: -60, opacity: 1 }}
-                animate={{ y: 0, opacity: 0 }}
-                transition={{
-                  duration: 0.8,
-                  delay: i * 0.1,
-                  repeat: 3,
-                }}
-              >
-                💧
-              </motion.div>
-            ))}
-          </div>
-        )}
-      </AnimatePresence>
-
-      {/* Plant growth stages */}
-      <AnimatePresence>
-        {currentStage >= 2 && seed && (
-          <div className="absolute bottom-16 sm:bottom-20 left-1/2 -translate-x-1/2">
-            {/* Seed in ground */}
-            {growthProgress < 10 && (
-              <motion.div
-                className="w-4 h-4 bg-amber-800 rounded-full"
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-              />
-            )}
-
-            {/* Sprout */}
-            {growthProgress >= 10 && growthProgress < 40 && (
-              <motion.div
-                className="relative"
-                initial={{ scale: 0, y: 10 }}
-                animate={{ scale: 1, y: 0 }}
-                transition={{ type: 'spring', stiffness: 200 }}
-              >
-                <div className="w-1 h-8 bg-green-500 mx-auto rounded-full" />
-                <div className="absolute -top-2 left-1/2 -translate-x-1/2">
-                  <div className="w-3 h-4 bg-green-400 rounded-full transform -rotate-45 -translate-x-1" />
-                  <div className="w-3 h-4 bg-green-400 rounded-full transform rotate-45 translate-x-1 -mt-3" />
-                </div>
-              </motion.div>
-            )}
-
-            {/* Stem with leaves */}
-            {growthProgress >= 40 && growthProgress < 70 && (
-              <motion.div
-                className="relative"
-                initial={{ height: 0 }}
-                animate={{ height: 'auto' }}
-              >
-                <motion.div
-                  className="w-2 bg-green-600 mx-auto rounded-full"
-                  initial={{ height: 20 }}
-                  animate={{ height: 60 }}
-                  transition={{ duration: 0.5 }}
-                />
-                {/* Leaves */}
-                <motion.div
-                  className="absolute top-4 -left-4 w-6 h-3 bg-green-500 rounded-full transform -rotate-30"
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ delay: 0.2 }}
-                />
-                <motion.div
-                  className="absolute top-8 -right-4 w-6 h-3 bg-green-500 rounded-full transform rotate-30"
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ delay: 0.4 }}
-                />
-              </motion.div>
-            )}
-
-            {/* Full flower */}
-            {growthProgress >= 70 && (
-              <motion.div
-                className="relative"
-                initial={{ scale: 0.5 }}
-                animate={{ scale: 1 }}
-                transition={{ type: 'spring', stiffness: 150 }}
-              >
-                {/* Stem */}
-                <div className="w-2 h-20 sm:h-24 bg-green-600 mx-auto rounded-full" />
-
-                {/* Leaves */}
-                <div className="absolute top-6 -left-5 w-8 h-4 bg-green-500 rounded-full transform -rotate-30" />
-                <div className="absolute top-12 -right-5 w-8 h-4 bg-green-500 rounded-full transform rotate-30" />
-
-                {/* Flower head */}
-                <motion.div
-                  className="absolute -top-10 sm:-top-12 left-1/2 -translate-x-1/2"
-                  initial={{ scale: 0, rotate: -180 }}
-                  animate={{ scale: 1, rotate: 0 }}
-                  transition={{ delay: 0.3, type: 'spring' }}
-                >
-                  {/* Petals */}
-                  {seed.id === 'sunflower' && (
-                    <div className="relative w-16 h-16 sm:w-20 sm:h-20">
-                      {Array.from({ length: 12 }).map((_, i) => (
-                        <motion.div
-                          key={i}
-                          className="absolute w-4 h-8 sm:w-5 sm:h-10 rounded-full"
-                          style={{
-                            backgroundColor: seed.petalColor,
-                            left: '50%',
-                            top: '50%',
-                            transformOrigin: 'center bottom',
-                            transform: `translate(-50%, -100%) rotate(${i * 30}deg)`,
-                          }}
-                          initial={{ scale: 0 }}
-                          animate={{ scale: 1 }}
-                          transition={{ delay: 0.4 + i * 0.05 }}
-                        />
-                      ))}
-                      <div
-                        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 rounded-full"
-                        style={{ backgroundColor: seed.centerColor }}
-                      />
-                    </div>
-                  )}
-
-                  {seed.id === 'rose' && (
-                    <div className="relative w-14 h-14 sm:w-16 sm:h-16">
-                      {Array.from({ length: 8 }).map((_, i) => (
-                        <motion.div
-                          key={i}
-                          className="absolute rounded-full"
-                          style={{
-                            backgroundColor: seed.petalColor,
-                            width: `${60 - i * 6}%`,
-                            height: `${60 - i * 6}%`,
-                            left: '50%',
-                            top: '50%',
-                            transform: `translate(-50%, -50%) rotate(${i * 45}deg)`,
-                            opacity: 1 - i * 0.08,
-                          }}
-                          initial={{ scale: 0 }}
-                          animate={{ scale: 1 }}
-                          transition={{ delay: 0.4 + i * 0.08 }}
-                        />
-                      ))}
-                    </div>
-                  )}
-
-                  {seed.id === 'daisy' && (
-                    <div className="relative w-14 h-14 sm:w-16 sm:h-16">
-                      {Array.from({ length: 10 }).map((_, i) => (
-                        <motion.div
-                          key={i}
-                          className="absolute w-3 h-6 sm:w-4 sm:h-8 bg-white rounded-full border border-gray-200"
-                          style={{
-                            left: '50%',
-                            top: '50%',
-                            transformOrigin: 'center bottom',
-                            transform: `translate(-50%, -100%) rotate(${i * 36}deg)`,
-                          }}
-                          initial={{ scale: 0 }}
-                          animate={{ scale: 1 }}
-                          transition={{ delay: 0.4 + i * 0.05 }}
-                        />
-                      ))}
-                      <div
-                        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 sm:w-8 sm:h-8 rounded-full"
-                        style={{ backgroundColor: seed.centerColor }}
-                      />
-                    </div>
-                  )}
-                </motion.div>
-
-                {/* Butterfly */}
-                {growthProgress >= 100 && (
-                  <motion.div
-                    className="absolute -top-16 sm:-top-20 -right-8 text-2xl sm:text-3xl"
-                    initial={{ x: 50, y: 50, opacity: 0 }}
-                    animate={{
-                      x: [50, 0, -10, 0],
-                      y: [50, 0, -5, 0],
-                      opacity: 1,
-                    }}
-                    transition={{ duration: 1.5, ease: 'easeOut' }}
-                  >
-                    <motion.span
-                      animate={{ rotateY: [0, 180, 0] }}
-                      transition={{ duration: 0.3, repeat: Infinity }}
-                    >
-                      🦋
-                    </motion.span>
-                  </motion.div>
-                )}
-              </motion.div>
-            )}
-          </div>
-        )}
-      </AnimatePresence>
-
-      {/* Empty state */}
-      <AnimatePresence>
-        {currentStage === 0 && (
+          {/* Water drops */}
+          {stage === 2 && selectedChoices.watered && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <span className="text-2xl opacity-60">💧</span>
+            </div>
+          )}
+          {/* Empty hint */}
+          {stage === 0 && (
+            <div className="absolute inset-0 flex items-center justify-center text-2xl opacity-20">🌱</div>
+          )}
+        </div>
+        {/* Sun when sunlight stage */}
+        {stage >= 4 && (
           <motion.div
-            className="absolute inset-0 flex items-center justify-center"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            className="absolute -top-4 -right-2 text-xl"
+            animate={{ rotate: [0, 10, -10, 0] }}
+            transition={{ duration: 3, repeat: Infinity }}
           >
-            <p className="text-gray-600 text-sm sm:text-base text-center bg-white/50 px-4 py-2 rounded-lg">
-              Your garden will<br />grow here!
-            </p>
+            ☀️
           </motion.div>
         )}
-      </AnimatePresence>
+      </div>
+
+      {/* Stage breadcrumb */}
+      <div className="flex items-center gap-1.5">
+        {STAGE_EMOJIS.map((emoji, i) => (
+          <span key={i} className={`text-sm transition-all ${i < stage ? 'opacity-100' : 'opacity-20'}`}>
+            {emoji}
+          </span>
+        ))}
+      </div>
     </div>
   );
 }
@@ -494,100 +201,61 @@ function GardenDisplay({
 export default function GardenGrower({ questions, onComplete, onProgress, initialState, allowAnonymous = false }: GardenGrowerProps) {
   const [currentStage, setCurrentStage] = useState(initialState?.currentStage ?? 0);
   const [selectedChoices, setSelectedChoices] = useState<SelectedChoices>(
-    initialState?.selectedChoices ?? {
-      soil: '',
-      seed: '',
-      watered: false,
-      sunlight: 50,
-    }
+    initialState?.selectedChoices ?? { soil: '', seed: '', watered: false, sunlight: 50 }
   );
   const [answerMap, setAnswerMap] = useState<AnswerMap>(initialState?.answerMap ?? {});
-  const [formData, setFormData] = useState<FormData>(
-    initialState?.formData ?? {
-      name: '',
-      email: '',
-    }
-  );
+  const [formData, setFormData] = useState<FormData>(initialState?.formData ?? { name: '', email: '' });
   const [showConfetti, setShowConfetti] = useState(false);
   const [growthProgress, setGrowthProgress] = useState(0);
   const [isGrowing, setIsGrowing] = useState(false);
   const [additionalThoughts, setAdditionalThoughts] = useState('');
+  const [pickedId, setPickedId] = useState<string | null>(null);
+  const [isWatering, setIsWatering] = useState(false);
 
   const reportProgress = useCallback(() => {
     if (!onProgress || currentStage === 0 || currentStage >= 5) return;
-
-    const answers: Answer[] = questions.map((question) => {
-      const entry = answerMap[question.id];
-      return {
-        questionId: question.id,
-        value: entry?.answerValue || '',
-      };
+    const answers: Answer[] = questions.map((q) => {
+      const entry = answerMap[q.id];
+      return { questionId: q.id, value: entry?.answerValue || '' };
     });
-
     onProgress({
-      currentStage,
-      totalStages: allowAnonymous ? 6 : 7,
-      answers,
-      adventureState: {
-        currentStage,
-        selectedChoices,
-        answerMap,
-        formData,
-      },
+      currentStage, totalStages: allowAnonymous ? 6 : 7, answers,
+      adventureState: { currentStage, selectedChoices, answerMap, formData },
       respondentName: allowAnonymous ? undefined : (formData.name || undefined),
       respondentEmail: allowAnonymous ? undefined : (formData.email || undefined),
     });
   }, [onProgress, currentStage, questions, answerMap, selectedChoices, formData, allowAnonymous]);
 
-  useEffect(() => {
-    reportProgress();
-  }, [currentStage, reportProgress]);
+  useEffect(() => { reportProgress(); }, [currentStage, reportProgress]);
 
   const mappedSoilOptions = mapQuestionToVisualOptions(questions[0], soilOptions);
   const mappedSeedOptions = mapQuestionToVisualOptions(questions[1], seedOptions);
 
-  const handleSoilSelect = (visualId: string, answerValue: string) => {
-    setSelectedChoices(prev => ({ ...prev, soil: visualId }));
-    if (questions[0]) {
-      setAnswerMap(prev => ({
-        ...prev,
-        [questions[0].id]: { visualId, answerValue },
-      }));
-    }
-    setCurrentStage(1);
+  const pickWithBadge = (uniqueId: string, advance: () => void) => {
+    setPickedId(uniqueId);
+    setTimeout(() => { setPickedId(null); advance(); }, 600);
   };
 
-  const handleSeedSelect = (visualId: string, answerValue: string) => {
-    setSelectedChoices(prev => ({ ...prev, seed: visualId }));
-    if (questions[1]) {
-      setAnswerMap(prev => ({
-        ...prev,
-        [questions[1].id]: { visualId, answerValue },
-      }));
-    }
-    setCurrentStage(2);
+  const handleSoilSelect = (uniqueId: string, answerValue: string) => {
+    setSelectedChoices(prev => ({ ...prev, soil: uniqueId }));
+    if (questions[0]) setAnswerMap(prev => ({ ...prev, [questions[0].id]: { visualId: uniqueId, answerValue } }));
+    pickWithBadge(uniqueId, () => setCurrentStage(1));
+  };
+
+  const handleSeedSelect = (uniqueId: string, answerValue: string) => {
+    setSelectedChoices(prev => ({ ...prev, seed: uniqueId }));
+    if (questions[1]) setAnswerMap(prev => ({ ...prev, [questions[1].id]: { visualId: uniqueId, answerValue } }));
+    pickWithBadge(uniqueId, () => setCurrentStage(2));
   };
 
   const handleWater = () => {
+    setIsWatering(true);
     setSelectedChoices(prev => ({ ...prev, watered: true }));
-    if (questions[2]) {
-      setAnswerMap(prev => ({
-        ...prev,
-        [questions[2].id]: { visualId: 'watered', answerValue: 'Watered' },
-      }));
-    }
-    // Wait for water animation then proceed
-    // Skip FormCapture stage if anonymous
+    if (questions[2]) setAnswerMap(prev => ({ ...prev, [questions[2].id]: { visualId: 'watered', answerValue: 'Watered' } }));
     setTimeout(() => {
+      setIsWatering(false);
       setCurrentStage(allowAnonymous ? 4 : 3);
-    }, 2500);
-  };
-
-  const handleFormSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (formData.name.trim()) {
-      setCurrentStage(4);
-    }
+    }, 1500);
   };
 
   const handleSunlightChange = (value: number) => {
@@ -596,54 +264,34 @@ export default function GardenGrower({ questions, onComplete, onProgress, initia
 
   const handleSunlightConfirm = () => {
     if (questions[3]) {
-      const sunlightLevel = selectedChoices.sunlight < 33 ? 'Low' : selectedChoices.sunlight < 66 ? 'Medium' : 'High';
-      setAnswerMap(prev => ({
-        ...prev,
-        [questions[3].id]: { visualId: sunlightLevel.toLowerCase(), answerValue: sunlightLevel },
-      }));
+      const level = selectedChoices.sunlight < 33 ? 'Low' : selectedChoices.sunlight < 66 ? 'Medium' : 'High';
+      setAnswerMap(prev => ({ ...prev, [questions[3].id]: { visualId: level.toLowerCase(), answerValue: level } }));
     }
-    setCurrentStage(5); // Go to final thoughts
+    setCurrentStage(5);
   };
 
-  // Go from final thoughts to growth animation
   const handleGoToGrowth = () => {
     setCurrentStage(6);
-    startGrowth();
-  };
-
-  const startGrowth = () => {
     setIsGrowing(true);
     setGrowthProgress(0);
-
     const interval = setInterval(() => {
       setGrowthProgress(prev => {
         if (prev >= 100) {
           clearInterval(interval);
           setIsGrowing(false);
           setShowConfetti(true);
-
-          // Complete after showing done state
           setTimeout(() => {
-            const answers: Answer[] = questions.map((question) => {
-              const entry = answerMap[question.id];
-              return {
-                questionId: question.id,
-                value: entry?.answerValue || '',
-              };
+            const answers: Answer[] = questions.map((q) => {
+              const entry = answerMap[q.id];
+              return { questionId: q.id, value: entry?.answerValue || '' };
             });
-
-            // Only include name/email if not anonymous
             if (!allowAnonymous) {
-              answers.push(
-                { questionId: 'respondent_name', value: formData.name },
-                { questionId: 'respondent_email', value: formData.email }
-              );
+              answers.push({ questionId: 'respondent_name', value: formData.name });
+              answers.push({ questionId: 'respondent_email', value: formData.email });
             }
             answers.push({ questionId: 'additional_thoughts', value: additionalThoughts });
-
             onComplete(answers);
           }, 2500);
-
           setTimeout(() => setShowConfetti(false), 4000);
           return 100;
         }
@@ -654,710 +302,384 @@ export default function GardenGrower({ questions, onComplete, onProgress, initia
 
   const handleBack = () => {
     if (currentStage > 0) {
-      // Skip FormCapture stage (3) when going back if anonymous
-      if (allowAnonymous && currentStage === 4) {
-        setCurrentStage(2);
-      } else {
-        setCurrentStage(prev => prev - 1);
-      }
+      if (allowAnonymous && currentStage === 4) setCurrentStage(2);
+      else setCurrentStage(prev => prev - 1);
     }
   };
 
-  const renderStage = () => {
-    switch (currentStage) {
-      case 0:
-        return (
-          <SoilSelection
-            question={questions[0]}
-            options={mappedSoilOptions}
-            onSelect={handleSoilSelect}
-          />
-        );
-      case 1:
-        return (
-          <SeedSelection
-            question={questions[1]}
-            options={mappedSeedOptions}
-            onSelect={handleSeedSelect}
-            onBack={handleBack}
-          />
-        );
-      case 2:
-        return (
-          <WateringStage
-            question={questions[2]}
-            watered={selectedChoices.watered}
-            onWater={handleWater}
-            onBack={handleBack}
-          />
-        );
-      case 3:
-        return (
-          <FormCapture
-            formData={formData}
-            setFormData={setFormData}
-            onSubmit={handleFormSubmit}
-            onBack={handleBack}
-          />
-        );
-      case 4:
-        return (
-          <SunlightStage
-            question={questions[3]}
-            sunlight={selectedChoices.sunlight}
-            onChange={handleSunlightChange}
-            onConfirm={handleSunlightConfirm}
-            onBack={handleBack}
-          />
-        );
-      case 5:
-        return (
-          <FinalThoughts
-            value={additionalThoughts}
-            onChange={setAdditionalThoughts}
-            onContinue={handleGoToGrowth}
-            onBack={handleBack}
-            theme="garden"
-            respondentName={formData.name}
-          />
-        );
-      case 6:
-        return (
-          <GrowthStage
-            isGrowing={isGrowing}
-            progress={growthProgress}
-            name={formData.name}
-          />
-        );
-      default:
-        return null;
-    }
-  };
+  const totalDisplayStages = allowAnonymous ? 5 : 6;
+  const progressPct = Math.min((currentStage / totalDisplayStages) * 100, 100);
+  const showTopBar = currentStage >= 1 && currentStage < 6;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-100 via-emerald-50 to-amber-50 flex flex-col items-center justify-start md:justify-center p-3 sm:p-6 lg:p-8">
+    <div className="min-h-screen bg-white flex flex-col">
       <Confetti isActive={showConfetti} />
 
-      {/* Header */}
-      <motion.div
-        className="text-center mb-3 sm:mb-4 pt-2 sm:pt-0"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-green-700 mb-1 sm:mb-2">
-          Grow Your Garden! 🌱
-        </h1>
-        {currentStage < 5 && (
-          <motion.p
-            className="text-gray-600 text-sm sm:text-base"
-            key={currentStage}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-          >
-            {(() => {
-              const totalStages = allowAnonymous ? 5 : 6;
-              // Adjust displayed stage number when anonymous (skip stage 3)
-              const displayStage = allowAnonymous && currentStage >= 4 ? currentStage : currentStage + 1;
-              return `Stage ${displayStage} of ${totalStages}`;
-            })()}
-          </motion.p>
-        )}
-      </motion.div>
-
-      {/* Main content */}
-      <div className="w-full max-w-4xl flex flex-col gap-4 md:gap-6">
-        {/* Garden Display */}
-        <motion.div
-          className="bg-white/30 rounded-2xl p-2 sm:p-3 backdrop-blur-sm"
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.4 }}
-        >
-          <GardenDisplay
-            currentStage={currentStage}
-            selectedChoices={selectedChoices}
-            growthProgress={growthProgress}
-            isGrowing={isGrowing}
-          />
-        </motion.div>
-
-        {/* Stage content */}
-        <div className="w-full max-w-lg mx-auto">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={currentStage}
-              variants={stageVariants}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
+      {/* Top bar */}
+      {showTopBar && (
+        <div className="w-full px-4 pt-6 pb-4 max-w-lg mx-auto">
+          <div className="flex items-center gap-4 mb-4">
+            <button
+              onClick={handleBack}
+              disabled={currentStage <= 1}
+              className="flex-shrink-0 w-10 h-10 rounded-2xl border-2 border-cloud-gray shadow-[0_3px_0_#e5e5e5] flex items-center justify-center text-graphite disabled:opacity-30 transition-all active:translate-y-[2px] active:shadow-none"
             >
-              {renderStage()}
-            </motion.div>
-          </AnimatePresence>
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <div className="flex-1 h-4 bg-cloud-gray rounded-full overflow-hidden border-2 border-cloud-gray">
+              <motion.div className="h-full bg-duo-green rounded-full"
+                initial={{ width: 0 }} animate={{ width: `${progressPct}%` }}
+                transition={{ duration: 0.4, ease: 'easeOut' }} />
+            </div>
+            <span className="flex-shrink-0 text-[10px] font-black text-graphite uppercase tracking-wider">
+              {Math.min(currentStage, totalDisplayStages)}/{totalDisplayStages}
+            </span>
+          </div>
         </div>
-      </div>
-    </div>
-  );
-}
-
-// Stage 0: Soil Selection
-function SoilSelection({
-  question,
-  options,
-  onSelect,
-}: {
-  question?: Question;
-  options: Array<typeof soilOptions[0] & { answerValue: string }>;
-  onSelect: (visualId: string, answerValue: string) => void;
-}) {
-  return (
-    <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8">
-      <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4 sm:mb-6">
-        {question?.question || 'Prepare Your Soil'}
-      </h2>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-        {options.map((option, index) => (
-          <motion.button
-            key={option.id}
-            onClick={() => onSelect(option.id, option.answerValue)}
-            className="min-h-[5rem] sm:min-h-0 p-4 sm:p-6 rounded-xl border-2 border-gray-200
-              transition-colors focus:outline-none focus:ring-2 focus:ring-green-400 cursor-pointer
-              active:bg-green-100 active:border-green-500
-              [@media(hover:hover)]:hover:border-green-400 [@media(hover:hover)]:hover:bg-green-50"
-            variants={buttonHoverVariants}
-            whileHover="hover"
-            whileTap="tap"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1 }}
-          >
-            {/* Soil visual with tilling animation */}
-            <motion.div
-              className={`w-16 h-8 mx-auto rounded-md ${option.color} mb-2 relative overflow-hidden`}
-              whileHover={{
-                scaleY: [1, 1.1, 1],
-              }}
-              transition={{ duration: 0.3 }}
-            >
-              {/* Soil texture lines */}
-              {Array.from({ length: 3 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="absolute h-0.5 bg-black/20"
-                  style={{
-                    width: '80%',
-                    left: '10%',
-                    top: `${25 + i * 25}%`,
-                  }}
-                />
-              ))}
-            </motion.div>
-            <div className="font-medium text-gray-700 text-[11px] sm:text-sm text-center leading-snug line-clamp-3" style={{ hyphens: 'auto', wordBreak: 'break-word' }}>{option.answerValue}</div>
-            <div className="text-xs text-gray-500 mt-1">{option.description}</div>
-          </motion.button>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-// Stage 1: Seed Selection
-function SeedSelection({
-  question,
-  options,
-  onSelect,
-  onBack,
-}: {
-  question?: Question;
-  options: Array<typeof seedOptions[0] & { answerValue: string }>;
-  onSelect: (visualId: string, answerValue: string) => void;
-  onBack?: () => void;
-}) {
-  return (
-    <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8">
-      {onBack && (
-        <button
-          onClick={onBack}
-          className="flex items-center gap-1 text-gray-500 hover:text-gray-700 mb-3 text-sm transition-colors"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-          Back
-        </button>
       )}
-      <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4 sm:mb-6">
-        {question?.question || 'Plant Your Seed'}
-      </h2>
-      <div className="grid grid-cols-3 gap-2 sm:gap-4">
-        {options.map((option, index) => (
-          <motion.button
-            key={option.id}
-            onClick={() => onSelect(option.id, option.answerValue)}
-            className="p-3 sm:p-4 min-h-[6rem] sm:min-h-0 rounded-xl border-2 border-gray-200
-              transition-colors focus:outline-none focus:ring-2 focus:ring-green-400 cursor-pointer touch-manipulation
-              active:bg-green-100 active:border-green-500
-              [@media(hover:hover)]:hover:border-green-400 [@media(hover:hover)]:hover:bg-green-50"
-            variants={buttonHoverVariants}
-            whileHover="hover"
-            whileTap="tap"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: index * 0.1, type: 'spring' }}
+
+      {/* Main */}
+      <div className="flex-1 flex flex-col px-4 max-w-lg mx-auto w-full pb-8">
+        {currentStage < 6 && (
+          <div className="py-6 flex justify-center">
+            <GardenDisplay selectedChoices={selectedChoices} stage={currentStage} />
+          </div>
+        )}
+
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentStage}
+            initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -30 }} transition={{ duration: 0.25 }}
           >
-            <motion.div
-              className="text-4xl sm:text-5xl mb-2"
-              whileHover={{ scale: 1.2, rotate: [0, -10, 10, 0] }}
-              transition={{ duration: 0.3 }}
+            {currentStage === 0 && (
+              <OptionStage
+                stageLabel="🌱 Soil First"
+                question={questions[0]}
+                fallback="Choose your soil"
+                options={mappedSoilOptions.map(o => ({ ...o, emoji: soilOptions.find(s => o.uniqueId.startsWith(s.id))?.emoji || '🌱' }))}
+                onSelect={handleSoilSelect}
+                pickedId={pickedId}
+                cols={3}
+              />
+            )}
+            {currentStage === 1 && (
+              <OptionStage
+                stageLabel="🫘 Plant a Seed"
+                question={questions[1]}
+                fallback="Pick your seed"
+                options={mappedSeedOptions.map(o => ({ ...o, emoji: seedOptions.find(s => o.uniqueId.startsWith(s.id))?.emoji || '🫘' }))}
+                onSelect={handleSeedSelect}
+                pickedId={pickedId}
+                cols={3}
+              />
+            )}
+            {currentStage === 2 && (
+              <WateringStage
+                question={questions[2]}
+                watered={selectedChoices.watered}
+                isWatering={isWatering}
+                onWater={handleWater}
+              />
+            )}
+            {currentStage === 3 && !allowAnonymous && (
+              <FormCapture formData={formData} setFormData={setFormData} onSubmit={() => setCurrentStage(4)} />
+            )}
+            {currentStage === 4 && (
+              <SunlightStage
+                question={questions[3]}
+                sunlight={selectedChoices.sunlight}
+                onChange={handleSunlightChange}
+                onConfirm={handleSunlightConfirm}
+              />
+            )}
+            {currentStage === 5 && (
+              <FinalThoughts
+                value={additionalThoughts}
+                onChange={setAdditionalThoughts}
+                onContinue={handleGoToGrowth}
+                onBack={handleBack}
+                theme="garden"
+                respondentName={formData.name}
+              />
+            )}
+            {currentStage === 6 && (
+              <GrowthStage isGrowing={isGrowing} progress={growthProgress} />
+            )}
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      {currentStage < 6 && (
+        <div className="py-6 text-center">
+          <a href="https://unboringsurveys.com" target="_blank" rel="noopener noreferrer"
+            className="font-fredoka text-sm font-bold text-silver hover:text-duo-green transition-colors">
+            Unboring<span className="text-duo-green">.</span>
+          </a>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Generic option grid
+function OptionStage({
+  stageLabel, question, fallback, options, onSelect, pickedId, cols,
+}: {
+  stageLabel: string;
+  question?: Question;
+  fallback: string;
+  options: Array<{ uniqueId: string; answerValue: string; emoji: string }>;
+  onSelect: (uniqueId: string, answerValue: string) => void;
+  pickedId: string | null;
+  cols: number;
+}) {
+  return (
+    <div>
+      <div className="mb-4">
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-duo-green/10 text-duo-green text-[10px] font-black uppercase tracking-widest rounded-full border border-duo-green/20">
+          {stageLabel}
+        </span>
+      </div>
+      <h2 className="font-fredoka text-2xl sm:text-3xl font-bold text-almost-black leading-tight mb-7">
+        {question?.question || fallback}
+      </h2>
+      <div className={`grid grid-cols-${cols} gap-3`}>
+        {options.map((option, index) => {
+          const isPicked = pickedId === option.uniqueId;
+          return (
+            <motion.button
+              key={option.uniqueId}
+              initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.06 }}
+              onClick={() => onSelect(option.uniqueId, option.answerValue)}
+              whileTap={{ scale: 0.97 }}
+              className={`p-4 rounded-2xl border-2 text-center transition-all ${
+                isPicked
+                  ? 'bg-duo-green/10 border-duo-green shadow-[0_3px_0_#46a302]'
+                  : 'bg-white border-cloud-gray shadow-[0_3px_0_#e5e5e5] hover:border-duo-green/40'
+              }`}
             >
-              {option.emoji}
-            </motion.div>
-            <div className="font-medium text-gray-700 text-[11px] sm:text-sm text-center leading-snug line-clamp-3" style={{ hyphens: 'auto', wordBreak: 'break-word' }}>{option.answerValue}</div>
-          </motion.button>
-        ))}
+              <div className="text-3xl mb-2">{option.emoji}</div>
+              <div className="font-fredoka font-bold text-almost-black text-sm leading-snug">{option.answerValue}</div>
+              <div className="mt-1.5 h-5 flex justify-center">
+                <PickedBadge show={isPicked} />
+              </div>
+            </motion.button>
+          );
+        })}
       </div>
     </div>
   );
 }
 
-// Stage 2: Watering Stage
+// Stage 2: Watering
 function WateringStage({
-  question,
-  watered,
-  onWater,
-  onBack,
+  question, watered, isWatering, onWater,
 }: {
   question?: Question;
   watered: boolean;
+  isWatering: boolean;
   onWater: () => void;
-  onBack?: () => void;
 }) {
-  const [isPouring, setIsPouring] = useState(false);
-  const canRef = useRef<HTMLDivElement>(null);
-
-  const handlePour = () => {
-    if (!watered && !isPouring) {
-      setIsPouring(true);
-      setTimeout(() => {
-        onWater();
-      }, 500);
-    }
-  };
-
   return (
-    <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8 text-center">
-      {onBack && (
-        <button
-          onClick={onBack}
-          className="flex items-center gap-1 text-gray-500 hover:text-gray-700 mb-3 text-sm transition-colors"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-          Back
-        </button>
-      )}
-      <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-1 sm:mb-2">
-        {question?.question || 'Water Your Plant'}
+    <div>
+      <div className="mb-4">
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-duo-green/10 text-duo-green text-[10px] font-black uppercase tracking-widest rounded-full border border-duo-green/20">
+          💧 Water Time
+        </span>
+      </div>
+      <h2 className="font-fredoka text-2xl sm:text-3xl font-bold text-almost-black leading-tight mb-7">
+        {question?.question || 'Time to water!'}
       </h2>
-      <p className="text-gray-500 text-sm sm:text-base mb-4 sm:mb-6">
-        {watered ? 'Nice! Your plant is well watered!' : 'Click the watering can to pour water'}
-      </p>
 
-      {/* Watering can */}
-      <motion.div
-        ref={canRef}
-        className="relative mx-auto w-32 h-32 sm:w-40 sm:h-40 cursor-pointer select-none"
-        onClick={handlePour}
-        animate={{
-          rotate: isPouring ? -45 : 0,
-        }}
-        transition={{ duration: 0.3 }}
-        whileHover={{ scale: watered ? 1 : 1.05 }}
-        whileTap={{ scale: watered ? 1 : 0.95 }}
-      >
-        {/* Can body */}
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-20 h-16 sm:w-24 sm:h-20 bg-green-500 rounded-lg rounded-t-xl shadow-lg">
-          {/* Handle */}
-          <div className="absolute -right-3 top-2 w-4 h-10 sm:w-5 sm:h-12 bg-green-600 rounded-full" />
-          {/* Spout */}
-          <div className="absolute -left-6 top-0 w-8 h-3 bg-green-600 rounded-l-full transform -rotate-12" />
-        </div>
-
-        {/* Water pouring */}
-        <AnimatePresence>
-          {isPouring && (
-            <motion.div
-              className="absolute -left-4 top-8 w-2 rounded-full bg-blue-400"
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 60, opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.5 }}
-            />
-          )}
-        </AnimatePresence>
-      </motion.div>
-
-      {watered && (
-        <motion.p
-          className="text-green-600 font-medium mt-4"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
+      <div className="text-center mb-8">
+        <motion.div
+          animate={isWatering ? { scale: [1, 1.1, 1], rotate: [0, -10, 10, 0] } : {}}
+          transition={{ duration: 0.5, repeat: isWatering ? Infinity : 0 }}
+          className="text-7xl mb-4"
         >
-          ✓ Plant watered! Moving to next step...
-        </motion.p>
+          {isWatering ? '💧' : watered ? '✅' : '🚿'}
+        </motion.div>
+        {isWatering && (
+          <motion.p
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+            className="text-duo-green font-fredoka font-bold text-lg"
+          >
+            Watering…
+          </motion.p>
+        )}
+      </div>
+
+      {!watered && (
+        <motion.button
+          onClick={onWater}
+          disabled={isWatering}
+          whileTap={{ scale: 0.97 }}
+          className="w-full py-5 bg-duo-green text-white font-fredoka font-bold text-xl uppercase tracking-widest rounded-2xl border-b-4 border-[#46a302] shadow-[0_4px_0_#3f8f01] transition-all hover:brightness-105 active:translate-y-[3px] active:shadow-none active:border-b-0 disabled:opacity-50"
+        >
+          💧 Water the Seed!
+        </motion.button>
       )}
     </div>
-  );
-}
-
-// Inline error component for form validation
-function InlineFormError({ message }: { message: string }) {
-  return (
-    <motion.p
-      initial={{ opacity: 0, y: -5 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -5 }}
-      className="text-red-500 text-sm mt-1 flex items-center gap-1"
-    >
-      <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-      </svg>
-      {message}
-    </motion.p>
   );
 }
 
 // Stage 3: Form Capture
 function FormCapture({
-  formData,
-  setFormData,
-  onSubmit,
-  onBack,
+  formData, setFormData, onSubmit,
 }: {
   formData: FormData;
   setFormData: React.Dispatch<React.SetStateAction<FormData>>;
-  onSubmit: (e: React.FormEvent) => void;
-  onBack?: () => void;
+  onSubmit: () => void;
 }) {
-  const [errors, setErrors] = useState<{ name?: string; email?: string }>({});
-  const [touched, setTouched] = useState<{ name?: boolean; email?: boolean }>({});
-
-  const validateName = (value: string) => {
-    if (!value.trim()) return 'Name is required';
-    if (value.trim().length < 2) return 'Name must be at least 2 characters';
-    return undefined;
-  };
-
-  const validateEmail = (value: string) => {
-    if (!value) return undefined;
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(value)) return 'Please enter a valid email address';
-    return undefined;
-  };
-
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setFormData(prev => ({ ...prev, name: value }));
-    if (touched.name) {
-      setErrors(prev => ({ ...prev, name: validateName(value) }));
-    }
-  };
-
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setFormData(prev => ({ ...prev, email: value }));
-    if (touched.email) {
-      setErrors(prev => ({ ...prev, email: validateEmail(value) }));
-    }
-  };
-
-  const handleNameBlur = () => {
-    setTouched(prev => ({ ...prev, name: true }));
-    setErrors(prev => ({ ...prev, name: validateName(formData.name) }));
-  };
-
-  const handleEmailBlur = () => {
-    setTouched(prev => ({ ...prev, email: true }));
-    setErrors(prev => ({ ...prev, email: validateEmail(formData.email) }));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const nameError = validateName(formData.name);
-    const emailError = validateEmail(formData.email);
-
-    setErrors({ name: nameError, email: emailError });
-    setTouched({ name: true, email: true });
-
-    if (!nameError && !emailError) {
-      onSubmit(e);
-    }
-  };
-
   return (
-    <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8">
-      {onBack && (
-        <button
-          type="button"
-          onClick={onBack}
-          className="flex items-center gap-1 text-gray-500 hover:text-gray-700 mb-3 text-sm transition-colors"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-          Back
-        </button>
-      )}
-      <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-1 sm:mb-2">
-        Who&apos;s the gardener?
-      </h2>
-      <p className="text-gray-500 text-sm sm:text-base mb-4 sm:mb-6">Let us know who&apos;s growing this beautiful garden</p>
-      <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.1 }}
-        >
-          <label htmlFor="name" className="block text-sm sm:text-base font-medium text-gray-700 mb-1">
-            Name <span className="text-green-500">*</span>
+    <div>
+      <div className="text-center mb-8">
+        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', bounce: 0.5 }}
+          className="w-20 h-20 bg-duo-green/10 rounded-[1.5rem] border-2 border-duo-green/20 flex items-center justify-center mx-auto mb-5">
+          <span className="text-4xl">🌿</span>
+        </motion.div>
+        <h2 className="font-fredoka text-3xl font-bold text-almost-black mb-2">Almost blooming…</h2>
+        <p className="text-graphite text-sm font-medium">Who&apos;s tending this garden?</p>
+      </div>
+      <div className="space-y-4 mb-8">
+        <div>
+          <label className="block text-[10px] font-black text-graphite uppercase tracking-widest mb-2 ml-1">
+            Name <span className="text-silver">(optional)</span>
           </label>
-          <input
-            type="text"
-            id="name"
-            value={formData.name}
-            onChange={handleNameChange}
-            onBlur={handleNameBlur}
-            className={`w-full px-4 py-3 sm:py-3 text-base rounded-lg border-2
-              focus:outline-none transition-colors
-              min-h-[48px] touch-manipulation
-              ${errors.name && touched.name
-                ? 'border-red-400 focus:border-red-500 bg-red-50'
-                : 'border-gray-200 focus:border-green-400'
-              }`}
+          <input type="text" value={formData.name}
+            onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
             placeholder="Your name"
-            aria-invalid={errors.name && touched.name ? 'true' : 'false'}
+            className="w-full p-4 rounded-2xl border-2 border-cloud-gray focus:border-duo-green focus:ring-0 outline-none transition-all text-almost-black font-bold text-sm shadow-[0_3px_0_#e5e5e5] focus:shadow-[0_3px_0_#46a302]"
           />
-          <AnimatePresence>
-            {errors.name && touched.name && (
-              <InlineFormError message={errors.name} />
-            )}
-          </AnimatePresence>
-        </motion.div>
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.2 }}
-        >
-          <label htmlFor="email" className="block text-sm sm:text-base font-medium text-gray-700 mb-1">
-            Email <span className="text-gray-400">(optional)</span>
+        </div>
+        <div>
+          <label className="block text-[10px] font-black text-graphite uppercase tracking-widest mb-2 ml-1">
+            Email <span className="text-silver">(optional)</span>
           </label>
-          <input
-            type="email"
-            id="email"
-            value={formData.email}
-            onChange={handleEmailChange}
-            onBlur={handleEmailBlur}
-            className={`w-full px-4 py-3 sm:py-3 text-base rounded-lg border-2
-              focus:outline-none transition-colors
-              min-h-[48px] touch-manipulation
-              ${errors.email && touched.email
-                ? 'border-red-400 focus:border-red-500 bg-red-50'
-                : 'border-gray-200 focus:border-green-400'
-              }`}
+          <input type="email" value={formData.email}
+            onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
             placeholder="your@email.com"
-            aria-invalid={errors.email && touched.email ? 'true' : 'false'}
+            className="w-full p-4 rounded-2xl border-2 border-cloud-gray focus:border-duo-green focus:ring-0 outline-none transition-all text-almost-black font-bold text-sm shadow-[0_3px_0_#e5e5e5] focus:shadow-[0_3px_0_#46a302]"
           />
-          <AnimatePresence>
-            {errors.email && touched.email && (
-              <InlineFormError message={errors.email} />
-            )}
-          </AnimatePresence>
-        </motion.div>
-        <motion.button
-          type="submit"
-          className="w-full py-3 sm:py-3 px-6 min-h-[48px] bg-green-500 text-white font-semibold rounded-lg
-            transition-colors focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2
-            cursor-pointer touch-manipulation
-            active:bg-green-700
-            [@media(hover:hover)]:hover:bg-green-600"
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-        >
-          Continue Growing
-        </motion.button>
-      </form>
+        </div>
+      </div>
+      <button onClick={onSubmit}
+        className="w-full py-5 bg-duo-green text-white font-fredoka font-bold text-xl uppercase tracking-widest rounded-2xl border-b-4 border-[#46a302] shadow-[0_4px_0_#3f8f01] transition-all hover:brightness-105 active:translate-y-[3px] active:shadow-none active:border-b-0">
+        Set the Sunlight ☀️
+      </button>
     </div>
   );
 }
 
-// Stage 4: Sunlight Stage
+// Stage 4: Sunlight Slider
 function SunlightStage({
-  question,
-  sunlight,
-  onChange,
-  onConfirm,
-  onBack,
+  question, sunlight, onChange, onConfirm,
 }: {
   question?: Question;
   sunlight: number;
   onChange: (value: number) => void;
   onConfirm: () => void;
-  onBack?: () => void;
 }) {
-  const sunlightLevel = sunlight < 33 ? 'Low' : sunlight < 66 ? 'Medium' : 'High';
+  const level = sunlight < 33 ? 'Low Sun' : sunlight < 66 ? 'Medium Sun' : 'Full Sun';
+  const levelEmoji = sunlight < 33 ? '🌑' : sunlight < 66 ? '🌤️' : '☀️';
 
   return (
-    <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8">
-      {onBack && (
-        <button
-          onClick={onBack}
-          className="flex items-center gap-1 text-gray-500 hover:text-gray-700 mb-3 text-sm transition-colors"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-          Back
-        </button>
-      )}
-      <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4 sm:mb-6">
-        {question?.question || 'Adjust Sunlight'}
+    <div>
+      <div className="mb-4">
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-duo-green/10 text-duo-green text-[10px] font-black uppercase tracking-widest rounded-full border border-duo-green/20">
+          ☀️ Sunlight
+        </span>
+      </div>
+      <h2 className="font-fredoka text-2xl sm:text-3xl font-bold text-almost-black leading-tight mb-7">
+        {question?.question || 'Adjust the sunlight'}
       </h2>
 
-      {/* Sun visual */}
-      <div className="relative h-20 mb-6 bg-gradient-to-r from-sky-200 via-sky-100 to-amber-100 rounded-xl overflow-hidden">
+      {/* Sun track */}
+      <div className="relative h-16 mb-6 bg-gradient-to-r from-slate-200 via-sky-100 to-amber-100 rounded-2xl overflow-hidden border-2 border-cloud-gray">
         <motion.div
-          className="absolute text-4xl sm:text-5xl"
-          style={{
-            top: '20%',
-            left: `${10 + sunlight * 0.7}%`,
-          }}
-          animate={{
-            filter: `drop-shadow(0 0 ${10 + sunlight / 5}px rgba(250, 204, 21, ${0.5 + sunlight / 200}))`,
-          }}
+          className="absolute top-1/2 -translate-y-1/2 text-3xl pointer-events-none"
+          style={{ left: `calc(${10 + sunlight * 0.75}% - 1rem)` }}
+          animate={{ filter: `drop-shadow(0 0 ${6 + sunlight / 10}px rgba(250,204,21,${0.4 + sunlight / 200}))` }}
+          transition={{ duration: 0.1 }}
         >
           ☀️
         </motion.div>
       </div>
 
       {/* Slider */}
-      <div className="mb-4">
+      <div className="mb-6">
         <input
-          type="range"
-          min="0"
-          max="100"
-          value={sunlight}
+          type="range" min="0" max="100" value={sunlight}
           onChange={(e) => onChange(parseInt(e.target.value))}
-          className="w-full h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer
-            [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6
-            [&::-webkit-slider-thumb]:bg-yellow-400 [&::-webkit-slider-thumb]:rounded-full
-            [&::-webkit-slider-thumb]:shadow-lg [&::-webkit-slider-thumb]:cursor-pointer
-            [&::-moz-range-thumb]:w-6 [&::-moz-range-thumb]:h-6
-            [&::-moz-range-thumb]:bg-yellow-400 [&::-moz-range-thumb]:rounded-full
-            [&::-moz-range-thumb]:shadow-lg [&::-moz-range-thumb]:cursor-pointer
-            [&::-moz-range-thumb]:border-0"
+          className="w-full h-4 rounded-full appearance-none cursor-pointer bg-cloud-gray
+            [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-7 [&::-webkit-slider-thumb]:h-7
+            [&::-webkit-slider-thumb]:bg-sunshine-yellow [&::-webkit-slider-thumb]:rounded-full
+            [&::-webkit-slider-thumb]:shadow-[0_3px_0_rgba(0,0,0,0.2)] [&::-webkit-slider-thumb]:cursor-pointer
+            [&::-moz-range-thumb]:w-7 [&::-moz-range-thumb]:h-7
+            [&::-moz-range-thumb]:bg-sunshine-yellow [&::-moz-range-thumb]:rounded-full
+            [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:cursor-pointer"
         />
-        <div className="flex justify-between text-sm text-gray-500 mt-2">
+        <div className="flex justify-between text-xs font-black text-graphite uppercase tracking-wider mt-2 px-1">
           <span>🌑 Shade</span>
-          <span className="font-medium text-amber-600">{sunlightLevel} Sun</span>
-          <span>☀️ Full Sun</span>
+          <span className="text-sunshine-yellow">{levelEmoji} {level}</span>
+          <span>☀️ Full</span>
         </div>
       </div>
 
       <motion.button
         onClick={onConfirm}
-        className="w-full py-3 px-6 min-h-[48px] bg-green-500 text-white font-semibold rounded-lg
-          transition-colors focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2
-          flex items-center justify-center gap-2 cursor-pointer touch-manipulation
-          active:bg-green-700
-          [@media(hover:hover)]:hover:bg-green-600"
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
+        whileTap={{ scale: 0.97 }}
+        className="w-full py-5 bg-duo-green text-white font-fredoka font-bold text-xl uppercase tracking-widest rounded-2xl border-b-4 border-[#46a302] shadow-[0_4px_0_#3f8f01] transition-all hover:brightness-105 active:translate-y-[3px] active:shadow-none active:border-b-0 flex items-center justify-center gap-2"
       >
-        <span>🌱</span>
-        <span>Watch It Grow!</span>
+        <motion.span animate={{ rotate: [0, 10, -10, 0] }} transition={{ duration: 2, repeat: Infinity }}>
+          🌱
+        </motion.span>
+        Watch It Grow!
       </motion.button>
     </div>
   );
 }
 
-// Stage 5: Growth Stage
-function GrowthStage({
-  isGrowing: _isGrowingParam,
-  progress,
-  name,
-}: {
-  isGrowing: boolean;
-  progress: number;
-  name: string;
-}) {
-  void _isGrowingParam;
-  const growthLabel = progress < 20 ? 'Germinating...' : progress < 50 ? 'Sprouting...' : progress < 80 ? 'Growing leaves...' : progress < 100 ? 'Blooming...' : 'Fully grown!';
+// Stage 6: Growth Stage
+function GrowthStage({ isGrowing, progress }: { isGrowing: boolean; progress: number }) {
+  const label = progress < 20 ? 'Germinating…' : progress < 50 ? 'Sprouting…' : progress < 80 ? 'Growing leaves…' : progress < 100 ? 'Blooming…' : 'Fully grown!';
 
   if (progress >= 100) {
-    void name;
     return (
-      <motion.div
-        className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8 text-center"
-        initial={{ scale: 0.8, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ type: 'spring', stiffness: 200, damping: 15 }}
-      >
-        <motion.div
-          className="text-5xl sm:text-6xl mb-4"
-          animate={{
-            scale: [1, 1.2, 1],
-            rotate: [0, -5, 5, 0]
-          }}
-          transition={{
-            duration: 0.8,
-            repeat: 2,
-            repeatDelay: 0.3
-          }}
-        >
+      <motion.div className="text-center py-12"
+        initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+        transition={{ type: 'spring', stiffness: 200, damping: 15 }}>
+        <motion.div className="text-7xl mb-6"
+          animate={{ scale: [1, 1.2, 1], rotate: [0, -5, 5, 0] }}
+          transition={{ duration: 0.8, repeat: 2, repeatDelay: 0.5 }}>
           🌸
         </motion.div>
-        <motion.h2
-          className="text-xl sm:text-2xl font-bold text-green-600"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-        >
-          Beautiful Garden!
-        </motion.h2>
+        <h2 className="font-fredoka text-4xl font-bold text-duo-green mb-2">Garden Bloomed!</h2>
+        <p className="text-graphite font-bold text-sm uppercase tracking-widest">Quest Complete!</p>
       </motion.div>
     );
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8 text-center">
-      <motion.div
-        className="text-4xl sm:text-5xl mb-4"
-        animate={{ scale: [1, 1.1, 1] }}
-        transition={{ duration: 1, repeat: Infinity }}
-      >
-        {progress < 20 ? '🌰' : progress < 50 ? '🌱' : progress < 80 ? '🌿' : '🌷'}
+    <div className="text-center py-12">
+      <motion.div className="text-6xl mb-6"
+        animate={{ scale: [1, 1.05, 1] }}
+        transition={{ duration: 1.5, repeat: Infinity }}>
+        {progress < 50 ? '🌱' : '🌿'}
       </motion.div>
-
-      <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-2">
-        {growthLabel}
-      </h2>
-
-      {/* Progress bar */}
-      <div className="w-full bg-gray-200 rounded-full h-4 mb-2 overflow-hidden">
-        <motion.div
-          className="h-full bg-gradient-to-r from-green-400 to-emerald-500 rounded-full"
-          initial={{ width: 0 }}
-          animate={{ width: `${progress}%` }}
-          transition={{ duration: 0.1 }}
-        />
+      <h2 className="font-fredoka text-3xl font-bold text-almost-black mb-6">{label}</h2>
+      <div className="w-full h-4 bg-cloud-gray rounded-full overflow-hidden border-2 border-cloud-gray mb-3">
+        <motion.div className="h-full bg-duo-green rounded-full"
+          initial={{ width: 0 }} animate={{ width: `${progress}%` }}
+          transition={{ duration: 0.1 }} />
       </div>
-      <p className="text-gray-500 text-sm">{Math.round(progress)}% grown</p>
+      <p className="font-black text-graphite text-sm uppercase tracking-widest">
+        {isGrowing ? `${Math.round(progress)}% grown` : 'Almost there…'}
+      </p>
     </div>
   );
 }
