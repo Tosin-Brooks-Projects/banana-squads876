@@ -20,12 +20,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!process.env.ANTHROPIC_API_KEY) {
-      return NextResponse.json(
-        { error: 'ANTHROPIC_API_KEY is not configured' },
-        { status: 500 }
-      );
-    }
+    // API Key is checked inside generateQuestions to allow for mock data fallback during design
 
     let result;
     try {

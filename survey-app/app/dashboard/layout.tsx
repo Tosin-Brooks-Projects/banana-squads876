@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
 import { useAuthContext } from '@/contexts/AuthContext';
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
 import Sidebar from '@/components/dashboard/Sidebar';
@@ -59,16 +60,20 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-neutral-50 overflow-x-hidden">
-      <DashboardHeader onMenuClick={() => setSidebarOpen(true)} />
+    <div className="min-h-[100dvh] bg-white overflow-x-hidden flex relative">
+      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
-      <div className="flex">
-        <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <div className="flex-1 flex flex-col min-h-[100dvh] lg:pl-0 relative z-10">
+        <DashboardHeader onMenuClick={() => setSidebarOpen(true)} />
 
-        <main className="flex-1 min-w-0 p-4 lg:p-6 lg:ml-0">
-          <div className="max-w-7xl mx-auto">
+        <main className="flex-1 p-4 md:p-8 overflow-x-hidden">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="max-w-[1400px] mx-auto w-full"
+          >
             {children}
-          </div>
+          </motion.div>
         </main>
       </div>
     </div>

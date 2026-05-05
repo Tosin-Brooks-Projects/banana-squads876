@@ -132,29 +132,29 @@ const confettiColors = ['#ef4444', '#f97316', '#eab308', '#22c55e', '#3b82f6', '
 
 // Visual options
 const crustOptions = [
-  { id: 'thin', name: 'Thin', color: 'bg-amber-200', borderColor: 'border-amber-400', thickness: 'h-2' },
-  { id: 'regular', name: 'Regular', color: 'bg-amber-300', borderColor: 'border-amber-500', thickness: 'h-3' },
-  { id: 'thick', name: 'Thick', color: 'bg-amber-400', borderColor: 'border-amber-600', thickness: 'h-4' },
+  { id: 'thin', name: 'Thin', color: 'bg-amber-100', borderColor: 'border-amber-900/20', thickness: 'h-2' },
+  { id: 'regular', name: 'Regular', color: 'bg-amber-200', borderColor: 'border-amber-900/30', thickness: 'h-3' },
+  { id: 'thick', name: 'Thick', color: 'bg-amber-300', borderColor: 'border-amber-900/40', thickness: 'h-4' },
 ];
 
 const sauceOptions = [
   { id: 'tomato', name: 'Tomato', color: 'bg-red-500' },
-  { id: 'white', name: 'White', color: 'bg-red-500' },
-  { id: 'pesto', name: 'Pesto', color: 'bg-red-500' },
+  { id: 'white', name: 'White', color: 'bg-red-100' },
+  { id: 'pesto', name: 'Pesto', color: 'bg-green-600' },
 ];
 
 const cheeseOptions = [
-  { id: 'mozzarella', name: 'Mozzarella', color: 'bg-orange-300', dots: 'bg-orange-400' },
-  { id: 'cheddar', name: 'Cheddar', color: 'bg-orange-300', dots: 'bg-orange-400' },
-  { id: 'none', name: 'No Cheese', color: 'bg-orange-300', dots: 'bg-orange-400' },
+  { id: 'mozzarella', name: 'Mozzarella', color: 'bg-yellow-100', dots: 'bg-yellow-200' },
+  { id: 'cheddar', name: 'Cheddar', color: 'bg-orange-200', dots: 'bg-orange-300' },
+  { id: 'none', name: 'No Cheese', color: 'bg-transparent', dots: 'bg-transparent' },
 ];
 
 const toppingOptions = [
-  { id: 'pepperoni', name: 'Pepperoni', emoji: '🥓', color: 'bg-red-600', shape: 'rounded-full' },
-  { id: 'mushrooms', name: 'Mushrooms', emoji: '🍄', color: 'bg-amber-100', shape: 'rounded-md' },
-  { id: 'peppers', name: 'Peppers', emoji: '🫑', color: 'bg-green-500', shape: 'rounded-sm' },
-  { id: 'olives', name: 'Olives', emoji: '🫒', color: 'bg-gray-800', shape: 'rounded-full' },
-  { id: 'onions', name: 'Onions', emoji: '🧅', color: 'bg-purple-200', shape: 'rounded-full' },
+  { id: 'pepperoni', name: 'Pepperoni', emoji: '🥓', color: 'bg-red-700', shape: 'rounded-full border-2 border-red-900' },
+  { id: 'mushrooms', name: 'Mushrooms', emoji: '🍄', color: 'bg-stone-200', shape: 'rounded-md border-2 border-stone-400' },
+  { id: 'peppers', name: 'Peppers', emoji: '🫑', color: 'bg-green-500', shape: 'rounded-sm border-2 border-green-700' },
+  { id: 'olives', name: 'Olives', emoji: '🫒', color: 'bg-neutral-900', shape: 'rounded-full border-2 border-black' },
+  { id: 'onions', name: 'Onions', emoji: '🧅', color: 'bg-purple-100', shape: 'rounded-full border-2 border-purple-300' },
 ];
 
 function getQuestionOptions(question: Question | undefined): string[] {

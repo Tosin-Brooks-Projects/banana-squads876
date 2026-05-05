@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Outfit } from "next/font/google";
+import { Inter, Outfit, Fredoka } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/contexts/AuthContext";
 
@@ -8,11 +8,19 @@ const inter = Inter({
   variable: "--font-inter",
   display: 'swap',
 });
+
 const outfit = Outfit({
   subsets: ["latin"],
   variable: "--font-outfit",
   display: 'swap',
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  weight: ["400", "500", "600", "700"],
+});
+
+const fredoka = Fredoka({
+  subsets: ["latin"],
+  variable: "--font-fredoka",
+  display: 'swap',
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -37,8 +45,25 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${outfit.variable} font-sans antialiased text-neutral-900 bg-neutral-50`}>
+      <body className={`${inter.variable} ${outfit.variable} ${fredoka.variable} font-outfit antialiased text-neutral-900 bg-neutral-50 noise-overlay`}>
         <AuthProvider>
+          {/* Direct script to kill lingering service workers in development */}
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+                if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                  if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                      for(var registration of registrations) {
+                        registration.unregister();
+                      }
+                      if (registrations.length > 0) window.location.reload();
+                    });
+                  }
+                }
+              `,
+            }}
+          />
           {children}
         </AuthProvider>
       </body>

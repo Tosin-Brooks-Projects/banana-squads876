@@ -1,10 +1,11 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import Button from '@/components/ui/AnimatedButton';
-import { Card } from '@/components/ui/card';
+import { Check, X, Loader2, LogOut, ArrowRight, Sparkles, Layout, Zap, Database } from 'lucide-react';
+import MagneticButton from '@/components/ui/MagneticButton';
+import { BentoGrid, BentoCard } from '@/components/ui/BentoGrid';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { updateUser, createUser, checkUsernameExists, isUsernameReserved } from '@/lib/firebase/firestore';
 import { signOut } from '@/lib/firebase/auth';
@@ -14,72 +15,15 @@ const USERNAME_MIN_LENGTH = 3;
 const USERNAME_MAX_LENGTH = 20;
 const USERNAME_REGEX = /^[a-zA-Z0-9-]+$/;
 
-interface ValidationResult {
-  isValid: boolean;
-  message: string;
-}
-
-function validateUsername(username: string): ValidationResult {
-  if (!username) {
-    return { isValid: false, message: '' };
-  }
-
-  if (username.length < USERNAME_MIN_LENGTH) {
-    return { isValid: false, message: `Username must be at least ${USERNAME_MIN_LENGTH} characters` };
-  }
-
-  if (username.length > USERNAME_MAX_LENGTH) {
-    return { isValid: false, message: `Username must be at most ${USERNAME_MAX_LENGTH} characters` };
-  }
-
-  if (!USERNAME_REGEX.test(username)) {
-    return { isValid: false, message: 'Only letters, numbers, and hyphens allowed' };
-  }
-
-  if (username.startsWith('-') || username.endsWith('-')) {
-    return { isValid: false, message: 'Username cannot start or end with a hyphen' };
-  }
-
-  if (username.includes('--')) {
-    return { isValid: false, message: 'Username cannot contain consecutive hyphens' };
-  }
-
-  if (isUsernameReserved(username)) {
-    return { isValid: false, message: 'This username is reserved' };
-  }
-
+function validateUsername(username: string) {
+  if (!username) return { isValid: false, message: '' };
+  if (username.length < USERNAME_MIN_LENGTH) return { isValid: false, message: `Min ${USERNAME_MIN_LENGTH} characters` };
+  if (username.length > USERNAME_MAX_LENGTH) return { isValid: false, message: `Max ${USERNAME_MAX_LENGTH} characters` };
+  if (!USERNAME_REGEX.test(username)) return { isValid: false, message: 'Alphanumeric and hyphens only' };
+  if (username.startsWith('-') || username.endsWith('-')) return { isValid: false, message: 'No hyphens at start/end' };
+  if (username.includes('--')) return { isValid: false, message: 'No consecutive hyphens' };
+  if (isUsernameReserved(username)) return { isValid: false, message: 'Reserved username' };
   return { isValid: true, message: '' };
-}
-
-function generateSuggestions(email: string): string[] {
-  const baseUsername = email.split('@')[0].toLowerCase();
-  const sanitized = baseUsername.replace(/[^a-z0-9]/g, '');
-
-  const suggestions: string[] = [];
-
-  // Base suggestion
-  if (sanitized.length >= USERNAME_MIN_LENGTH && !isUsernameReserved(sanitized)) {
-    suggestions.push(sanitized);
-  }
-
-  // With hyphen variant
-  const parts = baseUsername.split(/[._]/);
-  if (parts.length > 1) {
-    const hyphenated = parts.join('-').replace(/[^a-z0-9-]/g, '');
-    if (hyphenated.length >= USERNAME_MIN_LENGTH && !isUsernameReserved(hyphenated)) {
-      suggestions.push(hyphenated);
-    }
-  }
-
-  // First initial + last name style
-  if (parts.length > 1 && parts[0].length > 0 && parts[1].length > 0) {
-    const initialStyle = `${parts[0][0]}-${parts[1]}`.replace(/[^a-z0-9-]/g, '');
-    if (initialStyle.length >= USERNAME_MIN_LENGTH && !isUsernameReserved(initialStyle)) {
-      suggestions.push(initialStyle);
-    }
-  }
-
-  return suggestions.slice(0, 3);
 }
 
 export default function OnboardingPage() {
@@ -94,101 +38,70 @@ export default function OnboardingPage() {
   const [validationError, setValidationError] = useState('');
   const [error, setError] = useState<string | null>(null);
 
-  // Redirect if not logged in or already has username
   useEffect(() => {
     if (!loading) {
-      if (!firebaseUser) {
-        router.push('/login');
-      } else if (user?.username) {
-        router.push('/dashboard');
-      }
+      if (!firebaseUser) router.push('/login');
+      else if (user?.username) router.push('/dashboard');
     }
   }, [firebaseUser, user, loading, router]);
 
-  // Generate suggestions based on email
   useEffect(() => {
     if (user?.email) {
-      const emailSuggestions = generateSuggestions(user.email);
+      const base = user.email.split('@')[0].toLowerCase().replace(/[^a-z0-9]/g, '');
+      const emailSuggestions = [base, `${base}-surveys`, `${base}-pro`].slice(0, 3);
       setSuggestions(emailSuggestions);
     }
   }, [user?.email]);
 
-  // Check username availability with debounce
   const checkAvailability = useCallback(async (usernameToCheck: string) => {
     const validation = validateUsername(usernameToCheck);
-
     if (!validation.isValid) {
       setValidationError(validation.message);
       setAvailabilityStatus('idle');
       return;
     }
-
     setValidationError('');
     setAvailabilityStatus('checking');
-    setIsChecking(true);
-
     try {
       const exists = await checkUsernameExists(usernameToCheck.toLowerCase());
       setAvailabilityStatus(exists ? 'taken' : 'available');
     } catch {
       setAvailabilityStatus('idle');
-      setError('Failed to check username availability');
-    } finally {
-      setIsChecking(false);
+      setError('Failed to check availability');
     }
   }, []);
 
-  // Debounced availability check
   useEffect(() => {
     if (!username) {
       setAvailabilityStatus('idle');
       setValidationError('');
       return;
     }
-
     const validation = validateUsername(username);
     if (!validation.isValid) {
       setValidationError(validation.message);
       setAvailabilityStatus('idle');
       return;
     }
-
     setValidationError('');
-    const timeoutId = setTimeout(() => {
-      checkAvailability(username);
-    }, 500);
-
+    const timeoutId = setTimeout(() => checkAvailability(username), 500);
     return () => clearTimeout(timeoutId);
   }, [username, checkAvailability]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    console.log('Submit clicked', { user, firebaseUser, availabilityStatus, username });
-
-    // Use firebaseUser.uid if user document doesn't exist yet
     const userId = user?.id || firebaseUser?.uid;
-
-    if (!userId || availabilityStatus !== 'available') {
-      console.log('Submit blocked:', { userId, availabilityStatus });
-      return;
-    }
+    if (!userId || availabilityStatus !== 'available') return;
 
     setIsSubmitting(true);
     setError(null);
-
     try {
-      console.log('Updating user:', userId);
-
-      // If user document doesn't exist, create it first
       if (!user) {
-        console.log('Creating new user document...');
         await createUser({
           id: userId,
           email: firebaseUser!.email!,
           username: username.toLowerCase(),
           displayName: username,
-          photoURL: firebaseUser!.photoURL || undefined,
           createdAt: new Date(),
           updatedAt: new Date(),
         });
@@ -198,83 +111,126 @@ export default function OnboardingPage() {
           displayName: username,
         });
       }
-
-      console.log('User saved, refreshing...');
-      // Refresh user data in context before navigating
       await refreshUser();
-      console.log('Navigating to dashboard...');
       router.push('/dashboard/create');
     } catch (err) {
-      console.error('Submit error:', err);
-      setError('Failed to save username. Please try again.');
+      setError('Failed to save. Check your connection.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleSuggestionClick = (suggestion: string) => {
-    setUsername(suggestion);
-  };
-
-  // Show loading while checking auth state or if user already has username (will redirect)
   if (loading || !firebaseUser || user?.username) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-indigo-50 via-white to-pink-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600" />
+      <div className="min-h-[100dvh] flex items-center justify-center bg-neutral-50 noise-overlay">
+        <Loader2 className="w-8 h-8 animate-spin text-brand-500" />
       </div>
     );
   }
 
-  const getStatusIcon = () => {
-    switch (availabilityStatus) {
-      case 'checking':
-        return (
-          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-indigo-600" />
-        );
-      case 'available':
-        return (
-          <svg className="h-5 w-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-          </svg>
-        );
-      case 'taken':
-        return (
-          <svg className="h-5 w-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        );
-      default:
-        return null;
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-gradient-to-b from-indigo-50 via-white to-pink-50 flex items-center justify-center p-6">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md"
-      >
-        <div className="text-center mb-8">
-          <span className="text-4xl mb-4 block">Welcome!</span>
-          <h1 className="text-3xl font-bold text-gray-900 mt-4 mb-2">
-            Choose your username
-          </h1>
-          <p className="text-gray-600">
-            This will be your unique URL for sharing surveys
-          </p>
-        </div>
-
-        <Card className="p-8">
-          {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
-              {error}
+    <div className="min-h-[100dvh] bg-neutral-50 noise-overlay flex flex-col md:flex-row overflow-hidden">
+      {/* Visual Side - Feature Spotlight */}
+      <div className="hidden md:flex md:w-1/2 bg-neutral-100/50 p-12 flex-col justify-center relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-full opacity-30 bg-[radial-gradient(circle_at_30%_30%,rgba(230,115,72,0.1),transparent_50%)]" />
+        
+        <div className="relative z-10 space-y-6 max-w-lg mx-auto">
+          {/* Main Hero Card */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ type: 'spring', damping: 20 }}
+            className="glass-morphism rounded-[3rem] p-10 border-white/40 shadow-2xl"
+          >
+            <div className="flex items-start justify-between mb-8">
+              <div className="p-4 rounded-3xl bg-brand-500 shadow-lg shadow-brand-500/20">
+                <Sparkles className="text-white w-6 h-6" />
+              </div>
+              <div className="flex -space-x-3">
+                {[1,2,3].map(i => (
+                  <div key={i} className="w-10 h-10 rounded-full border-2 border-white bg-neutral-200" />
+                ))}
+              </div>
             </div>
-          )}
+            <h3 className="font-outfit text-3xl font-bold tracking-tighter text-neutral-900 leading-tight">
+              Feedback that feels <br/> like a <span className="text-brand-500 italic">game.</span>
+            </h3>
+            <p className="text-neutral-500 mt-4 text-lg font-medium leading-relaxed">
+              Transform dry questions into immersive adventures. 3x higher completion rates, guaranteed.
+            </p>
+          </motion.div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+          <div className="grid grid-cols-2 gap-6">
+            {/* Secondary Card 1 */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, type: 'spring' }}
+              className="glass-morphism rounded-[2.5rem] p-8 border-white/20"
+            >
+              <div className="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center mb-4">
+                <Zap className="text-brand-500 w-6 h-6 fill-brand-500" />
+              </div>
+              <h4 className="font-bold text-neutral-900 tracking-tight">Instant Deployment</h4>
+              <p className="text-xs text-neutral-400 mt-2 font-medium">Ready in under 60 seconds.</p>
+            </motion.div>
+
+            {/* Secondary Card 2 */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, type: 'spring' }}
+              className="bg-neutral-900 rounded-[2.5rem] p-8 shadow-2xl relative overflow-hidden group"
+            >
+              <div className="absolute top-0 right-0 w-32 h-32 bg-brand-500/10 blur-3xl group-hover:bg-brand-500/20 transition-colors" />
+              <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center mb-4 border border-white/10">
+                <Layout className="text-white w-6 h-6" />
+              </div>
+              <h4 className="font-bold text-white tracking-tight">Custom Skins</h4>
+              <p className="text-xs text-neutral-400 mt-2 font-medium">10+ Immersive themes.</p>
+            </motion.div>
+          </div>
+
+          {/* Floating Detail */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.5 }}
+            className="flex items-center gap-4 px-6 py-4 glass-morphism rounded-full w-max border-white/10 self-center mx-auto"
+          >
+            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+            <span className="text-xs font-bold uppercase tracking-widest text-neutral-500">Live Preview Active</span>
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Form Side */}
+      <div className="w-full md:w-1/2 flex items-center justify-center p-8 md:p-16">
+        <motion.div 
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="w-full max-w-md"
+        >
+          <header className="mb-12">
+            <motion.div 
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ type: 'spring', damping: 15 }}
+              className="w-12 h-12 bg-brand-500 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-brand-500/20"
+            >
+              <Layout className="text-white w-6 h-6" />
+            </motion.div>
+            <h1 className="text-4xl md:text-5xl font-outfit font-bold tracking-tighter leading-tight text-neutral-900">
+              Claim your space.
+            </h1>
+            <p className="text-neutral-500 mt-4 text-lg">
+              Choose a username for your unique survey link.
+            </p>
+          </header>
+
+          <form onSubmit={handleSubmit} className="space-y-8">
+            <div className="space-y-3">
+              <label className="text-sm font-semibold tracking-wide text-neutral-900 uppercase">
                 Username
               </label>
               <div className="relative">
@@ -282,119 +238,120 @@ export default function OnboardingPage() {
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/\s/g, ''))}
-                  placeholder="your-username"
+                  placeholder="the-best-surveys"
                   className={`
-                    w-full px-4 py-2 pr-10 rounded-lg border transition-colors
-                    focus:outline-none focus:ring-2 focus:ring-offset-0
+                    w-full px-6 py-4 rounded-2xl bg-white border-2 transition-all duration-300 outline-none
+                    font-medium text-lg
                     ${validationError || availabilityStatus === 'taken'
-                      ? 'border-red-300 focus:border-red-500 focus:ring-red-200'
+                      ? 'border-red-100 focus:border-red-200 bg-red-50/10'
                       : availabilityStatus === 'available'
-                        ? 'border-green-300 focus:border-green-500 focus:ring-green-200'
-                        : 'border-gray-300 focus:border-indigo-500 focus:ring-indigo-200'
+                        ? 'border-green-100 focus:border-green-200 bg-green-50/10'
+                        : 'border-neutral-100 focus:border-brand-200'
                     }
                   `}
                   maxLength={USERNAME_MAX_LENGTH}
                 />
-                <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                  {getStatusIcon()}
+                <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                  <AnimatePresence mode="wait">
+                    {isChecking ? (
+                      <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                        <Loader2 className="w-5 h-5 animate-spin text-neutral-400" />
+                      </motion.div>
+                    ) : availabilityStatus === 'available' ? (
+                      <motion.div key="success" initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="p-1 rounded-full bg-green-500">
+                        <Check className="w-3 h-3 text-white" strokeWidth={4} />
+                      </motion.div>
+                    ) : availabilityStatus === 'taken' ? (
+                      <motion.div key="error" initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="p-1 rounded-full bg-red-500">
+                        <X className="w-3 h-3 text-white" strokeWidth={4} />
+                      </motion.div>
+                    ) : null}
+                  </AnimatePresence>
                 </div>
               </div>
 
-              {/* Validation/status messages */}
-              {validationError && (
-                <p className="mt-1 text-sm text-red-600">{validationError}</p>
-              )}
-              {!validationError && availabilityStatus === 'available' && (
-                <p className="mt-1 text-sm text-green-600">Username is available!</p>
-              )}
-              {!validationError && availabilityStatus === 'taken' && (
-                <p className="mt-1 text-sm text-red-600">Username is already taken</p>
-              )}
+              {/* Status Messages */}
+              <AnimatePresence>
+                {(validationError || availabilityStatus === 'taken' || availabilityStatus === 'available') && (
+                  <motion.p 
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className={`text-sm font-medium ${
+                      validationError || availabilityStatus === 'taken' ? 'text-red-500' : 'text-green-600'
+                    }`}
+                  >
+                    {validationError || (availabilityStatus === 'taken' ? 'Already taken' : 'Available!')}
+                  </motion.p>
+                )}
+              </AnimatePresence>
             </div>
 
             {/* URL Preview */}
-            {username && !validationError && (
-              <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                <p className="text-sm text-gray-500 mb-1">Your survey URL will be:</p>
-                <p className="text-sm font-mono text-indigo-600 break-all">
-                  unboringsurveys.com/<span className="font-semibold">{username}</span>/your-survey
-                </p>
+            <div className="glass-morphism rounded-3xl p-6 border-neutral-100">
+              <div className="flex items-center gap-3 text-neutral-400 mb-2">
+                <Database className="w-4 h-4" />
+                <span className="text-xs font-bold uppercase tracking-widest">Public URL</span>
               </div>
-            )}
+              <p className="text-neutral-900 font-medium break-all">
+                unboring.com/<span className="text-brand-500">{username || 'your-name'}</span>
+              </p>
+            </div>
 
             {/* Suggestions */}
             {suggestions.length > 0 && !username && (
-              <div>
-                <p className="text-sm text-gray-500 mb-2">Suggestions based on your email:</p>
-                <div className="flex flex-wrap gap-2">
-                  {suggestions.map((suggestion) => (
-                    <button
-                      key={suggestion}
-                      type="button"
-                      onClick={() => handleSuggestionClick(suggestion)}
-                      className="px-3 py-1.5 text-sm bg-indigo-50 text-indigo-700 rounded-full hover:bg-indigo-100 transition-colors"
-                    >
-                      {suggestion}
-                    </button>
-                  ))}
-                </div>
+              <div className="flex flex-wrap gap-2">
+                {suggestions.map((s) => (
+                  <button
+                    key={s}
+                    type="button"
+                    onClick={() => setUsername(s)}
+                    className="px-4 py-2 text-xs font-bold uppercase tracking-wider bg-white border border-neutral-100 rounded-xl hover:border-brand-200 hover:text-brand-500 transition-all"
+                  >
+                    {s}
+                  </button>
+                ))}
               </div>
             )}
 
-            {/* Rules */}
-            <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-              <p className="text-sm font-medium text-gray-700 mb-2">Username rules:</p>
-              <ul className="text-sm text-gray-500 space-y-1">
-                <li className="flex items-center gap-2">
-                  <span className={username.length >= USERNAME_MIN_LENGTH && username.length <= USERNAME_MAX_LENGTH ? 'text-green-500' : 'text-gray-400'}>
-                    {username.length >= USERNAME_MIN_LENGTH && username.length <= USERNAME_MAX_LENGTH ? '✓' : '○'}
-                  </span>
-                  {USERNAME_MIN_LENGTH}-{USERNAME_MAX_LENGTH} characters
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className={username && USERNAME_REGEX.test(username) ? 'text-green-500' : 'text-gray-400'}>
-                    {username && USERNAME_REGEX.test(username) ? '✓' : '○'}
-                  </span>
-                  Letters, numbers, and hyphens only
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className={username && !username.includes(' ') ? 'text-green-500' : 'text-gray-400'}>
-                    {username && !username.includes(' ') ? '✓' : '○'}
-                  </span>
-                  No spaces or special characters
-                </li>
-              </ul>
-            </div>
-
-            <Button
-              type="submit"
-              className="w-full"
-              size="lg"
-              isLoading={isSubmitting}
-              disabled={availabilityStatus !== 'available' || isChecking || isSubmitting}
+            <MagneticButton
+              disabled={availabilityStatus !== 'available' || isSubmitting}
+              className={`
+                w-full py-5 rounded-2xl font-bold text-lg transition-all duration-300
+                ${availabilityStatus === 'available' && !isSubmitting
+                  ? 'bg-neutral-900 text-white shadow-xl shadow-neutral-900/10'
+                  : 'bg-neutral-100 text-neutral-400 cursor-not-allowed'
+                }
+              `}
             >
-              Continue
-            </Button>
+              <div className="flex items-center justify-center gap-2">
+                {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Complete Setup'}
+                <ArrowRight className="w-5 h-5" />
+              </div>
+            </MagneticButton>
+
+            {error && (
+              <p className="text-center text-sm text-red-500 font-medium">{error}</p>
+            )}
           </form>
 
-          {/* Sign out option for users who need to use a different account */}
-          <div className="mt-6 pt-4 border-t border-gray-200 text-center">
-            <p className="text-sm text-gray-500 mb-2">
-              Signed in as {firebaseUser?.email}
-            </p>
+          <footer className="mt-12 pt-8 border-t border-neutral-100 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-neutral-200" />
+              <div className="text-xs">
+                <p className="text-neutral-400 font-medium">Logged in as</p>
+                <p className="text-neutral-900 font-bold">{firebaseUser?.email}</p>
+              </div>
+            </div>
             <button
-              type="button"
-              onClick={async () => {
-                await signOut();
-                router.push('/login');
-              }}
-              className="text-sm text-gray-500 hover:text-gray-700 underline"
+              onClick={async () => { await signOut(); router.push('/login'); }}
+              className="p-2 rounded-xl hover:bg-red-50 text-neutral-400 hover:text-red-500 transition-colors"
             >
-              Sign out and use a different account
+              <LogOut className="w-5 h-5" />
             </button>
-          </div>
-        </Card>
-      </motion.div>
+          </footer>
+        </motion.div>
+      </div>
     </div>
   );
 }

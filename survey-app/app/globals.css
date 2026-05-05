@@ -33,57 +33,61 @@ body {
   .text-balance {
     text-wrap: balance;
   }
-}
 
-/* Smooth loading transitions */
-@keyframes shimmer {
-  0% {
-    transform: translateX(-100%);
+  .glass-morphism {
+    @apply backdrop-blur-xl bg-white/40 border border-white/20 shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_20px_40px_-15px_rgba(0,0,0,0.05)];
   }
 
-  100% {
-    transform: translateX(100%);
+  .glass-morphism-dark {
+    @apply backdrop-blur-xl bg-neutral-900/40 border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.05),0_20px_40px_-15px_rgba(0,0,0,0.2)];
   }
-}
 
-.animate-shimmer {
-  animation: shimmer 1.5s infinite;
-}
+  .noise-overlay::before {
+    content: "";
+    @apply fixed inset-0 z-50 pointer-events-none opacity-[0.03] mix-blend-overlay;
+    background-image: url("/noise.svg");
+  }
 
-/* Fade transition for loading states */
-.loading-fade-enter {
-  opacity: 0;
-}
+  .btn-3d {
+    @apply relative transition-all duration-100 active:translate-y-[2px] active:border-b-0;
+    border-bottom-width: 4px;
+  }
 
-.loading-fade-enter-active {
-  opacity: 1;
-  transition: opacity 200ms ease-in;
-}
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
 
-.loading-fade-exit {
-  opacity: 1;
-}
+  .animate-shimmer {
+    animation: shimmer 1.5s infinite;
+  }
 
-.loading-fade-exit-active {
-  opacity: 0;
-  transition: opacity 200ms ease-out;
-}
+  .loading-fade-enter {
+    opacity: 0;
+  }
 
-/* Skeleton pulse enhancement */
-@keyframes skeleton-pulse {
+  .loading-fade-enter-active {
+    opacity: 1;
+    transition: opacity 200ms ease-in;
+  }
 
-  0%,
-  100% {
+  .loading-fade-exit {
     opacity: 1;
   }
 
-  50% {
-    opacity: 0.5;
+  .loading-fade-exit-active {
+    opacity: 0;
+    transition: opacity 200ms ease-out;
   }
-}
 
-.skeleton-pulse {
-  animation: skeleton-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  @keyframes skeleton-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  .skeleton-pulse {
+    animation: skeleton-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
 }
 
 @layer components {
@@ -97,21 +101,11 @@ body {
 }
 
 @keyframes marquee {
-  from {
-    transform: translateX(0);
-  }
-
-  to {
-    transform: translateX(calc(-100% - var(--gap, 1rem)));
-  }
+  from { transform: translateX(0); }
+  to { transform: translateX(calc(-100% - var(--gap, 1rem))); }
 }
 
 @keyframes marquee-vertical {
-  from {
-    transform: translateY(0);
-  }
-
-  to {
-    transform: translateY(calc(-100% - var(--gap, 1rem)));
-  }
+  from { transform: translateY(0); }
+  to { transform: translateY(calc(-100% - var(--gap, 1rem))); }
 }

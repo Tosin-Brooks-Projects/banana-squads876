@@ -248,8 +248,8 @@ export function isUsernameReserved(username: string): boolean {
 export async function createSurvey(survey: Omit<Survey, 'id'>): Promise<string> {
   const surveyData = removeUndefined({
     ...survey,
-    createdAt: Timestamp.fromDate(survey.createdAt),
-    updatedAt: Timestamp.fromDate(survey.updatedAt),
+    createdAt: survey.createdAt ? Timestamp.fromDate(survey.createdAt) : Timestamp.now(),
+    updatedAt: survey.updatedAt ? Timestamp.fromDate(survey.updatedAt) : Timestamp.now(),
     publishedAt: survey.publishedAt ? Timestamp.fromDate(survey.publishedAt) : null,
     responseCount: 0,
   });
@@ -266,8 +266,8 @@ export async function createFreeSurveyAtomic(
 
   const surveyData = removeUndefined({
     ...survey,
-    createdAt: Timestamp.fromDate(survey.createdAt),
-    updatedAt: Timestamp.fromDate(survey.updatedAt),
+    createdAt: survey.createdAt ? Timestamp.fromDate(survey.createdAt) : Timestamp.now(),
+    updatedAt: survey.updatedAt ? Timestamp.fromDate(survey.updatedAt) : Timestamp.now(),
     publishedAt: survey.publishedAt ? Timestamp.fromDate(survey.publishedAt) : null,
     responseCount: 0,
   });

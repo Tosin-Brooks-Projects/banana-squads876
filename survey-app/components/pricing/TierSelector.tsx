@@ -43,21 +43,12 @@ export default function TierSelector({
   }, [showAllTiers]);
 
   return (
-    <div className="w-full">
-      <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold text-neutral-900">
-          Choose Your Survey Plan
-        </h2>
-        <p className="mt-2 text-neutral-600">
-          Pay once per survey. No subscriptions.
-        </p>
-      </div>
-
+    <div className="w-full space-y-8">
       {/* Main tier cards (Free, Starter & Pro) */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="grid gap-4 items-stretch grid-cols-1 md:grid-cols-3 max-w-4xl mx-auto"
+        className="grid gap-6 items-stretch grid-cols-1 md:grid-cols-3"
       >
         {mainTiers.map((tier) => (
           <PricingCard
@@ -67,18 +58,21 @@ export default function TierSelector({
             isSelected={selectedTier === tier.id}
             onSelect={handleSelect}
             disabled={isLoading}
-            compact={false}
+            compact={true}
           />
         ))}
       </motion.div>
 
       {/* Toggle to show all tiers */}
-      <div className="mt-6 text-center">
+      <div className="text-center">
         <button
           onClick={() => setShowAllTiers(true)}
-          className="text-sm text-neutral-600 hover:text-brand-600 transition-colors"
+          className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 hover:text-orange-500 transition-colors flex items-center justify-center gap-2 mx-auto group"
         >
-          Show all pricing options
+          <span className="group-hover:translate-x-1 transition-transform">Explore all mission realms</span>
+          <svg className="w-3 h-3 group-hover:translate-y-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" />
+          </svg>
         </button>
       </div>
 
@@ -89,7 +83,7 @@ export default function TierSelector({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4"
+            className="fixed inset-0 z-[100] bg-gray-900/40 backdrop-blur-md flex items-center justify-center p-4 sm:p-8"
             onClick={(e) => {
               if (e.target === e.currentTarget) setShowAllTiers(false);
             }}
@@ -98,32 +92,35 @@ export default function TierSelector({
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="bg-white rounded-2xl shadow-2xl w-full max-w-6xl max-h-[90vh] overflow-y-auto"
+              className="bg-white rounded-[48px] border-4 border-gray-100 shadow-2xl w-full max-w-6xl max-h-[90vh] overflow-hidden flex flex-col"
             >
               {/* Modal header */}
-              <div className="sticky top-0 bg-white border-b border-neutral-200 px-6 py-4 flex items-center justify-between z-10">
-                <div>
-                  <h2 className="text-xl font-bold text-neutral-900">
-                    Choose Your Survey Plan
+              <div className="bg-white border-b-4 border-gray-50 px-10 py-8 flex items-center justify-between">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-3 mb-1">
+                    <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
+                    <span className="text-[10px] font-black text-orange-500 uppercase tracking-[0.2em]">The Armory</span>
+                  </div>
+                  <h2 className="text-3xl font-black text-gray-900 leading-tight">
+                    Choose Your <span className="text-orange-500">Mission Realm</span>
                   </h2>
-                  <p className="text-sm text-neutral-600">
-                    Pay once per survey. No subscriptions.
+                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+                    One-time unlock per mission. No recurring tolls.
                   </p>
                 </div>
                 <button
                   onClick={() => setShowAllTiers(false)}
-                  className="p-2 text-neutral-500 hover:text-neutral-700 hover:bg-neutral-100 rounded-lg transition-colors"
+                  className="w-14 h-14 flex items-center justify-center rounded-2xl bg-white border-4 border-gray-100 shadow-[4px_4px_0_0_#f3f4f6] text-gray-300 hover:text-red-500 hover:border-red-100 transition-all active:translate-y-1 active:shadow-none"
                 >
                   <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </button>
               </div>
 
               {/* Modal content */}
-              <div className="p-6">
-                <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+              <div className="p-10 overflow-y-auto bg-gray-50/30">
+                <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
                   {tiers.map((tier) => (
                     <PricingCard
                       key={tier.id}
@@ -139,13 +136,13 @@ export default function TierSelector({
               </div>
 
               {/* Modal footer */}
-              <div className="sticky bottom-0 bg-white border-t border-neutral-200 px-6 py-4 flex justify-center">
-                <button
-                  onClick={() => setShowAllTiers(false)}
-                  className="text-sm text-neutral-600 hover:text-brand-600 transition-colors"
-                >
-                  Show fewer options
-                </button>
+              <div className="bg-white border-t-4 border-gray-50 px-10 py-6 flex justify-center">
+                <div className="flex items-center gap-3">
+                  <img src="/orange-kea-mascot.png" alt="Mascot" className="w-8 h-8 object-contain" />
+                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                     Select your gear to begin the adventure
+                  </p>
+                </div>
               </div>
             </motion.div>
           </motion.div>
@@ -157,27 +154,29 @@ export default function TierSelector({
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mt-8 p-4 bg-brand-50 border border-brand-200 rounded-lg"
+          className="p-8 bg-white border-4 border-gray-100 rounded-[40px] shadow-[8px_8px_0_0_rgba(0,0,0,0.02)]"
         >
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="font-medium text-brand-900">
-                Selected: {PRICING_TIERS[selectedTier].name}
-              </p>
-              <p className="text-sm text-brand-700">
-                Up to {PRICING_TIERS[selectedTier].responseLimit.toLocaleString()} responses
-                {PRICING_TIERS[selectedTier].price > 0 &&
-                  ` • $${PRICING_TIERS[selectedTier].price}`}
-              </p>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+            <div className="flex items-center gap-5">
+               <div className="w-16 h-16 rounded-2xl bg-orange-500 border-b-4 border-orange-700 flex items-center justify-center text-white text-3xl shadow-lg">
+                  {selectedTier === 'free' ? '🌱' : '🚀'}
+               </div>
+               <div>
+                 <div className="flex items-center gap-2 mb-1">
+                    <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] leading-none">Mission Ready</p>
+                 </div>
+                 <p className="font-black text-gray-900 text-2xl uppercase tracking-tight">
+                    {PRICING_TIERS[selectedTier].name} Realm
+                 </p>
+               </div>
             </div>
-            {selectedTier !== 'free' && (
-              <div className="text-right">
-                <p className="text-2xl font-bold text-brand-900">
-                  ${PRICING_TIERS[selectedTier].price}
-                </p>
-                <p className="text-xs text-brand-600">one-time payment</p>
-              </div>
-            )}
+            <div className="text-left sm:text-right bg-gray-50 px-6 py-4 rounded-3xl border-2 border-gray-100">
+              <p className="font-black text-gray-900 text-3xl">
+                {selectedTier === 'free' ? 'Free' : `$${PRICING_TIERS[selectedTier].price}`}
+              </p>
+              <p className="text-[10px] font-black text-orange-500 uppercase tracking-widest mt-1">One-time Unlock</p>
+            </div>
           </div>
         </motion.div>
       )}

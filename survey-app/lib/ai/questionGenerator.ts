@@ -37,6 +37,45 @@ export async function generateQuestions(
   theme: string,
   preferences?: SurveyPreferences
 ): Promise<GeneratedQuestionsResponse> {
+  // Mock fallback for design work if API key is missing
+  if (!process.env.ANTHROPIC_API_KEY) {
+    console.log('No ANTHROPIC_API_KEY found, using mock data for design.');
+    // Simulate a slight delay for realism
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    return {
+      questions: [
+        {
+          id: 'mock-1',
+          type: 'multiple-choice',
+          question: 'How would you describe your current mood?',
+          options: ['Excited 🚀', 'Relaxed 🌊', 'Focused 🧠', 'Curious 🔍'],
+          required: true,
+          order: 0
+        },
+        {
+          id: 'mock-2',
+          type: 'rating',
+          question: 'How much do you love this new design?',
+          scale: 5,
+          startLabel: 'Meh',
+          endLabel: 'Obsessed',
+          required: true,
+          order: 1
+        },
+        {
+          id: 'mock-3',
+          type: 'text',
+          question: 'Any suggestions for the "Quest Builder" flow?',
+          placeholder: 'Share your thoughts...',
+          maxLength: 500,
+          required: false,
+          order: 2
+        }
+      ]
+    } as GeneratedQuestionsResponse;
+  }
+
   const anthropic = new Anthropic({
     apiKey: process.env.ANTHROPIC_API_KEY
   });
@@ -138,7 +177,7 @@ Rules:
 - Start with an engaging question, end with an open feedback question`}`;
 
   const message = await anthropic.messages.create({
-    model: 'claude-sonnet-4-20250514',
+    model: 'claude-3-5-sonnet-20240620',
     max_tokens: 2048,
     messages: [{
       role: 'user',

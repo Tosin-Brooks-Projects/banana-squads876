@@ -75,7 +75,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
           console.log('User data from Firestore:', userData?.username || 'no username');
           if (isMounted) setUser(userData);
         } catch (error) {
-          console.error('Error fetching user:', error);
+          console.error('Error fetching user from Firestore:', error);
+          if (error instanceof Error && error.message.includes('offline')) {
+            console.warn('Firestore thinks the client is offline. Current navigator.onLine status:', typeof window !== 'undefined' ? window.navigator.onLine : 'unknown');
+          }
         }
       } else {
         if (isMounted) setUser(null);

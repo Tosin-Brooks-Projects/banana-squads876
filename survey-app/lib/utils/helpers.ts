@@ -121,6 +121,18 @@ export function getAdventureEmoji(adventureType: string): string {
   return emojis[adventureType] || '📋';
 }
 
+export function getAdventureImage(adventureType: string): string {
+  const images: Record<string, string> = {
+    'classic': '/theme-classic.png',
+    'ice-cream-sundae': '/theme-sundae.png',
+    'pizza-builder': '/theme-pizza-2d.svg',
+    'garden-grower': '/theme-garden.png',
+    'dream-home': '/theme-home.png',
+    'coffee-brewer': '/theme-coffee.png',
+  };
+  return images[adventureType] || '/theme-classic.png';
+}
+
 export function getAdventureLabel(adventureType: string): string {
   const labels: Record<string, string> = {
     'classic': 'Classic',

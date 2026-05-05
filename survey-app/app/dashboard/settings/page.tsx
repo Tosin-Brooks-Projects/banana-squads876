@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Settings } from 'lucide-react';
 import Button from '@/components/ui/AnimatedButton';
 import { Card } from '@/components/ui/card';
 import { useAuthContext } from '@/contexts/AuthContext';
@@ -598,12 +599,19 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <div className="max-w-3xl mx-auto py-10 px-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">Settings</h1>
+        <div className="flex items-center gap-3 mb-8">
+           <div className="w-12 h-12 rounded-2xl bg-orange-500 border-b-4 border-orange-700 flex items-center justify-center text-white shadow-lg">
+              <Settings className="w-6 h-6" />
+           </div>
+           <h1 className="text-4xl font-black tracking-tight text-gray-900">
+             Command <span className="text-orange-500">Center</span>
+           </h1>
+        </div>
 
         <AnimatePresence>
           {successMessage && (
@@ -615,31 +623,37 @@ export default function SettingsPage() {
         </AnimatePresence>
 
         {/* Account Settings Card */}
-        <Card className="p-8 mb-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Account</h2>
+        <div className="bg-white rounded-[32px] border-4 border-gray-100 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.02)] p-10 mb-8">
+          <div className="flex items-center gap-3 mb-8">
+            <div className="w-10 h-10 rounded-xl bg-indigo-50 border-2 border-indigo-100 flex items-center justify-center text-xl">
+              👤
+            </div>
+            <h2 className="text-2xl font-black text-gray-900 leading-tight uppercase tracking-tight">Identity</h2>
+          </div>
 
           {/* Current Username Display */}
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Username
-            </label>
-            <div className="flex items-center gap-4">
-              <div className="flex-1 px-4 py-3 bg-gray-50 rounded-lg border border-gray-200">
-                <span className="text-gray-900 font-medium">{user.username || 'Not set'}</span>
+          <div className="mb-8">
+            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">Your Codename</p>
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+              <div className="flex-1 px-6 py-4 bg-gray-50 rounded-2xl border-2 border-gray-100 flex items-center gap-3">
+                <span className="text-gray-900 font-black text-lg">@{user.username || 'unknown'}</span>
               </div>
               {!showUsernameForm && user.username && (
-                <Button
-                  variant="outline"
+                <button
                   onClick={handleChangeUsernameClick}
+                  className="px-6 py-4 bg-white border-2 border-gray-100 hover:border-orange-200 hover:text-orange-600 rounded-2xl font-black text-sm uppercase tracking-widest transition-all active:translate-y-1 shadow-[2px_2px_0px_0px_rgba(0,0,0,0.03)]"
                 >
-                  Change Username
-                </Button>
+                  Change Identity
+                </button>
               )}
             </div>
             {user.username && (
-              <p className="mt-2 text-sm text-gray-500">
-                Your survey URL: <span className="font-mono text-indigo-600">unboringsurveys.com/{user.username}/your-survey</span>
-              </p>
+              <div className="mt-4 p-4 bg-indigo-50/50 rounded-2xl border-2 border-indigo-50 flex items-center gap-3">
+                <div className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
+                <p className="text-[10px] font-bold text-indigo-600 uppercase tracking-wider">
+                  Quest Portal: <span className="font-black">unboringsurveys.com/{user.username}/...</span>
+                </p>
+              </div>
             )}
           </div>
 
@@ -650,22 +664,20 @@ export default function SettingsPage() {
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
-                className="overflow-hidden"
+                className="overflow-hidden mb-8"
               >
-                <div className="border-t border-gray-200 pt-6">
-                  <h3 className="text-md font-medium text-gray-900 mb-4">Change Username</h3>
+                <div className="border-4 border-orange-100 rounded-3xl p-8 bg-orange-50/30">
+                  <h3 className="text-lg font-black text-gray-900 mb-6 uppercase tracking-tight">New Codename Selection</h3>
 
                   {error && (
-                    <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
+                    <div className="mb-6 p-4 bg-red-50 border-2 border-red-100 rounded-2xl text-red-600 font-bold text-sm">
                       {error}
                     </div>
                   )}
 
-                  <form onSubmit={handleSubmit} className="space-y-4">
+                  <form onSubmit={handleSubmit} className="space-y-6">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        New Username
-                      </label>
+                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">New Username</p>
                       <div className="relative">
                         <input
                           type="text"
@@ -673,85 +685,85 @@ export default function SettingsPage() {
                           onChange={(e) => setNewUsername(e.target.value.toLowerCase().replace(/\s/g, ''))}
                           placeholder="your-new-username"
                           className={`
-                            w-full px-4 py-2 pr-10 rounded-lg border transition-colors
-                            focus:outline-none focus:ring-2 focus:ring-offset-0
+                            w-full px-6 py-4 pr-12 rounded-2xl border-4 transition-all font-black text-lg
+                            focus:outline-none shadow-inner
                             ${validationError || availabilityStatus === 'taken' || availabilityStatus === 'same'
-                              ? 'border-red-300 focus:border-red-500 focus:ring-red-200'
+                              ? 'border-red-200 bg-red-50 text-red-600'
                               : availabilityStatus === 'available'
-                                ? 'border-green-300 focus:border-green-500 focus:ring-green-200'
-                                : 'border-gray-300 focus:border-indigo-500 focus:ring-indigo-200'
+                                ? 'border-green-200 bg-green-50 text-green-600'
+                                : 'border-gray-100 bg-white focus:border-orange-200'
                             }
                           `}
                           maxLength={USERNAME_MAX_LENGTH}
                         />
-                        <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2">
                           {getStatusIcon()}
                         </div>
                       </div>
 
                       {/* Validation/status messages */}
                       {validationError && (
-                        <p className="mt-1 text-sm text-red-600">{validationError}</p>
+                        <p className="mt-2 ml-1 text-xs font-bold text-red-500">{validationError}</p>
                       )}
                       {!validationError && availabilityStatus === 'available' && (
-                        <p className="mt-1 text-sm text-green-600">Username is available!</p>
+                        <p className="mt-2 ml-1 text-xs font-bold text-green-600">Quest name available! 🚀</p>
                       )}
                       {!validationError && availabilityStatus === 'taken' && (
-                        <p className="mt-1 text-sm text-red-600">Username is already taken</p>
+                        <p className="mt-2 ml-1 text-xs font-bold text-red-500">Identity already claimed</p>
                       )}
                     </div>
 
                     {/* URL Preview */}
                     {newUsername && !validationError && availabilityStatus === 'available' && (
-                      <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                        <p className="text-sm text-gray-500 mb-1">Your new survey URL will be:</p>
-                        <p className="text-sm font-mono text-indigo-600 break-all">
-                          unboringsurveys.com/<span className="font-semibold">{newUsername}</span>/your-survey
+                      <div className="bg-white rounded-2xl p-5 border-4 border-gray-50 shadow-sm">
+                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">New Portal URL:</p>
+                        <p className="text-xs font-black text-orange-600 break-all bg-orange-50 px-3 py-2 rounded-lg border-2 border-orange-100">
+                          unboringsurveys.com/<span className="underline">{newUsername}</span>/your-quest
                         </p>
                       </div>
                     )}
 
                     {/* Username Rules */}
-                    <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                      <p className="text-sm font-medium text-gray-700 mb-2">Username rules:</p>
-                      <ul className="text-sm text-gray-500 space-y-1">
-                        <li className="flex items-center gap-2">
-                          <span className={newUsername.length >= USERNAME_MIN_LENGTH && newUsername.length <= USERNAME_MAX_LENGTH ? 'text-green-500' : 'text-gray-400'}>
-                            {newUsername.length >= USERNAME_MIN_LENGTH && newUsername.length <= USERNAME_MAX_LENGTH ? '✓' : '○'}
-                          </span>
-                          {USERNAME_MIN_LENGTH}-{USERNAME_MAX_LENGTH} characters
+                    <div className="bg-gray-100/50 rounded-2xl p-6 border-2 border-gray-100">
+                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">Identity Rules:</p>
+                      <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <li className="flex items-center gap-3">
+                          <div className={`w-5 h-5 rounded-lg flex items-center justify-center text-[10px] border-2 ${newUsername.length >= USERNAME_MIN_LENGTH && newUsername.length <= USERNAME_MAX_LENGTH ? 'bg-green-500 border-green-600 text-white' : 'bg-white border-gray-200 text-gray-300'}`}>
+                            {newUsername.length >= USERNAME_MIN_LENGTH && newUsername.length <= USERNAME_MAX_LENGTH ? '✓' : ''}
+                          </div>
+                          <span className="text-xs font-bold text-gray-500">3-20 Characters</span>
                         </li>
-                        <li className="flex items-center gap-2">
-                          <span className={newUsername && USERNAME_REGEX.test(newUsername) ? 'text-green-500' : 'text-gray-400'}>
-                            {newUsername && USERNAME_REGEX.test(newUsername) ? '✓' : '○'}
-                          </span>
-                          Letters, numbers, and hyphens only
+                        <li className="flex items-center gap-3">
+                          <div className={`w-5 h-5 rounded-lg flex items-center justify-center text-[10px] border-2 ${newUsername && USERNAME_REGEX.test(newUsername) ? 'bg-green-500 border-green-600 text-white' : 'bg-white border-gray-200 text-gray-300'}`}>
+                            {newUsername && USERNAME_REGEX.test(newUsername) ? '✓' : ''}
+                          </div>
+                          <span className="text-xs font-bold text-gray-500">Alphanumeric & Hyphens</span>
                         </li>
-                        <li className="flex items-center gap-2">
-                          <span className={newUsername && !newUsername.includes(' ') ? 'text-green-500' : 'text-gray-400'}>
-                            {newUsername && !newUsername.includes(' ') ? '✓' : '○'}
-                          </span>
-                          No spaces or special characters
+                        <li className="flex items-center gap-3">
+                          <div className={`w-5 h-5 rounded-lg flex items-center justify-center text-[10px] border-2 ${newUsername && !newUsername.includes(' ') ? 'bg-green-500 border-green-600 text-white' : 'bg-white border-gray-200 text-gray-300'}`}>
+                            {newUsername && !newUsername.includes(' ') ? '✓' : ''}
+                          </div>
+                          <span className="text-xs font-bold text-gray-500">No Spaces</span>
                         </li>
                       </ul>
                     </div>
 
-                    <div className="flex gap-3">
-                      <Button
+                    <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                      <button
                         type="button"
-                        variant="outline"
                         onClick={handleCancelUsernameChange}
                         disabled={isSubmitting}
+                        className="flex-1 py-4 bg-white border-4 border-gray-100 rounded-2xl font-black text-sm uppercase tracking-widest text-gray-400 hover:text-gray-600 hover:border-gray-200 transition-all active:translate-y-1"
                       >
-                        Cancel
-                      </Button>
-                      <Button
+                        Abort
+                      </button>
+                      <button
                         type="submit"
-                        isLoading={isSubmitting}
                         disabled={availabilityStatus !== 'available' || isChecking || isSubmitting}
+                        className="flex-1 py-4 bg-orange-500 text-white border-b-4 border-orange-700 rounded-2xl font-black text-sm uppercase tracking-widest transition-all active:border-b-0 active:translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-orange-500/20"
                       >
-                        Save New Username
-                      </Button>
+                        {isSubmitting ? 'Updating Realm...' : 'Claim Identity'}
+                      </button>
                     </div>
                   </form>
                 </div>
@@ -760,112 +772,101 @@ export default function SettingsPage() {
           </AnimatePresence>
 
           {/* Email Display (read-only) */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Email
-            </label>
-            <div className="px-4 py-3 bg-gray-50 rounded-lg border border-gray-200">
-              <span className="text-gray-900">{user.email}</span>
+          <div className="border-t-4 border-gray-50 pt-8 mt-8">
+            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">Recovery Scroll (Email)</p>
+            <div className="px-6 py-4 bg-gray-50/50 rounded-2xl border-2 border-gray-100 flex items-center justify-between group">
+              <span className="text-gray-500 font-bold">{user.email}</span>
+              <div className="px-3 py-1 bg-white border-2 border-gray-100 rounded-full text-[10px] font-black text-gray-400 uppercase tracking-tighter group-hover:border-indigo-100 group-hover:text-indigo-400 transition-all">
+                Locked
+              </div>
             </div>
-            <p className="mt-2 text-sm text-gray-500">
-              Email cannot be changed.
+            <p className="mt-3 ml-1 text-[10px] font-bold text-gray-400 uppercase tracking-widest opacity-60">
+              Identity email is bound to your account realm.
             </p>
           </div>
-        </Card>
+        </div>
 
         {/* Data & Privacy Card */}
-        <Card className="p-8 mb-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Data & Privacy</h2>
+        <div className="bg-white rounded-[32px] border-4 border-gray-100 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.02)] p-10 mb-8">
+          <div className="flex items-center gap-3 mb-8">
+            <div className="w-10 h-10 rounded-xl bg-green-50 border-2 border-green-100 flex items-center justify-center text-xl">
+              📦
+            </div>
+            <h2 className="text-2xl font-black text-gray-900 leading-tight uppercase tracking-tight">Mission Data</h2>
+          </div>
 
           {exportError && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
+            <div className="mb-6 p-4 bg-red-50 border-2 border-red-100 rounded-2xl text-red-600 font-bold text-sm">
               {exportError}
             </div>
           )}
 
-          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
-            <div>
-              <p className="font-medium text-gray-900">Export Your Data</p>
-              <p className="text-sm text-gray-600 mt-1">
-                Download all your data including surveys, responses, and account information.
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 p-8 bg-gray-50 rounded-[32px] border-4 border-gray-100 group hover:border-indigo-100 transition-all">
+            <div className="max-w-md">
+              <p className="text-lg font-black text-gray-900 leading-tight uppercase tracking-tight mb-1">Archive Mission History</p>
+              <p className="text-xs font-bold text-gray-400 uppercase tracking-wider leading-relaxed">
+                Download a complete record of all your adventures, responses, and identity metadata in a portable JSON format.
               </p>
             </div>
             <button
               onClick={handleExportData}
               disabled={isExporting}
-              className="px-4 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors disabled:bg-indigo-400 disabled:cursor-not-allowed flex items-center gap-2"
+              className="px-8 py-4 bg-white border-4 border-indigo-100 text-indigo-600 rounded-2xl font-black text-sm uppercase tracking-widest shadow-[4px_4px_0px_0px_rgba(79,70,229,0.05)] hover:border-indigo-500 hover:translate-y-[-2px] active:translate-y-1 active:shadow-none transition-all disabled:opacity-50 shrink-0"
             >
               {isExporting ? (
-                <>
-                  <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                  </svg>
-                  Exporting...
-                </>
-              ) : (
-                <>
-                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                  </svg>
-                  Export Data
-                </>
-              )}
+                <span className="flex items-center gap-2">
+                   <div className="w-4 h-4 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+                   Archiving...
+                </span>
+              ) : 'Export Data'}
             </button>
           </div>
+        </div>
 
-          <p className="mt-4 text-sm text-gray-500">
-            Your data export will include your profile, all surveys you&apos;ve created, and all responses collected.
-            The file will be downloaded in JSON format.
-          </p>
-        </Card>
-
-        {/* Danger Zone Card */}
-        <Card className="p-8 border-red-200">
-          <h2 className="text-lg font-semibold text-red-600 mb-4">Danger Zone</h2>
+        {/* Danger Zone */}
+        <div className="bg-red-50/30 rounded-[32px] border-4 border-red-50 p-10 mb-12">
+          <div className="flex items-center gap-3 mb-8">
+            <div className="w-10 h-10 rounded-xl bg-red-100 border-2 border-red-200 flex items-center justify-center text-xl">
+              ⚠️
+            </div>
+            <h2 className="text-2xl font-black text-red-600 leading-tight uppercase tracking-tight">Danger Zone</h2>
+          </div>
 
           {deleteError && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
+            <div className="mb-6 p-4 bg-red-50 border-2 border-red-200 rounded-2xl text-red-600 font-bold text-sm">
               {deleteError}
             </div>
           )}
 
-          <div className="flex items-center justify-between p-4 bg-red-50 rounded-lg border border-red-200">
-            <div>
-              <p className="font-medium text-gray-900">Delete Account</p>
-              <p className="text-sm text-gray-600 mt-1">
-                Permanently delete your account and all associated data.
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 p-8 bg-white rounded-[32px] border-4 border-red-100 shadow-[8px_8px_0px_0px_rgba(239,68,68,0.05)]">
+            <div className="max-w-md">
+              <p className="text-lg font-black text-gray-900 leading-tight uppercase tracking-tight mb-1">Erase account realm</p>
+              <p className="text-xs font-bold text-gray-400 uppercase tracking-wider leading-relaxed">
+                Permanently delete your account, all missions, and every respondent response. This cannot be reversed by any magic.
               </p>
             </div>
             <button
               onClick={() => setShowDeleteModal(true)}
-              className="px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors"
+              className="px-8 py-4 bg-red-50 text-red-600 border-4 border-red-100 rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-red-600 hover:text-white hover:border-red-700 transition-all active:translate-y-1 active:shadow-none shrink-0"
             >
-              Delete Account
+              Self-Destruct
             </button>
           </div>
-
-          <p className="mt-4 text-sm text-gray-500">
-            This will permanently delete your account, all surveys, and all responses.
-            This action cannot be undone.
-          </p>
-        </Card>
-
-        {/* Warning Modal */}
-        <WarningModal
-          isOpen={showWarningModal}
-          onClose={() => setShowWarningModal(false)}
-          onConfirm={handleWarningConfirm}
-        />
-
-        {/* Delete Account Modal */}
-        <DeleteAccountModal
-          isOpen={showDeleteModal}
-          onClose={() => setShowDeleteModal(false)}
-          onConfirm={handleDeleteAccount}
-          isDeleting={isDeleting}
-        />
+        </div>
       </motion.div>
+
+      <WarningModal
+        isOpen={showWarningModal}
+        onClose={() => setShowWarningModal(false)}
+        onConfirm={handleWarningConfirm}
+      />
+
+      <DeleteAccountModal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={handleDeleteAccount}
+        isDeleting={isDeleting}
+      />
     </div>
   );
 }

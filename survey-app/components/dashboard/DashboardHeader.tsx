@@ -1,10 +1,12 @@
 'use client';
 
+import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
+import { LogOut, Settings, Bell, Menu, User, ChevronDown, Sparkles, PartyPopper } from 'lucide-react';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { signOut } from '@/lib/firebase/auth';
-import { useRouter } from 'next/navigation';
-import { useState, useRef, useEffect } from 'react';
 
 interface DashboardHeaderProps {
   onMenuClick: () => void;
@@ -17,14 +19,12 @@ export default function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsDropdownOpen(false);
       }
     }
-
     if (isDropdownOpen) {
       document.addEventListener('mousedown', handleClickOutside);
       return () => document.removeEventListener('mousedown', handleClickOutside);
@@ -42,97 +42,104 @@ export default function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
     }
   };
 
-  const displayName = user?.displayName || firebaseUser?.displayName || firebaseUser?.email?.split('@')[0] || 'User';
-  const email = firebaseUser?.email || '';
-  const photoURL = user?.photoURL || firebaseUser?.photoURL;
+  const displayName = user?.displayName || firebaseUser?.displayName || firebaseUser?.email?.split('@')[0] || 'Friend';
+  
+  // Pixel-art is way more fun!
+  const avatarUrl = `https://api.dicebear.com/7.x/pixel-art/svg?seed=${encodeURIComponent(displayName)}&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf`;
 
   return (
-    <header className="bg-white border-b border-neutral-200 sticky top-0 z-30">
-      <div className="flex items-center justify-between px-4 py-3 lg:px-6">
-        <div className="flex items-center gap-4">
+    <header className="sticky top-0 z-40 w-full bg-white border-b-2 border-duo-gray">
+      <div className="mx-auto flex h-20 max-w-[1400px] items-center justify-between px-4 md:px-8">
+        {/* Left: Mobile Menu & Clean Logo */}
+        <div className="flex items-center gap-2 sm:gap-6">
           <button
             onClick={onMenuClick}
-            className="lg:hidden p-2 -ml-2 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 rounded-lg transition-colors"
-            aria-label="Open menu"
+            className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-2xl bg-white border-2 border-duo-gray shadow-[0_4px_0_#e5e5e5] text-duo-graphite transition-all active:translate-y-[2px] active:shadow-none lg:hidden"
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
+            <Menu className="h-5 w-5 sm:h-6 sm:w-6" />
           </button>
-
-          <Link href="/dashboard" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-brand-500 rounded-lg flex items-center justify-center">
-              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-              </svg>
-            </div>
-            <span className="text-xl font-bold text-neutral-900 hidden sm:block">Unboring Surveys</span>
+          
+          <Link href="/dashboard" className="group">
+             <span className="font-fredoka text-xl sm:text-3xl font-bold tracking-tight text-duo-black">
+                Unboring<span className="text-duo-green">.</span>
+             </span>
           </Link>
         </div>
 
-        <div className="flex items-center gap-3">
-          <div className="hidden sm:flex flex-col items-end">
-            <span className="text-sm font-medium text-neutral-900">{displayName}</span>
-            <span className="text-xs text-neutral-500">{email}</span>
-          </div>
+        {/* Right: Tactile Actions & Profile */}
+        <div className="flex items-center gap-4">
+          <motion.button 
+            whileTap={{ scale: 0.95 }}
+            className="hidden h-12 w-12 items-center justify-center rounded-2xl bg-white border-2 border-duo-yellow shadow-[0_4px_0_#ffc700] text-duo-yellow transition-all active:translate-y-[2px] active:shadow-none sm:flex"
+          >
+            <Sparkles className="h-6 w-6" fill="currentColor" fillOpacity={0.2} />
+          </motion.button>
 
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className="flex items-center gap-2 p-1 min-h-[48px] min-w-[48px] justify-center rounded-full hover:bg-neutral-100 transition-colors touch-manipulation"
-              aria-expanded={isDropdownOpen}
-              aria-haspopup="true"
+              className="flex items-center gap-1.5 sm:gap-3 rounded-2xl border-2 border-duo-gray p-1.5 sm:pr-4 transition-all hover:bg-duo-gray/10 active:translate-y-[2px]"
             >
-              {photoURL ? (
+              <div className="h-9 w-9 overflow-hidden rounded-xl border-2 border-duo-gray flex-shrink-0">
                 <img
-                  src={photoURL}
+                  src={avatarUrl}
                   alt={displayName}
-                  className="w-9 h-9 rounded-full object-cover border-2 border-neutral-200"
-                  loading="lazy"
+                  className="h-full w-full object-cover bg-white"
                 />
-              ) : (
-                <div className="w-9 h-9 rounded-full bg-brand-100 flex items-center justify-center border-2 border-neutral-200">
-                  <span className="text-brand-600 font-medium text-sm">
-                    {displayName.charAt(0).toUpperCase()}
-                  </span>
-                </div>
-              )}
+              </div>
+              <div className="hidden flex-col items-start text-left md:flex">
+                <span className="text-[11px] font-black text-duo-black leading-none uppercase">{displayName}</span>
+                <span className="text-[9px] font-black text-duo-green mt-1 uppercase tracking-wider">Superstar</span>
+              </div>
+              <ChevronDown className={`h-4 w-4 text-duo-silver transition-transform duration-300 hidden sm:block ${isDropdownOpen ? 'rotate-180' : ''}`} />
             </button>
 
-            {isDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-neutral-200 transition-all duration-200">
-                <div className="p-3 border-b border-neutral-100 sm:hidden">
-                  <p className="text-sm font-medium text-neutral-900">{displayName}</p>
-                  <p className="text-xs text-neutral-500 truncate">{email}</p>
-                </div>
-                <div className="p-1">
-                  <Link
-                    href="/dashboard/settings"
-                    onClick={() => setIsDropdownOpen(false)}
-                    className="flex items-center gap-2 px-3 py-2 min-h-[44px] text-sm text-neutral-700 hover:bg-neutral-100 rounded-md transition-colors touch-manipulation"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                    Settings
-                  </Link>
-                  <button
-                    onClick={() => {
-                      setIsDropdownOpen(false);
-                      handleSignOut();
-                    }}
-                    disabled={isSigningOut}
-                    className="flex items-center gap-2 w-full px-3 py-2 min-h-[44px] text-sm text-red-600 hover:bg-red-50 rounded-md transition-colors disabled:opacity-50 touch-manipulation"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                    </svg>
-                    {isSigningOut ? 'Signing out...' : 'Sign out'}
-                  </button>
-                </div>
-              </div>
-            )}
+            <AnimatePresence>
+              {isDropdownOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  className="absolute right-0 mt-4 w-60 origin-top-right overflow-hidden rounded-[2rem] border-2 border-duo-gray bg-white shadow-2xl"
+                >
+                  <div className="bg-duo-gray/20 p-5 text-center border-b-2 border-duo-gray">
+                     <p className="text-[10px] font-black uppercase tracking-[0.2em] text-duo-graphite">Hey Superstar!</p>
+                     <p className="text-sm font-black text-duo-black mt-1 uppercase">{displayName} ✨</p>
+                  </div>
+
+                  <div className="p-3 space-y-2">
+                    <Link
+                      href="/dashboard/settings"
+                      onClick={() => setIsDropdownOpen(false)}
+                      className="flex items-center gap-3 rounded-xl px-4 py-3 text-[11px] font-black uppercase tracking-wider text-duo-graphite hover:bg-duo-gray/30 transition-all"
+                    >
+                      <Settings className="h-4 w-4" />
+                      Settings
+                    </Link>
+                    
+                    <Link
+                      href="/dashboard/profile"
+                      onClick={() => setIsDropdownOpen(false)}
+                      className="flex items-center gap-3 rounded-xl px-4 py-3 text-[11px] font-black uppercase tracking-wider text-duo-graphite hover:bg-duo-gray/30 transition-all"
+                    >
+                      <User className="h-4 w-4" />
+                      My Profile
+                    </Link>
+
+                    <div className="my-2 h-[2px] bg-duo-gray mx-2" />
+
+                    <button
+                      onClick={handleSignOut}
+                      disabled={isSigningOut}
+                      className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-[11px] font-black uppercase tracking-wider text-red-500 hover:bg-red-50 transition-all"
+                    >
+                      <LogOut className="h-4 w-4" />
+                      {isSigningOut ? 'Bye bye...' : 'Log Out'}
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </div>

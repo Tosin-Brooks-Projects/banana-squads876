@@ -11,7 +11,7 @@ import { Shimmer, TableSkeleton } from '@/components/ui/LoadingStates';
 import { QuestionCardSkeleton, OverviewSkeleton } from '@/components/charts/ChartSkeleton';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { getSurvey, getSurveyResponses, deleteSurvey, updateSurvey } from '@/lib/firebase/firestore';
-import { formatDate, formatDateTime, formatDuration, getAdventureEmoji, getAdventureLabel, aggregateAllQuestions, getResponsesOverTime, calculateAverageCompletionTime, QuestionAggregation } from '@/lib/utils/helpers';
+import { formatDate, formatDateTime, formatDuration, getAdventureEmoji, getAdventureImage, getAdventureLabel, aggregateAllQuestions, getResponsesOverTime, calculateAverageCompletionTime, QuestionAggregation } from '@/lib/utils/helpers';
 import { Survey, SurveyResponse, Answer, PricingTier, PRICING_TIERS } from '@/lib/types';
 import ResponseCapBanner from '@/components/pricing/ResponseCapBanner';
 import { BarChartComponent, LineChartComponent, RatingDisplay, CompletionRateChart, TextResponsesList, AIInsights } from '@/components/charts';
@@ -88,120 +88,40 @@ function Toast({ message, show, onClose }: { message: string; show: boolean; onC
 
 function LoadingSkeleton() {
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.3 }}
-      className="min-h-screen bg-gray-50"
-    >
-      {/* Header Skeleton */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="container mx-auto px-4 sm:px-6 py-4">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <Shimmer className="w-14 h-5 bg-gray-200 rounded" />
-              <Shimmer className="w-12 h-12 bg-gray-200 rounded-xl" />
-              <div className="space-y-2">
-                <Shimmer className="w-48 h-6 bg-gray-200 rounded" />
-                <Shimmer className="w-36 h-4 bg-gray-200 rounded" />
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <Shimmer className="w-24 h-10 bg-gray-200 rounded-lg" />
-              <Shimmer className="w-28 h-10 bg-gray-200 rounded-lg" />
-              <Shimmer className="w-16 h-10 bg-gray-200 rounded-lg" />
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <main className="container mx-auto px-4 sm:px-6 py-6 sm:py-8">
-        {/* Metadata Cards Skeleton */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
-          {[0, 1, 2, 3].map((i) => (
+    <div className="min-h-screen bg-[#FAFAFA] flex flex-col items-center justify-center p-4">
+      <motion.div
+        animate={{ 
+          y: [0, -20, 0],
+          rotate: [0, 5, -5, 0]
+        }}
+        transition={{ 
+          duration: 2,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+        className="relative mb-8"
+      >
+        <div className="absolute inset-0 bg-orange-200 blur-3xl opacity-30 rounded-full" />
+        <img 
+          src="/orange-kea-mascot.png" 
+          alt="Loading..." 
+          className="w-32 h-32 relative z-10 drop-shadow-2xl"
+        />
+      </motion.div>
+      <div className="text-center space-y-4">
+        <h2 className="text-2xl font-bold text-gray-900">Gathering your results...</h2>
+        <div className="flex gap-1.5 justify-center">
+          {[0, 1, 2].map((i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 }}
-            >
-              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
-                <div className="flex items-center gap-3">
-                  <Shimmer className="w-10 h-10 bg-gray-200 rounded-lg" />
-                  <div className="space-y-2">
-                    <Shimmer className="w-16 h-3 bg-gray-200 rounded" />
-                    <Shimmer className="w-20 h-5 bg-gray-200 rounded" />
-                  </div>
-                </div>
-              </div>
-            </motion.div>
+              animate={{ opacity: [0.3, 1, 0.3] }}
+              transition={{ duration: 1, repeat: Infinity, delay: i * 0.2 }}
+              className="w-2.5 h-2.5 bg-orange-500 rounded-full"
+            />
           ))}
         </div>
-
-        {/* Survey URL Skeleton */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="mb-6 sm:mb-8"
-        >
-          <Card>
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-              <div className="space-y-2">
-                <Shimmer className="w-20 h-3 bg-gray-200 rounded" />
-                <Shimmer className="w-64 h-7 bg-gray-200 rounded" />
-              </div>
-              <Shimmer className="w-20 h-9 bg-gray-200 rounded-lg" />
-            </div>
-          </Card>
-        </motion.div>
-
-        {/* Analytics Overview Skeleton */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="mb-6 sm:mb-8"
-        >
-          <Card>
-            <OverviewSkeleton />
-          </Card>
-        </motion.div>
-
-        {/* Question Results Skeleton */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
-          className="mb-6 sm:mb-8"
-        >
-          <Card>
-            <Shimmer className="w-40 h-6 bg-gray-200 rounded mb-6" />
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {[0, 1, 2, 3].map((i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.7 + i * 0.1 }}
-                >
-                  <QuestionCardSkeleton />
-                </motion.div>
-              ))}
-            </div>
-          </Card>
-        </motion.div>
-
-        {/* Responses Table Skeleton */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8 }}
-        >
-          <TableSkeleton rows={5} columns={4} showHeader={true} />
-        </motion.div>
-      </main>
-    </motion.div>
+      </div>
+    </div>
   );
 }
 
@@ -255,15 +175,23 @@ function ExpandedResponseRow({ response, questions }: { response: SurveyResponse
       initial={{ opacity: 0, height: 0 }}
       animate={{ opacity: 1, height: 'auto' }}
       exit={{ opacity: 0, height: 0 }}
-      className="bg-gray-50 border-t border-gray-100"
+      className="bg-gray-50 border-t-2 border-gray-100"
     >
-      <div className="p-4 sm:p-6 space-y-4">
-        <h4 className="font-medium text-gray-900 text-sm">Response Details</h4>
-        <div className="grid gap-3">
-          {questions.map((question) => (
-            <div key={question.id} className="bg-white rounded-lg p-3 border border-gray-100">
-              <p className="text-xs text-gray-500 mb-1">{question.question}</p>
-              <p className="text-sm font-medium text-gray-900">{getAnswerValue(question.id)}</p>
+      <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
+        <div className="flex items-center gap-2">
+          <span className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center text-xs font-black text-orange-600 border-2 border-orange-200">
+            📊
+          </span>
+          <h4 className="font-black text-gray-900 text-sm uppercase tracking-widest">Full Response Data</h4>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {questions.map((question, i) => (
+            <div key={question.id} className="bg-white rounded-2xl p-4 border-2 border-gray-100 shadow-sm group hover:border-orange-200 transition-all">
+              <p className="text-[10px] font-black text-gray-400 uppercase tracking-tighter mb-2 flex items-center gap-2">
+                <span className="w-4 h-4 rounded bg-gray-50 flex items-center justify-center text-[8px] border border-gray-100">{i + 1}</span>
+                {question.question}
+              </p>
+              <p className="text-sm font-bold text-gray-900 group-hover:text-orange-600 transition-colors">{getAnswerValue(question.id)}</p>
             </div>
           ))}
         </div>
@@ -772,22 +700,149 @@ export default function SurveyDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="container mx-auto px-4 sm:px-6 py-4">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div className="flex items-center gap-3 sm:gap-4">
+    <div className="w-full bg-gray-50/50">
+      {/* Survey nav bar */}
+      <div className="bg-white border-b-4 border-gray-100 rounded-2xl mb-4">
+        <div className="w-full py-3 sm:py-5">
+
+          {/* Mobile layout */}
+          <div className="sm:hidden">
+            {/* Nav row: back + status badge + delete */}
+            <div className="flex items-center justify-between mb-4">
+              <Link href="/dashboard" className="flex items-center gap-1.5 text-gray-500 font-bold text-sm">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
+                </svg>
+                Back
+              </Link>
+              <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border-2 ${
+                survey.status === 'published' ? 'bg-green-100 text-green-700 border-green-200' :
+                survey.status === 'closed' ? 'bg-red-100 text-red-700 border-red-200' :
+                'bg-yellow-100 text-yellow-700 border-yellow-200'
+              }`}>
+                {survey.status}
+              </span>
+              <button
+                onClick={() => setShowDeleteModal(true)}
+                className="w-9 h-9 flex items-center justify-center rounded-xl bg-red-50 border-2 border-red-100 text-red-400 active:bg-red-500 active:text-white transition-all"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Centered survey identity */}
+            <div className="flex flex-col items-center text-center mb-4">
+              <div className="w-20 h-20 rounded-3xl bg-orange-50 border-4 border-orange-100 flex items-center justify-center mb-3 shadow-[0_4px_0_rgba(249,115,22,0.15)]">
+                <img
+                  src={getAdventureImage(survey.adventureType)}
+                  alt={survey.adventureType}
+                  className="w-14 h-14 object-contain drop-shadow-md"
+                />
+              </div>
+              <span className="px-2.5 py-0.5 rounded-full bg-orange-100 text-orange-700 text-[9px] font-black uppercase tracking-wider border border-orange-200 mb-2">
+                {getAdventureLabel(survey.adventureType)}
+              </span>
+              {isEditingTitle ? (
+                <div className="flex items-center gap-1.5 w-full max-w-xs">
+                  <input
+                    ref={titleInputRef}
+                    type="text"
+                    value={editedTitle}
+                    onChange={(e) => setEditedTitle(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') handleSaveTitle();
+                      if (e.key === 'Escape') handleCancelTitleEdit();
+                    }}
+                    className="text-base font-black text-gray-900 bg-white border-2 border-orange-500 rounded-xl px-3 py-1.5 focus:outline-none flex-1 text-center"
+                    disabled={savingTitle}
+                  />
+                  <button onClick={handleSaveTitle} disabled={savingTitle} className="p-1.5 text-green-600 bg-green-50 rounded-lg border border-green-200">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                  </button>
+                  <button onClick={handleCancelTitleEdit} disabled={savingTitle} className="p-1.5 text-gray-400 bg-gray-50 rounded-lg border border-gray-200">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>
+                  </button>
+                </div>
+              ) : (
+                <button onClick={handleEditTitle} className="group flex items-center gap-1.5 mb-1">
+                  <h1 className="text-xl font-black text-gray-900 leading-tight group-active:text-orange-600 transition-colors">
+                    {survey.title || 'Untitled Survey'}
+                  </h1>
+                  <svg className="w-3.5 h-3.5 text-gray-300 group-active:text-orange-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                  </svg>
+                </button>
+              )}
+              <p className="text-gray-500 text-sm font-medium">
+                <span className="text-gray-900 font-black">{responses.length}</span> responses collected
+              </p>
+            </div>
+
+            {/* Action buttons — centered row */}
+            <div className="flex items-center justify-center gap-2 flex-wrap">
+              <Button
+                variant="outline"
+                onClick={handleRefresh}
+                isLoading={isRefreshing}
+                className="flex-shrink-0 bg-white border-2 border-gray-200 text-xs h-9 px-3 shadow-[2px_2px_0px_0px_rgba(0,0,0,0.05)]"
+              >
+                <svg className="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                Refresh
+              </Button>
+              {responses.length > 0 && (
+                <>
+                  <Button
+                    variant="outline"
+                    onClick={handlePickWinner}
+                    className="flex-shrink-0 bg-white border-2 border-orange-200 text-orange-600 text-xs h-9 px-3"
+                  >
+                    🏆 Winner
+                  </Button>
+                  {CSV_EXPORT_TIERS.includes(survey.pricingTier || 'free') ? (
+                    <CSVLink data={csvData} filename={csvFilename} className="inline-flex flex-shrink-0">
+                      <Button variant="outline" className="bg-white border-2 border-indigo-200 text-indigo-600 text-xs h-9 px-3">
+                        ↓ CSV
+                      </Button>
+                    </CSVLink>
+                  ) : (
+                    <Button variant="outline" disabled className="flex-shrink-0 opacity-40 border-2 border-gray-200 text-xs h-9 px-3">
+                      🔒 CSV
+                    </Button>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
+
+          {/* Desktop layout (sm+) */}
+          <div className="hidden sm:flex flex-col lg:flex-row lg:items-center justify-between gap-4 sm:gap-6">
+            <div className="flex items-start gap-5">
               <Link
                 href="/dashboard"
-                className="text-gray-500 hover:text-gray-700 text-sm"
+                className="w-10 h-10 flex items-center justify-center rounded-xl bg-gray-50 border-2 border-gray-200 text-gray-400 hover:text-gray-600 hover:border-gray-300 transition-all hover:translate-y-[-2px] active:translate-y-[0px]"
               >
-                ← Back
+                ←
               </Link>
-              <div className="text-3xl sm:text-4xl">{getAdventureEmoji(survey.adventureType)}</div>
-              <div className="min-w-0 flex-1">
+              <div className="relative group">
+                <div className="absolute inset-0 bg-orange-100 rounded-2xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity" />
+                <img
+                  src={getAdventureImage(survey.adventureType)}
+                  alt={survey.adventureType}
+                  className="w-20 h-20 object-contain relative z-10 drop-shadow-md"
+                />
+              </div>
+              <div className="min-w-0 flex-1 pt-1">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="px-2.5 py-0.5 rounded-full bg-orange-100 text-orange-700 text-[10px] font-bold uppercase tracking-wider border border-orange-200">
+                    {getAdventureLabel(survey.adventureType)}
+                  </span>
+                </div>
                 {isEditingTitle ? (
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 max-w-md">
                     <input
                       ref={titleInputRef}
                       type="text"
@@ -797,132 +852,92 @@ export default function SurveyDetailPage() {
                         if (e.key === 'Enter') handleSaveTitle();
                         if (e.key === 'Escape') handleCancelTitleEdit();
                       }}
-                      className="text-lg sm:text-xl font-bold text-gray-900 bg-white border border-gray-300 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 w-full max-w-xs"
+                      className="text-2xl font-black text-gray-900 bg-white border-4 border-orange-500 rounded-xl px-3 py-1 focus:outline-none w-full shadow-[4px_4px_0px_0px_rgba(249,115,22,0.2)]"
                       disabled={savingTitle}
                     />
-                    <button
-                      onClick={handleSaveTitle}
-                      disabled={savingTitle}
-                      className="p-1.5 text-green-600 hover:bg-green-50 rounded-lg transition-colors disabled:opacity-50"
-                      title="Save"
-                    >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                    </button>
-                    <button
-                      onClick={handleCancelTitleEdit}
-                      disabled={savingTitle}
-                      className="p-1.5 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50"
-                      title="Cancel"
-                    >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </button>
+                    <div className="flex gap-1">
+                      <button onClick={handleSaveTitle} disabled={savingTitle} className="p-2 text-green-600 hover:bg-green-50 rounded-xl transition-colors border-2 border-transparent hover:border-green-200">
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                      </button>
+                      <button onClick={handleCancelTitleEdit} disabled={savingTitle} className="p-2 text-gray-400 hover:bg-gray-50 rounded-xl transition-colors border-2 border-transparent hover:border-gray-200">
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>
+                      </button>
+                    </div>
                   </div>
                 ) : (
-                  <div className="group flex items-center gap-2">
-                    <h1 className="text-lg sm:text-xl font-bold text-gray-900 truncate">{survey.title}</h1>
-                    <button
-                      onClick={handleEditTitle}
-                      className="p-1 text-gray-400 hover:text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity"
-                      title="Edit title"
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                  <div className="group flex items-center gap-3">
+                    <h1 className="text-3xl font-black text-gray-900 truncate tracking-tight">{survey.title}</h1>
+                    <button onClick={handleEditTitle} className="p-1.5 text-gray-300 hover:text-orange-500 transition-colors" title="Edit title">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                       </svg>
                     </button>
                   </div>
                 )}
-                <p className="text-gray-500 text-xs sm:text-sm">
-                  {getAdventureLabel(survey.adventureType)} • {responses.length} responses
-                </p>
+                <div className="flex items-center gap-3 mt-1">
+                  <div className="flex -space-x-2">
+                    {[...Array(Math.min(3, responses.length))].map((_, i) => (
+                      <div key={i} className="w-6 h-6 rounded-full border-2 border-white bg-gray-100 flex items-center justify-center text-[10px]">👤</div>
+                    ))}
+                  </div>
+                  <p className="text-gray-500 text-sm font-medium">
+                    <span className="text-gray-900 font-bold">{responses.length}</span> responses collected
+                  </p>
+                </div>
               </div>
             </div>
-            <div className="flex items-center gap-2 sm:gap-3">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleRefresh}
-                isLoading={isRefreshing}
-                loadingText="Refreshing..."
-                className="relative"
-              >
-                <span className="inline-flex items-center">
-                  <svg
-                    className="w-4 h-4 mr-1.5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                  </svg>
-                  <span className="hidden sm:inline">Refresh</span>
-                </span>
+
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+              <Button variant="outline" onClick={handleRefresh} isLoading={isRefreshing} className="bg-white border-2 border-gray-200 shadow-[2px_2px_0px_0px_rgba(0,0,0,0.05)] hover:translate-y-[-2px] active:translate-y-[0px] transition-all">
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                Refresh
               </Button>
               {responses.length > 0 && (
                 <>
-                  <Button variant="outline" size="sm" onClick={handlePickWinner}>
-                    <span className="inline-flex items-center">
-                      <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
-                      </svg>
-                      <span className="hidden sm:inline">Pick Winner</span>
-                      <span className="sm:hidden">Winner</span>
-                    </span>
+                  <Button variant="outline" onClick={handlePickWinner} className="bg-white border-2 border-orange-200 text-orange-600 shadow-[2px_2px_0px_0px_rgba(249,115,22,0.1)] hover:border-orange-500 hover:translate-y-[-2px] active:translate-y-[0px] transition-all">
+                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
+                    </svg>
+                    Pick Winner
                   </Button>
                   {CSV_EXPORT_TIERS.includes(survey.pricingTier || 'free') ? (
-                    <CSVLink
-                      data={csvData}
-                      filename={csvFilename}
-                      onClick={() => {
-                        setToastMessage('CSV exported successfully!');
-                        setShowToast(true);
-                      }}
-                      className="inline-flex"
-                    >
-                      <Button variant="outline" size="sm">
-                        <span className="inline-flex items-center">
-                          <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                          </svg>
-                          <span className="hidden sm:inline">Download CSV</span>
-                          <span className="sm:hidden">CSV</span>
-                        </span>
+                    <CSVLink data={csvData} filename={csvFilename} className="inline-flex">
+                      <Button variant="outline" className="bg-white border-2 border-indigo-200 text-indigo-600 shadow-[2px_2px_0px_0px_rgba(79,70,229,0.1)] hover:border-indigo-500 hover:translate-y-[-2px] active:translate-y-[0px] transition-all">
+                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                        Export CSV
                       </Button>
                     </CSVLink>
                   ) : (
                     <div className="relative group">
-                      <Button variant="outline" size="sm" disabled className="opacity-60">
-                        <span className="inline-flex items-center">
-                          <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                          </svg>
-                          <span className="hidden sm:inline">CSV</span>
-                          <svg className="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                          </svg>
-                        </span>
+                      <Button variant="outline" disabled className="opacity-50 border-2 border-gray-200">
+                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                        </svg>
+                        Export CSV
                       </Button>
-                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-neutral-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-                        CSV export requires a paid plan
+                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-neutral-900 text-white text-[10px] font-bold rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-50">
+                        UPGRADE TO UNLOCK
                       </div>
                     </div>
                   )}
                 </>
               )}
-              <Button variant="ghost" size="sm" onClick={() => setShowDeleteModal(true)}>
-                <svg className="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <button onClick={() => setShowDeleteModal(true)} className="w-10 h-10 flex items-center justify-center rounded-xl bg-red-50 border-2 border-red-100 text-red-500 hover:bg-red-500 hover:text-white hover:border-red-500 transition-all hover:translate-y-[-2px]">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                 </svg>
-              </Button>
+              </button>
             </div>
           </div>
-        </div>
-      </header>
 
-      <main className="container mx-auto px-4 sm:px-6 py-6 sm:py-8">
+        </div>
+      </div>
+
+      <main className="w-full">
         {/* Payment Required Banner for Unpaid Drafts */}
         {survey.paymentStatus === 'unpaid' && survey.pricingTier && survey.pricingTier !== 'free' && (
           <motion.div
@@ -1005,222 +1020,208 @@ export default function SurveyDetailPage() {
           />
         )}
 
-        {/* Survey Metadata Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
+        {/* Survey Overview Bento Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
+          {/* Survey Title & Status */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0 }}
+            className="col-span-2 md:col-span-2 lg:col-span-2 p-4 sm:p-6 rounded-3xl bg-white border-4 border-gray-100 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.03)] flex flex-col justify-between"
           >
-            <Card>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center text-xl">
-                  📋
-                </div>
-                <div className="min-w-0">
-                  <p className="text-gray-500 text-xs">Title</p>
-                  <p className="text-sm font-semibold text-gray-900 truncate">{survey.title}</p>
-                </div>
+            <div>
+              <div className="flex items-center gap-2 mb-4 min-w-0">
+                <span className={`flex-shrink-0 px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-wide border-2 ${
+                  survey.status === 'published' ? 'bg-green-100 text-green-700 border-green-200' :
+                  survey.status === 'closed' ? 'bg-red-100 text-red-700 border-red-200' :
+                  'bg-yellow-100 text-yellow-700 border-yellow-200'
+                }`}>
+                  {survey.status}
+                </span>
+                <span className="text-gray-400 text-[10px] font-bold truncate min-w-0">ID: {survey.id.slice(0, 8)}…</span>
               </div>
-            </Card>
+              <h3 className="text-2xl font-black text-gray-900 mb-2 leading-tight">{survey.title}</h3>
+              {survey.description ? (
+                <p className="text-gray-500 text-sm line-clamp-2 mb-4">{survey.description}</p>
+              ) : (
+                <p className="text-gray-400 text-sm italic mb-4">No description provided yet.</p>
+              )}
+            </div>
+            <div className="flex items-center gap-2">
+              <button 
+                onClick={handleEditDescription}
+                className="px-4 py-2 rounded-xl bg-gray-50 text-gray-600 text-xs font-bold border-2 border-gray-100 hover:bg-white hover:border-orange-500 hover:text-orange-600 transition-all"
+              >
+                Edit Description
+              </button>
+            </div>
           </motion.div>
 
+          {/* Response Count Card */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
+            className="p-3 sm:p-6 rounded-3xl bg-indigo-600 border-4 border-indigo-700 shadow-[8px_8px_0px_0px_rgba(79,70,229,0.2)] text-white relative overflow-hidden group"
           >
-            <Card>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center text-xl">
-                  📊
-                </div>
-                <div>
-                  <p className="text-gray-500 text-xs">Responses</p>
-                  <p className="text-sm font-semibold text-gray-900">{responses.length}</p>
-                </div>
+            <div className="absolute top-[-20px] right-[-20px] w-32 h-32 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700" />
+            <div className="relative z-10">
+              <p className="text-indigo-100 text-[9px] sm:text-xs font-black uppercase tracking-widest mb-1">Responses</p>
+              <div className="flex items-end gap-1 sm:gap-2">
+                <span className="text-3xl sm:text-5xl font-black">{responses.length}</span>
+                <span className="text-indigo-200 text-xs sm:text-sm font-bold mb-1">Total</span>
               </div>
-            </Card>
+              <div className="mt-2 sm:mt-4 h-1.5 w-full bg-indigo-800 rounded-full overflow-hidden">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: survey.responseLimit ? `${(responses.length / survey.responseLimit) * 100}%` : '100%' }}
+                  className="h-full bg-white rounded-full shadow-[0_0_8px_rgba(255,255,255,0.5)]"
+                />
+              </div>
+              {survey.responseLimit && (
+                <p className="text-[9px] text-indigo-200 mt-1 font-bold uppercase">
+                  {survey.responseLimit - responses.length} left
+                </p>
+              )}
+            </div>
           </motion.div>
 
+          {/* Creation Date Card */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
+            className="p-3 sm:p-6 rounded-3xl bg-white border-4 border-gray-100 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.03)] flex flex-col justify-between"
           >
-            <Card>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-purple-50 rounded-lg flex items-center justify-center text-xl">
+            <div>
+              <p className="text-gray-400 text-[9px] sm:text-xs font-black uppercase tracking-widest mb-2 sm:mb-4">Launch Date</p>
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="w-9 h-9 sm:w-12 sm:h-12 flex-shrink-0 rounded-2xl bg-orange-50 border-2 border-orange-100 flex items-center justify-center text-lg sm:text-2xl">
                   📅
                 </div>
-                <div>
-                  <p className="text-gray-500 text-xs">Created</p>
-                  <p className="text-sm font-semibold text-gray-900">{formatDate(survey.createdAt)}</p>
+                <div className="min-w-0">
+                  <p className="text-gray-900 font-black leading-tight text-sm sm:text-base truncate">{formatDate(survey.createdAt)}</p>
+                  <p className="text-gray-500 text-[9px] font-bold uppercase">Mission Start</p>
                 </div>
               </div>
-            </Card>
+            </div>
           </motion.div>
 
+          {/* Survey Link Card */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
+            className="col-span-2 md:col-span-3 lg:col-span-4 p-4 sm:p-6 rounded-3xl bg-[#FFFBF0] border-4 border-[#FFE0A3] shadow-[8px_8px_0px_0px_rgba(255,184,0,0.1)]"
           >
-            <Card>
-              <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-xl ${survey.status === 'published' ? 'bg-green-50' : survey.status === 'closed' ? 'bg-gray-50' : 'bg-yellow-50'
-                  }`}>
-                  {survey.status === 'published' ? '🟢' : survey.status === 'closed' ? '🔴' : '🟡'}
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-10 h-10 flex-shrink-0 rounded-2xl bg-white border-2 border-[#FFE0A3] shadow-sm flex items-center justify-center text-xl">
+                  🔗
                 </div>
-                <div>
-                  <p className="text-gray-500 text-xs">Status</p>
-                  <p className="text-sm font-semibold text-gray-900 capitalize">{survey.status}</p>
+                <div className="min-w-0 flex-1">
+                  <p className="text-[#855D00] text-[10px] font-black uppercase tracking-wide mb-1">Public Survey Link</p>
+                  <div className="flex items-center gap-2 min-w-0">
+                    <code className="text-sm font-bold text-[#D97706] truncate block bg-white/50 px-2 py-1 rounded-xl border-2 border-[#FFE0A3]/50 flex-1 min-w-0">
+                      {surveyUrl}
+                    </code>
+                    <CopyButton text={surveyUrl} />
+                  </div>
                 </div>
               </div>
-            </Card>
+              <div className="flex gap-2 w-full">
+                <Link href={surveyUrl} target="_blank" className="flex-1">
+                  <Button className="w-full bg-[#D97706] hover:bg-[#B45309] text-white border-b-4 border-[#92400E] active:border-b-0 active:translate-y-[4px] transition-all">
+                    Open Survey
+                  </Button>
+                </Link>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    if (navigator.share) {
+                      navigator.share({ title: survey.title, url: surveyUrl });
+                    } else {
+                      navigator.clipboard.writeText(surveyUrl);
+                      setToastMessage('Link copied!');
+                      setShowToast(true);
+                    }
+                  }}
+                  className="flex-1 bg-white border-2 border-[#FFE0A3] text-[#D97706] hover:bg-[#FFF8E6]"
+                >
+                  Share
+                </Button>
+              </div>
+            </div>
           </motion.div>
         </div>
-
-        {/* Survey URL */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="mb-6 sm:mb-8"
-        >
-          <Card>
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-              <div className="min-w-0 flex-1">
-                <p className="text-gray-500 text-xs mb-1">Survey URL</p>
-                <div className="flex items-center">
-                  <code className="text-sm text-indigo-600 bg-indigo-50 px-2 py-1 rounded truncate block">
-                    {surveyUrl}
-                  </code>
-                  <CopyButton text={surveyUrl} />
-                </div>
-              </div>
-              <Link href={surveyUrl} target="_blank">
-                <Button variant="outline" size="sm">
-                  <span className="inline-flex items-center">
-                    <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                    </svg>
-                    Open
-                  </span>
-                </Button>
-              </Link>
-            </div>
-          </Card>
-        </motion.div>
-
-        {/* Description */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.42 }}
-          className="mb-6 sm:mb-8"
-        >
-          <Card>
-            <div className="flex items-start justify-between gap-3">
-              <div className="flex-1">
-                <p className="text-gray-500 text-xs mb-1">Description</p>
-                {isEditingDescription ? (
-                  <div className="space-y-3">
-                    <textarea
-                      value={editedDescription}
-                      onChange={(e) => setEditedDescription(e.target.value)}
-                      placeholder="Add a description for your survey..."
-                      rows={3}
-                      className="w-full text-sm text-gray-700 bg-white border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 resize-none"
-                      disabled={savingDescription}
-                    />
-                    <div className="flex items-center gap-2">
-                      <Button
-                        size="sm"
-                        onClick={handleSaveDescription}
-                        disabled={savingDescription}
-                        isLoading={savingDescription}
-                      >
-                        Save
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={handleCancelDescriptionEdit}
-                        disabled={savingDescription}
-                      >
-                        Cancel
-                      </Button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="group flex items-start gap-2">
-                    {survey.description ? (
-                      <p className="text-sm text-gray-700">{survey.description}</p>
-                    ) : (
-                      <p className="text-sm text-gray-400 italic">No description</p>
-                    )}
-                    <button
-                      onClick={handleEditDescription}
-                      className="p-1 text-gray-400 hover:text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
-                      title="Edit description"
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                      </svg>
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-          </Card>
-        </motion.div>
 
         {/* Link Controls */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.45 }}
-          className="mb-6 sm:mb-8"
+          className="mb-8"
         >
-          <Card>
-            <h3 className="text-sm font-semibold text-gray-900 mb-4">Link Controls</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="bg-white rounded-[32px] border-4 border-gray-100 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.03)] p-4 sm:p-8">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-xl bg-orange-50 border-2 border-orange-100 flex items-center justify-center text-xl">
+                ⚙️
+              </div>
+              <h2 className="text-2xl font-black text-gray-900 leading-tight">Link Controls</h2>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Active/Inactive Toggle */}
-              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <div>
-                  <p className="text-sm font-medium text-gray-700">Survey Active</p>
-                  <p className="text-xs text-gray-500">When inactive, link won&apos;t work</p>
+              <div className="p-4 sm:p-6 bg-gray-50/50 rounded-2xl border-2 border-gray-100 flex items-center gap-3 justify-between transition-all hover:bg-white hover:border-orange-200 group">
+                <div className="flex items-center gap-3 min-w-0 flex-1">
+                  <div className={`w-10 h-10 flex-shrink-0 rounded-xl flex items-center justify-center text-xl transition-all ${
+                    survey.status === 'published' ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-400'
+                  }`}>
+                    {survey.status === 'published' ? '🚀' : '🛑'}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs font-black text-gray-900 uppercase tracking-wide truncate">Survey Status</p>
+                    <p className="text-[11px] font-bold text-gray-400 truncate">
+                      {survey.status === 'published' ? 'Live!' : 'Disabled'}
+                    </p>
+                  </div>
                 </div>
                 <button
                   onClick={handleStatusToggle}
                   disabled={updatingStatus || survey.status === 'draft'}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${survey.status === 'published'
-                      ? 'bg-indigo-600'
-                      : 'bg-gray-200'
-                    } ${updatingStatus || survey.status === 'draft' ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                  className={`flex-shrink-0 relative inline-flex h-8 w-14 items-center rounded-full transition-all focus:outline-none border-2 ${
+                    survey.status === 'published'
+                      ? 'bg-orange-500 border-orange-600 shadow-[2px_2px_0px_0px_rgba(0,0,0,0.1)]'
+                      : 'bg-gray-200 border-gray-300'
+                  } ${updatingStatus || survey.status === 'draft' ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer active:translate-y-0.5 active:shadow-none'}`}
                   title={survey.status === 'draft' ? 'Publish the survey first to enable this control' : ''}
                 >
-                  <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${survey.status === 'published' ? 'translate-x-6' : 'translate-x-1'
-                      }`}
-                  />
+                  <span className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-sm transition-all ${
+                    survey.status === 'published' ? 'translate-x-7' : 'translate-x-1'
+                  }`} />
                 </button>
               </div>
 
               {/* Expiration Date */}
-              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-700">Expiration Date</p>
-                  <p className="text-xs text-gray-500 truncate">
-                    {survey.settings?.expiresAt
-                      ? (new Date(survey.settings.expiresAt) < new Date()
-                        ? `Expired ${formatDateTime(new Date(survey.settings.expiresAt))}`
-                        : `Expires ${formatDateTime(new Date(survey.settings.expiresAt))}`)
-                      : 'No expiration set'}
-                  </p>
+              <div className="p-4 sm:p-6 bg-gray-50/50 rounded-2xl border-2 border-gray-100 flex items-center gap-3 justify-between transition-all hover:bg-white hover:border-orange-200 group">
+                <div className="flex items-center gap-3 flex-1 min-w-0">
+                  <div className={`w-10 h-10 flex-shrink-0 rounded-xl flex items-center justify-center text-xl transition-all ${
+                    survey.settings?.expiresAt ? 'bg-indigo-100 text-indigo-600' : 'bg-gray-100 text-gray-400'
+                  }`}>
+                    ⌛
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-black text-gray-900 uppercase tracking-wide truncate">Expiration</p>
+                    <p className="text-[11px] font-bold text-gray-400 truncate">
+                      {survey.settings?.expiresAt
+                        ? (new Date(survey.settings.expiresAt) < new Date()
+                          ? `Expired`
+                          : `Expires ${formatDateTime(new Date(survey.settings.expiresAt))}`)
+                        : 'No expiration set'}
+                    </p>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
+
+                <div className="flex items-center gap-1.5 flex-shrink-0">
                   <input
                     ref={expirationInputRef}
                     type="datetime-local"
@@ -1229,6 +1230,8 @@ export default function SurveyDetailPage() {
                         const d = new Date(survey.settings.expiresAt);
                         const offset = d.getTimezoneOffset();
                         const local = new Date(d.getTime() - offset * 60000);
+                        local.setSeconds(0);
+                        local.setMilliseconds(0);
                         return local.toISOString().slice(0, 16);
                       })()
                       : ''
@@ -1242,10 +1245,10 @@ export default function SurveyDetailPage() {
                     type="button"
                     onClick={() => expirationInputRef.current?.showPicker()}
                     disabled={updatingExpiration}
-                    className={`w-9 h-9 flex items-center justify-center bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer ${updatingExpiration ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    className={`w-9 h-9 flex items-center justify-center bg-white border-2 border-gray-100 rounded-xl hover:border-orange-500 hover:text-orange-500 transition-all cursor-pointer ${updatingExpiration ? 'opacity-50 cursor-not-allowed' : 'active:translate-y-0.5'}`}
                     title="Set expiration date"
                   >
-                    <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
                   </button>
@@ -1254,10 +1257,10 @@ export default function SurveyDetailPage() {
                       type="button"
                       onClick={handleClearExpiration}
                       disabled={updatingExpiration}
-                      className={`w-9 h-9 flex items-center justify-center bg-white border border-gray-300 rounded-lg hover:bg-red-50 hover:border-red-300 transition-colors cursor-pointer ${updatingExpiration ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      className={`w-9 h-9 flex items-center justify-center bg-white border-2 border-gray-100 rounded-xl hover:border-red-500 hover:text-red-500 transition-all cursor-pointer ${updatingExpiration ? 'opacity-50 cursor-not-allowed' : 'active:translate-y-0.5'}`}
                       title="Clear expiration date"
                     >
-                      <svg className="w-5 h-5 text-gray-600 hover:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                       </svg>
                     </button>
@@ -1265,67 +1268,92 @@ export default function SurveyDetailPage() {
                 </div>
               </div>
             </div>
-          </Card>
+          </div>
         </motion.div>
 
         {/* Analytics Section */}
-        {responses.length > 0 && (
+        {responses.length > 0 ? (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="mb-6 sm:mb-8 space-y-6"
+            className="mb-8 space-y-8"
           >
             {/* Overall Metrics */}
-            <Card>
-              <h2 className="text-lg font-semibold text-gray-900 mb-6">Overview</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="bg-white rounded-[32px] border-4 border-gray-100 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.03)] p-4 sm:p-8">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-8">
+                <div className="min-w-0">
+                  <h2 className="text-xl sm:text-2xl font-black text-gray-900 leading-tight">Response Overview</h2>
+                  <p className="text-gray-500 font-medium text-sm">Deep dive into your survey performance</p>
+                </div>
+                <div className="flex items-center gap-2 bg-green-50 px-3 py-2 rounded-2xl border-2 border-green-100 flex-shrink-0">
+                  <img src="/orange-kea-mascot.png" alt="Mascot" className="w-8 h-8 object-contain" />
+                  <p className="text-green-700 text-xs font-bold leading-tight">
+                    {responses.length > 10 ? "Taking off! 🚀" : "Keep it up! ✨"}
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
                 {/* Completion Rate */}
-                <div className="flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg">
+                <div className="p-4 sm:p-6 rounded-2xl bg-gray-50 border-2 border-gray-100 flex flex-col items-center justify-center text-center group hover:border-indigo-200 transition-colors">
                   <CompletionRateChart
                     completedCount={responses.length}
                     totalCount={responses.length}
-                    size={120}
+                    size={100}
                   />
-                  <p className="text-sm text-gray-600 mt-2">Completion Rate</p>
+                  <p className="text-gray-400 text-[10px] font-black uppercase tracking-widest mt-4">Completion Rate</p>
+                  <p className="text-xl font-black text-gray-900">100%</p>
                 </div>
 
                 {/* Total Responses */}
-                <div className="flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg">
-                  <div className="text-4xl font-bold text-indigo-600">{responses.length}</div>
-                  <p className="text-sm text-gray-600 mt-2">Total Responses</p>
+                <div className="p-4 sm:p-6 rounded-2xl bg-gray-50 border-2 border-gray-100 flex flex-col items-center justify-center text-center group hover:border-indigo-200 transition-colors">
+                  <div className="text-5xl font-black text-indigo-600 mb-2">{responses.length}</div>
+                  <p className="text-gray-400 text-[10px] font-black uppercase tracking-widest">Total Responses</p>
+                  <p className="text-indigo-900/40 text-xs font-bold">Updated just now</p>
                 </div>
 
                 {/* Average Completion Time */}
-                <div className="flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg">
-                  <div className="text-4xl font-bold text-purple-600">
+                <div className="p-4 sm:p-6 rounded-2xl bg-gray-50 border-2 border-gray-100 flex flex-col items-center justify-center text-center group hover:border-purple-200 transition-colors">
+                  <div className="text-4xl font-black text-purple-600 mb-2">
                     {formatDuration(averageCompletionTime)}
                   </div>
-                  <p className="text-sm text-gray-600 mt-2">Avg. Completion Time</p>
+                  <p className="text-gray-400 text-[10px] font-black uppercase tracking-widest">Avg. Time</p>
+                  <p className="text-purple-900/40 text-xs font-bold">Per respondent</p>
                 </div>
 
                 {/* Questions Answered */}
-                <div className="flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg">
-                  <div className="text-4xl font-bold text-teal-600">{survey?.questions.length || 0}</div>
-                  <p className="text-sm text-gray-600 mt-2">Questions</p>
+                <div className="p-4 sm:p-6 rounded-2xl bg-gray-50 border-2 border-gray-100 flex flex-col items-center justify-center text-center group hover:border-teal-200 transition-colors">
+                  <div className="text-5xl font-black text-teal-600 mb-2">{survey?.questions.length || 0}</div>
+                  <p className="text-gray-400 text-[10px] font-black uppercase tracking-widest">Questions</p>
+                  <p className="text-teal-900/40 text-xs font-bold">Total in survey</p>
                 </div>
               </div>
 
               {/* Responses Over Time */}
               {responsesOverTime.length > 1 && (
-                <div className="mt-8">
-                  <h3 className="text-sm font-medium text-gray-700 mb-4">Responses Over Time</h3>
+                <div className="mt-6 sm:mt-12 p-4 sm:p-6 rounded-3xl bg-gray-50/50 border-2 border-gray-100">
+                  <div className="flex items-center justify-between gap-2 mb-6">
+                    <h3 className="text-xs font-black text-gray-900 uppercase tracking-wide">Response Velocity</h3>
+                    <div className="flex items-center gap-1.5 text-[10px] font-bold text-gray-400 uppercase flex-shrink-0">
+                      <div className="w-2 h-2 rounded-full bg-indigo-500 flex-shrink-0" /> Responses
+                    </div>
+                  </div>
                   <LineChartComponent
                     data={responsesOverTime.map(({ name, value }) => ({ name, value }))}
                     height={200}
                   />
                 </div>
               )}
-            </Card>
+            </div>
 
             {/* Question Analytics */}
-            <Card>
-              <h2 className="text-lg font-semibold text-gray-900 mb-6">Question Results</h2>
+            <div className="bg-white rounded-[32px] border-4 border-gray-100 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.03)] p-4 sm:p-8">
+              <div className="mb-6 sm:mb-8">
+                <h2 className="text-xl sm:text-2xl font-black text-gray-900 leading-tight">Question Analysis</h2>
+                <p className="text-gray-500 font-medium text-sm">How your audience answered each question</p>
+              </div>
+
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {questionAggregations.map((aggregation: QuestionAggregation, index: number) => (
                   <motion.div
@@ -1333,73 +1361,122 @@ export default function SurveyDetailPage() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.05 * index }}
-                    className="bg-gray-50 rounded-xl p-5 border border-gray-100"
+                    className="bg-white rounded-3xl p-6 border-4 border-gray-50 hover:border-orange-100 transition-all group"
                   >
-                    <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-start justify-between mb-6">
                       <div className="flex-1 min-w-0">
-                        <span className="inline-block px-2 py-0.5 text-xs font-medium rounded-full mb-2 capitalize"
-                          style={{
-                            backgroundColor: aggregation.type === 'rating' ? '#fef3c7' : aggregation.type === 'text' ? '#e0e7ff' : '#d1fae5',
-                            color: aggregation.type === 'rating' ? '#92400e' : aggregation.type === 'text' ? '#3730a3' : '#065f46',
-                          }}
-                        >
-                          {aggregation.type === 'multiple_choice' ? 'Multiple Choice' : aggregation.type === 'rating' ? 'Rating' : 'Text'}
-                        </span>
-                        <h3 className="text-sm font-semibold text-gray-900 line-clamp-2">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="w-6 h-6 rounded-lg bg-gray-100 flex items-center justify-center text-xs font-black text-gray-400">
+                            {index + 1}
+                          </span>
+                          <span className={`px-2 py-0.5 text-[10px] font-black uppercase tracking-widest rounded-full border-2 ${
+                            aggregation.type === 'rating' ? 'bg-amber-50 text-amber-600 border-amber-100' : 
+                            aggregation.type === 'text' ? 'bg-indigo-50 text-indigo-600 border-indigo-100' : 
+                            'bg-green-50 text-green-600 border-green-100'
+                          }`}>
+                            {aggregation.type.replace('_', ' ')}
+                          </span>
+                        </div>
+                        <h3 className="text-lg font-black text-gray-900 leading-tight group-hover:text-orange-600 transition-colors">
                           {aggregation.questionText}
                         </h3>
                       </div>
                     </div>
 
-                    {/* Rating Question Display */}
-                    {aggregation.type === 'rating' && aggregation.average !== undefined && (
-                      <RatingDisplay
-                        average={aggregation.average}
-                        data={aggregation.data}
-                        totalResponses={aggregation.totalResponses}
-                        maxRating={aggregation.maxRating || 5}
-                      />
-                    )}
+                    <div className="bg-gray-50 rounded-2xl p-4 border-2 border-gray-100/50">
+                      {/* Rating Question Display */}
+                      {aggregation.type === 'rating' && aggregation.average !== undefined && (
+                        <RatingDisplay
+                          average={aggregation.average}
+                          data={aggregation.data}
+                          totalResponses={aggregation.totalResponses}
+                          maxRating={aggregation.maxRating || 5}
+                        />
+                      )}
 
-                    {/* Multiple Choice Question Display */}
-                    {aggregation.type === 'multiple_choice' && (
-                      <BarChartComponent
-                        data={aggregation.data}
-                        height={Math.max(180, aggregation.data.length * 45)}
-                        layout="horizontal"
-                        showPercentages={true}
-                        showCounts={true}
-                      />
-                    )}
+                      {/* Multiple Choice Question Display */}
+                      {aggregation.type === 'multiple_choice' && (
+                        <BarChartComponent
+                          data={aggregation.data}
+                          height={Math.max(180, aggregation.data.length * 45)}
+                          layout="horizontal"
+                          showPercentages={true}
+                          showCounts={true}
+                        />
+                      )}
 
-                    {/* Text Question Display */}
-                    {aggregation.type === 'text' && aggregation.textResponses && (
-                      <TextResponsesList
-                        responses={aggregation.textResponses}
-                        maxVisible={3}
-                      />
-                    )}
+                      {/* Text Question Display */}
+                      {aggregation.type === 'text' && aggregation.textResponses && (
+                        <TextResponsesList
+                          responses={aggregation.textResponses}
+                          maxVisible={3}
+                        />
+                      )}
+                    </div>
                   </motion.div>
                 ))}
               </div>
-            </Card>
+            </div>
           </motion.div>
-        )}
-
-        {/* AI Insights Section */}
-        {firebaseUser && (
+        ) : (
+          /* Empty State */
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: responses.length > 0 ? 0.55 : 0.5 }}
-            className="mb-6 sm:mb-8"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white rounded-[40px] border-4 border-gray-100 shadow-[12px_12px_0px_0px_rgba(0,0,0,0.03)] p-12 text-center mb-8 relative overflow-hidden"
           >
-            <AIInsights
-              surveyId={surveyId}
-              responseCount={responses.length}
-              pricingTier={survey.pricingTier || 'free'}
-              getAuthToken={() => firebaseUser.getIdToken()}
-            />
+            <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
+              <img src={getAdventureImage(survey.adventureType)} className="w-64 h-64 rotate-12" alt="" />
+            </div>
+            
+            <div className="relative z-10 max-w-lg mx-auto">
+              <motion.div
+                animate={{ 
+                  y: [0, -15, 0],
+                  rotate: [0, 5, -5, 0]
+                }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                className="w-48 h-48 mx-auto mb-8 bg-orange-50 rounded-[48px] border-4 border-orange-100 p-8 flex items-center justify-center relative shadow-xl"
+              >
+                <div className="absolute inset-4 bg-orange-200 blur-2xl opacity-30 rounded-full" />
+                <img src="/orange-kea-mascot.png" alt="Waiting..." className="w-full h-full object-contain relative z-10" />
+              </motion.div>
+              
+              <h2 className="text-3xl font-black text-gray-900 mb-4 leading-tight">Waiting for your first respondent!</h2>
+              <p className="text-gray-500 font-medium text-lg mb-8">
+                Your survey is live and ready for action. Share the link with your audience to start the adventure!
+              </p>
+              
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <Button
+                  onClick={() => {
+                    navigator.clipboard.writeText(surveyUrl);
+                    setToastMessage('Link copied to clipboard!');
+                    setShowToast(true);
+                  }}
+                  size="lg"
+                  className="w-full sm:w-auto bg-orange-500 hover:bg-orange-600 text-white border-b-4 border-orange-700 px-8 py-4 h-auto text-lg font-black active:border-b-0 active:translate-y-1 transition-all"
+                >
+                  Copy Survey Link
+                </Button>
+                <Link href={surveyUrl} target="_blank" className="w-full sm:w-auto">
+                  <Button 
+                    variant="outline" 
+                    size="lg"
+                    className="w-full sm:w-auto bg-white border-4 border-gray-100 px-8 py-4 h-auto text-lg font-black hover:border-orange-200 hover:text-orange-600 transition-all"
+                  >
+                    Preview Survey
+                  </Button>
+                </Link>
+              </div>
+
+              <div className="mt-12 pt-8 border-t-2 border-gray-50">
+                <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-3">Direct Survey URL</p>
+                <code className="bg-gray-50 text-indigo-600 px-6 py-3 rounded-2xl border-2 border-gray-100 font-bold text-sm block truncate">
+                  {surveyUrl}
+                </code>
+              </div>
+            </div>
           </motion.div>
         )}
 
@@ -1407,171 +1484,103 @@ export default function SurveyDetailPage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: responses.length > 0 ? 0.6 : 0.5 }}
+          transition={{ delay: 0.6 }}
+          className="bg-white rounded-[32px] border-4 border-gray-100 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.03)] overflow-hidden"
         >
-          <Card >
-            <div className="p-4 sm:p-6 border-b border-gray-200">
-              <h2 className="text-lg font-semibold text-gray-900">Responses</h2>
-              <p className="text-gray-500 text-sm mt-1">
+          <div className="p-4 sm:p-8 border-b-4 border-gray-50 flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
+            <div>
+              <h2 className="text-2xl font-black text-gray-900 leading-tight">Respondent Log</h2>
+              <p className="text-gray-500 font-medium">
                 {responses.length === 0
-                  ? 'No responses yet'
-                  : `Showing ${paginatedResponses.length} of ${responses.length} responses`}
+                  ? 'No data points yet'
+                  : `Reviewing ${paginatedResponses.length} entries of ${responses.length}`}
               </p>
             </div>
-
-            {responses.length === 0 ? (
-              <div className="p-8 sm:p-12 text-center">
-                <div className="w-20 h-20 mx-auto mb-6 bg-indigo-50 rounded-full flex items-center justify-center">
-                  <svg className="w-10 h-10 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-                  </svg>
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">No responses yet</h3>
-                <p className="text-gray-500 mb-6 max-w-sm mx-auto">
-                  Share your survey link with your audience to start collecting valuable feedback.
-                </p>
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-                  <Button
-                    onClick={() => {
-                      navigator.clipboard.writeText(surveyUrl);
-                      setToastMessage('Survey link copied!');
-                      setShowToast(true);
-                    }}
-                  >
-                    <span className="inline-flex items-center">
-                      <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                      </svg>
-                      Copy Survey Link
-                    </span>
-                  </Button>
-                  <Link href={surveyUrl} target="_blank">
-                    <Button variant="outline">
-                      <span className="inline-flex items-center">
-                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                        </svg>
-                        Preview Survey
-                      </span>
-                    </Button>
-                  </Link>
-                </div>
-                <div className="mt-8 pt-6 border-t border-gray-100">
-                  <p className="text-xs text-gray-400 mb-2">Your survey URL</p>
-                  <code className="text-sm text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-lg inline-block max-w-full truncate">
-                    {surveyUrl}
-                  </code>
-                </div>
+            {responses.length > 0 && (
+              <div className="flex items-center gap-2 px-3 py-1.5 bg-indigo-50 rounded-xl border-2 border-indigo-100">
+                <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
+                <span className="text-[10px] font-black text-indigo-700 uppercase tracking-widest">Real-time Sync</span>
               </div>
-            ) : (
-              <>
-                {/* Desktop Table */}
-                <div className="hidden md:block overflow-x-auto">
-                  <table className="w-full">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        <th className="text-left py-3 px-4 sm:px-6 font-medium text-gray-600 text-sm">Respondent</th>
-                        <th className="text-left py-3 px-4 sm:px-6 font-medium text-gray-600 text-sm">Email</th>
-                        <th className="text-left py-3 px-4 sm:px-6 font-medium text-gray-600 text-sm">Completed At</th>
-                        <th className="text-left py-3 px-4 sm:px-6 font-medium text-gray-600 text-sm">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-100">
-                      {paginatedResponses.map((response, index) => (
-                        <motion.tr
-                          key={response.id}
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          transition={{ delay: index * 0.02 }}
-                          className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'} hover:bg-indigo-50/50 transition-colors cursor-pointer`}
-                          onClick={() => toggleRowExpansion(response.id)}
-                        >
-                          <td className="py-3 px-4 sm:px-6 text-gray-900 text-sm">
-                            {response.respondentName || 'Anonymous'}
-                          </td>
-                          <td className="py-3 px-4 sm:px-6 text-gray-600 text-sm">
-                            {response.respondentEmail || '-'}
-                          </td>
-                          <td className="py-3 px-4 sm:px-6 text-gray-600 text-sm">
-                            {formatDateTime(response.completedAt)}
-                          </td>
-                          <td className="py-3 px-4 sm:px-6">
-                            <button className="text-indigo-600 hover:text-indigo-800 text-sm font-medium">
-                              {expandedRows.has(response.id) ? 'Hide' : 'View'} Details
-                            </button>
-                          </td>
-                        </motion.tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+            )}
+          </div>
 
-                {/* Mobile List */}
-                <div className="md:hidden divide-y divide-gray-100">
-                  {paginatedResponses.map((response, index) => (
-                    <div key={response.id}>
-                      <button
-                        onClick={() => toggleRowExpansion(response.id)}
-                        className={`w-full text-left p-4 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'} hover:bg-indigo-50/50 transition-colors`}
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="min-w-0 flex-1">
-                            <p className="font-medium text-gray-900 text-sm truncate">
-                              {response.respondentName || 'Anonymous'}
-                            </p>
-                            <p className="text-gray-500 text-xs truncate">
-                              {response.respondentEmail || 'No email'}
-                            </p>
-                            <p className="text-gray-400 text-xs mt-1">
-                              {formatDateTime(response.completedAt)}
-                            </p>
-                          </div>
-                          <svg
-                            className={`w-5 h-5 text-gray-400 transition-transform ${expandedRows.has(response.id) ? 'rotate-180' : ''}`}
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                          </svg>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gray-50/50">
+                <tr>
+                  <th className="text-left py-3 px-4 sm:px-8 font-black text-gray-400 text-[10px] uppercase tracking-wide">Respondent</th>
+                  <th className="text-left py-3 px-4 sm:px-8 font-black text-gray-400 text-[10px] uppercase tracking-wide hidden md:table-cell">Contact</th>
+                  <th className="text-left py-3 px-4 sm:px-8 font-black text-gray-400 text-[10px] uppercase tracking-wide hidden sm:table-cell">Date</th>
+                  <th className="text-right py-3 px-4 sm:px-8 font-black text-gray-400 text-[10px] uppercase tracking-wide">Details</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y-2 divide-gray-50">
+                {paginatedResponses.map((response, index) => (
+                  <motion.tr
+                    key={response.id}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: index * 0.02 }}
+                    className="group hover:bg-orange-50/30 transition-all cursor-pointer"
+                    onClick={() => toggleRowExpansion(response.id)}
+                  >
+                    <td className="py-4 px-4 sm:px-8">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-white border-2 border-gray-100 flex items-center justify-center text-xs group-hover:border-orange-200 transition-colors">
+                          👤
                         </div>
-                      </button>
-                      <AnimatePresence>
-                        {expandedRows.has(response.id) && (
-                          <ExpandedResponseRow response={response} questions={survey.questions} />
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  ))}
-                </div>
+                        <span className="text-sm font-bold text-gray-900 group-hover:text-orange-600 transition-colors">
+                          {response.respondentName || 'Anonymous'}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="py-4 px-8 hidden md:table-cell">
+                      <span className="text-sm font-medium text-gray-500">{response.respondentEmail || '-'}</span>
+                    </td>
+                    <td className="py-4 px-8 hidden sm:table-cell">
+                      <span className="text-sm font-medium text-gray-400">{formatDateTime(response.completedAt)}</span>
+                    </td>
+                    <td className="py-4 px-4 sm:px-8 text-right">
+                      <span className={`inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-lg border-2 transition-all ${
+                        expandedRows.has(response.id) 
+                        ? 'bg-orange-500 text-white border-orange-600 shadow-[2px_2px_0px_0px_rgba(0,0,0,0.1)]' 
+                        : 'bg-white text-gray-400 border-gray-100 group-hover:border-orange-200 group-hover:text-orange-500'
+                      }`}>
+                        {expandedRows.has(response.id) ? 'Close' : 'View'}
+                      </span>
+                    </td>
+                  </motion.tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
-                {/* Desktop Expanded Rows */}
-                <div className="hidden md:block">
-                  <AnimatePresence>
-                    {paginatedResponses.map((response) =>
-                      expandedRows.has(response.id) ? (
-                        <ExpandedResponseRow key={`expanded-${response.id}`} response={response} questions={survey.questions} />
-                      ) : null
-                    )}
-                  </AnimatePresence>
-                </div>
+          <div>
+            <AnimatePresence>
+              {paginatedResponses.map((response) =>
+                expandedRows.has(response.id) ? (
+                  <ExpandedResponseRow key={`expanded-${response.id}`} response={response} questions={survey.questions} />
+                ) : null
+              )}
+            </AnimatePresence>
+          </div>
 
                 {/* Pagination */}
                 {totalPages > 1 && (
-                  <div className="p-4 sm:p-6 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-4">
-                    <p className="text-gray-500 text-sm">
-                      Page {currentPage} of {totalPages}
+                  <div className="p-4 sm:p-8 border-t-4 border-gray-50 flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6">
+                    <p className="text-gray-400 text-xs font-black uppercase tracking-widest">
+                      Mission Phase <span className="text-gray-900">{currentPage}</span> of {totalPages}
                     </p>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-3">
                       <Button
                         variant="outline"
-                        size="sm"
                         disabled={currentPage === 1}
                         onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                        className="bg-white border-2 border-gray-100 shadow-[2px_2px_0px_0px_rgba(0,0,0,0.05)] disabled:opacity-30"
                       >
                         Previous
                       </Button>
-                      <div className="hidden sm:flex items-center gap-1">
+                      <div className="hidden sm:flex items-center gap-2">
                         {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
                           let pageNum: number;
                           if (totalPages <= 5) {
@@ -1587,10 +1596,11 @@ export default function SurveyDetailPage() {
                             <button
                               key={pageNum}
                               onClick={() => setCurrentPage(pageNum)}
-                              className={`w-8 h-8 rounded text-sm font-medium ${currentPage === pageNum
-                                  ? 'bg-indigo-600 text-white'
-                                  : 'text-gray-600 hover:bg-gray-100'
-                                }`}
+                              className={`w-10 h-10 rounded-xl text-sm font-black transition-all border-2 ${
+                                currentPage === pageNum
+                                  ? 'bg-orange-500 text-white border-orange-600 shadow-[2px_2px_0px_0px_rgba(0,0,0,0.1)]'
+                                  : 'bg-white text-gray-400 border-gray-100 hover:border-orange-200 hover:text-orange-500 shadow-[2px_2px_0px_0px_rgba(0,0,0,0.03)]'
+                              }`}
                             >
                               {pageNum}
                             </button>
@@ -1599,19 +1609,16 @@ export default function SurveyDetailPage() {
                       </div>
                       <Button
                         variant="outline"
-                        size="sm"
                         disabled={currentPage === totalPages}
                         onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                        className="bg-white border-2 border-gray-100 shadow-[2px_2px_0px_0px_rgba(0,0,0,0.05)] disabled:opacity-30"
                       >
                         Next
                       </Button>
                     </div>
                   </div>
                 )}
-              </>
-            )}
-          </Card>
-        </motion.div>
+              </motion.div>
       </main>
 
       {/* Delete Confirmation Modal */}
@@ -1621,45 +1628,41 @@ export default function SurveyDetailPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50"
             onClick={() => setShowDeleteModal(false)}
           >
             <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-white rounded-xl shadow-xl max-w-md w-full p-6"
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+              className="bg-white rounded-[32px] border-4 border-red-100 shadow-2xl max-w-md w-full p-8 text-center"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="text-center">
-                <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                  </svg>
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">Delete Survey</h3>
-                <p className="text-gray-600 mb-2">
-                  Are you sure you want to delete this survey?
-                </p>
-                <p className="font-medium text-gray-800 mb-3 break-words">
-                  &quot;{survey.title}&quot;
-                </p>
-                <p className="text-sm text-red-600 mb-6">
-                  This cannot be undone. All responses will be permanently lost.
-                </p>
-                <div className="flex items-center gap-3 justify-center">
-                  <Button variant="outline" onClick={() => setShowDeleteModal(false)} disabled={deleting}>
-                    Cancel
-                  </Button>
-                  <Button
-                    onClick={handleDelete}
-                    isLoading={deleting}
-                    loadingText="Deleting..."
-                    className="bg-red-600 hover:bg-red-700 focus:ring-red-500"
-                  >
-                    Delete Survey
-                  </Button>
-                </div>
+              <div className="w-20 h-20 bg-red-50 rounded-3xl border-4 border-red-100 flex items-center justify-center mx-auto mb-6">
+                <svg className="w-10 h-10 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </div>
+              <h3 className="text-2xl font-black text-gray-900 mb-2 uppercase tracking-tight">Delete Survey?</h3>
+              <p className="text-gray-500 font-medium mb-6">
+                Are you sure you want to delete <span className="text-gray-900 font-bold">&quot;{survey.title}&quot;</span>? This action is permanent and all responses will be lost forever.
+              </p>
+              <div className="flex flex-col gap-3">
+                <Button
+                  onClick={handleDelete}
+                  isLoading={deleting}
+                  className="w-full bg-red-600 hover:bg-red-700 text-white border-b-4 border-red-800 h-12 text-lg font-black active:border-b-0 active:translate-y-1 transition-all"
+                >
+                  Delete Mission
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setShowDeleteModal(false)} 
+                  disabled={deleting}
+                  className="w-full border-2 border-gray-100 font-bold"
+                >
+                  Keep Survey
+                </Button>
               </div>
             </motion.div>
           </motion.div>
@@ -1673,129 +1676,126 @@ export default function SurveyDetailPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
+            className="fixed inset-0 bg-indigo-900/40 backdrop-blur-md flex items-center justify-center p-4 z-50"
             onClick={() => !isPickingWinner && setShowWinnerModal(false)}
           >
             <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-white rounded-xl shadow-xl max-w-md w-full p-6"
+              initial={{ scale: 0.8, rotate: -5 }}
+              animate={{ scale: 1, rotate: 0 }}
+              exit={{ scale: 0.8, rotate: 5 }}
+              className="bg-white rounded-[40px] border-4 border-indigo-100 shadow-2xl max-w-md w-full p-8 relative overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="text-center">
+              {/* Confetti Background would go here if we had a component */}
+              <div className="relative z-10">
                 {isPickingWinner ? (
-                  <>
+                  <div className="text-center py-12">
                     <motion.div
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-                      className="w-16 h-16 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-4"
+                      animate={{ 
+                        rotate: 360,
+                        scale: [1, 1.2, 1]
+                      }}
+                      transition={{ 
+                        rotate: { duration: 2, repeat: Infinity, ease: "linear" },
+                        scale: { duration: 1, repeat: Infinity }
+                      }}
+                      className="w-24 h-24 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-8 shadow-xl border-4 border-white"
                     >
-                      <span className="text-3xl">🎰</span>
+                      <span className="text-5xl">🎰</span>
                     </motion.div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Picking a Winner...</h3>
+                    <h3 className="text-2xl font-black text-gray-900 mb-2 uppercase tracking-widest">Spinning...</h3>
+                    <p className="text-gray-400 font-bold text-xs uppercase tracking-tighter">Selecting from {responses.length} heroes</p>
                     <motion.div
                       key={selectedWinner?.id}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="p-4 bg-gray-50 rounded-lg"
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="mt-8 p-4 bg-gray-50 rounded-2xl border-2 border-gray-100"
                     >
-                      <p className="text-gray-700 font-medium">
-                        {selectedWinner?.respondentName || selectedWinner?.respondentEmail || 'Anonymous'}
+                      <p className="text-gray-800 font-black text-lg">
+                        {selectedWinner?.respondentName || 'Searching...'}
                       </p>
                     </motion.div>
-                  </>
+                  </div>
                 ) : (
-                  <>
-                    {/* Shareable Winner Card */}
-                    <div
-                      ref={winnerCardRef}
-                      className="p-6 bg-gradient-to-br from-yellow-50 via-orange-50 to-amber-50 rounded-xl mb-4"
-                    >
+                  <div className="text-center">
+                    <div className="relative mb-8">
                       <motion.div
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        transition={{ type: 'spring', stiffness: 200, damping: 10 }}
-                        className="w-20 h-20 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg"
+                        initial={{ y: 50, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        className="absolute -top-12 -right-4 w-24 h-24 z-20"
                       >
-                        <span className="text-4xl">🏆</span>
+                        <img src="/orange-kea-mascot.png" alt="Happy Mascot" className="w-full h-full object-contain" />
                       </motion.div>
-                      <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.2 }}
+                      
+                      <div
+                        ref={winnerCardRef}
+                        className="p-8 bg-gradient-to-br from-yellow-50 via-orange-50 to-indigo-50 rounded-[32px] border-4 border-yellow-200 shadow-inner relative overflow-hidden"
                       >
-                        <h3 className="text-xl font-bold text-gray-900 mb-1">We Have a Winner!</h3>
-                        <p className="text-sm text-gray-500 mb-3">from &quot;{survey?.title}&quot;</p>
-                      </motion.div>
-                      <motion.div
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: 0.4 }}
-                        className="p-4 bg-white border-2 border-yellow-300 rounded-xl shadow-sm"
-                      >
-                        <p className="text-2xl font-bold text-gray-900">
-                          {selectedWinner?.respondentName || 'Anonymous'}
+                        <motion.div
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          transition={{ type: 'spring', damping: 12 }}
+                          className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-lg border-2 border-yellow-300"
+                        >
+                          <span className="text-4xl">🏆</span>
+                        </motion.div>
+                        
+                        <h3 className="text-3xl font-black text-gray-900 mb-1 leading-tight tracking-tight uppercase">Winner!</h3>
+                        <p className="text-orange-600 font-bold text-xs uppercase tracking-widest mb-6">Survey Mission Complete</p>
+                        
+                        <div className="p-6 bg-white rounded-2xl border-4 border-indigo-100 shadow-sm mb-4">
+                          <p className="text-2xl font-black text-gray-900 leading-tight">
+                            {selectedWinner?.respondentName || 'Anonymous Hero'}
+                          </p>
+                          {selectedWinner?.respondentEmail && (
+                            <p className="text-sm font-bold text-indigo-400 mt-1">{selectedWinner.respondentEmail}</p>
+                          )}
+                        </div>
+                        
+                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                          Drawn on {new Date().toLocaleDateString()}
                         </p>
-                        {selectedWinner?.respondentEmail && (
-                          <p className="text-sm text-gray-600 mt-1">{selectedWinner.respondentEmail}</p>
-                        )}
-                      </motion.div>
-                      <p className="text-xs text-gray-400 mt-3">
-                        Selected on {new Date().toLocaleDateString()}
-                      </p>
+                      </div>
                     </div>
 
-                    {/* Share Buttons */}
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 0.6 }}
-                      className="flex items-center justify-center gap-2 mb-4"
-                    >
+                    <div className="grid grid-cols-2 gap-3 mb-6">
                       <button
                         onClick={handleDownloadWinnerImage}
                         disabled={isSavingWinnerImage}
-                        className="flex items-center gap-1.5 px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors disabled:opacity-50"
+                        className="flex flex-col items-center gap-2 p-4 bg-gray-50 rounded-2xl border-2 border-gray-100 hover:border-indigo-200 transition-all group"
                       >
-                        {isSavingWinnerImage ? (
-                          <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                          </svg>
-                        ) : (
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                          </svg>
-                        )}
-                        Save Image
+                        <div className="w-10 h-10 rounded-xl bg-white border-2 border-gray-100 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                          📸
+                        </div>
+                        <span className="text-[10px] font-black uppercase text-gray-500">Save Card</span>
                       </button>
                       <button
                         onClick={handleCopyWinnerText}
-                        className="flex items-center gap-1.5 px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors"
+                        className="flex flex-col items-center gap-2 p-4 bg-gray-50 rounded-2xl border-2 border-gray-100 hover:border-indigo-200 transition-all group"
                       >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                        </svg>
-                        Copy Text
+                        <div className="w-10 h-10 rounded-xl bg-white border-2 border-gray-100 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                          ✍️
+                        </div>
+                        <span className="text-[10px] font-black uppercase text-gray-500">Copy Text</span>
                       </button>
-                    </motion.div>
+                    </div>
 
-                    {/* Action Buttons */}
-                    <div className="flex items-center gap-3 justify-center">
-                      <Button variant="outline" onClick={() => setShowWinnerModal(false)}>
-                        Close
+                    <div className="flex flex-col gap-3">
+                      <Button 
+                        onClick={handlePickWinner}
+                        className="w-full bg-indigo-600 hover:bg-indigo-700 text-white border-b-4 border-indigo-800 h-14 text-lg font-black active:border-b-0 active:translate-y-1 transition-all"
+                      >
+                        Redraw Winner
                       </Button>
-                      <Button onClick={handlePickWinner}>
-                        <span className="inline-flex items-center">
-                          <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                          </svg>
-                          Pick Again
-                        </span>
+                      <Button 
+                        variant="ghost" 
+                        onClick={() => setShowWinnerModal(false)}
+                        className="font-bold text-gray-400 hover:text-gray-600"
+                      >
+                        Close Portal
                       </Button>
                     </div>
-                  </>
+                  </div>
                 )}
               </div>
             </motion.div>

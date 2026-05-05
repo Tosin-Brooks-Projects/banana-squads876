@@ -60,122 +60,94 @@ export default function SurveySuccessModal({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
+            className="fixed inset-0 bg-duo-black/40 backdrop-blur-sm z-[100]"
           />
 
           {/* Modal */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            className="fixed inset-0 z-[110] flex items-center justify-center p-6"
           >
-            <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden">
+            <div className="bg-white rounded-[3rem] border-4 border-duo-gray shadow-2xl max-w-lg w-full overflow-hidden flex flex-col">
               {/* Success animation header */}
-              <div className="bg-neutral-50 px-6 py-8 text-center border-b border-neutral-100">
+              <div className="bg-white px-10 pt-12 pb-8 text-center relative overflow-hidden">
+                {/* Celebratory Mascot */}
                 <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ delay: 0.2, type: 'spring', damping: 15 }}
-                  className="w-16 h-16 bg-brand-500 rounded-full mx-auto flex items-center justify-center"
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.2 }}
+                  className="w-48 h-48 mx-auto mb-6"
                 >
-                  <motion.svg
-                    initial={{ pathLength: 0 }}
-                    animate={{ pathLength: 1 }}
-                    transition={{ delay: 0.4, duration: 0.5 }}
-                    className="w-8 h-8 text-white"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={3}
-                  >
-                    <motion.path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M5 13l4 4L19 7"
-                    />
-                  </motion.svg>
+                  <img 
+                    src="/success-mascot.png" 
+                    alt="Celebration!" 
+                    className="w-full h-full object-contain"
+                  />
                 </motion.div>
+
                 <motion.h2
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
-                  className="text-2xl font-bold text-neutral-900 mt-4"
+                  className="text-4xl font-fredoka font-bold text-duo-black"
                 >
-                  Survey Created!
+                  Quest <span className="text-duo-green">Launched!</span>
                 </motion.h2>
                 <motion.p
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4 }}
-                  className="text-neutral-600 mt-1"
+                  className="text-duo-silver text-sm font-black uppercase tracking-widest mt-2"
                 >
-                  Your survey is ready to share
+                  Your adventure is now live
                 </motion.p>
               </div>
 
               {/* Content */}
-              <div className="p-6 space-y-5">
+              <div className="px-10 pb-12 space-y-8">
                 {/* Survey URL */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Survey Link
+                <div className="space-y-3">
+                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-duo-silver ml-4">
+                    Share your quest link
                   </label>
-                  <div className="flex items-center gap-2">
-                    <div className="flex-1 px-4 py-3 bg-gray-50 rounded-lg border border-gray-200 text-gray-800 font-mono text-sm truncate">
+                  <div className="flex items-center gap-3">
+                    <div className="flex-1 px-5 py-4 bg-duo-gray/20 rounded-2xl border-2 border-transparent text-duo-graphite font-fredoka font-bold text-sm truncate">
                       {fullUrl}
                     </div>
                     <button
                       onClick={copyToClipboard}
                       className={`
-                        px-4 py-3 rounded-lg font-medium transition-all flex items-center gap-2
+                        px-6 py-4 rounded-2xl font-fredoka font-bold uppercase tracking-widest text-[10px] transition-all
                         ${copied
-                          ? 'bg-brand-100 text-brand-700'
-                          : 'bg-brand-50 text-brand-700 hover:bg-brand-100'
+                          ? 'bg-duo-green text-white border-b-4 border-[#46a302]'
+                          : 'bg-white border-2 border-duo-gray text-duo-graphite shadow-[0_4px_0_#e5e5e5] hover:bg-duo-gray/10 active:translate-y-[2px] active:shadow-none'
                         }
                       `}
                     >
-                      {copied ? (
-                        <>
-                          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                          </svg>
-                          Copied!
-                        </>
-                      ) : (
-                        <>
-                          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                          </svg>
-                          Copy
-                        </>
-                      )}
+                      {copied ? 'Copied!' : 'Copy'}
                     </button>
                   </div>
                 </div>
 
                 {/* Action buttons */}
-                <div className="space-y-3">
-                  <div className="flex justify-center gap-3">
-                    <Button
-                      onClick={openSurvey}
-                      variant="outline"
-                    >
-                      <span className="inline-flex items-center gap-1.5">
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                        </svg>
-                        View
-                      </span>
-                    </Button>
-                    <Button
-                      onClick={onGoToDashboard}
-                      variant="primary"
-                    >
-                      Go to Dashboard
-                    </Button>
-                  </div>
+                <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                  <button
+                    onClick={openSurvey}
+                    className="flex-1 py-5 rounded-2xl bg-white border-2 border-duo-gray text-duo-graphite font-fredoka font-bold uppercase tracking-widest text-xs shadow-[0_4px_0_#e5e5e5] hover:bg-duo-gray/5 transition-all active:translate-y-[2px] active:shadow-none flex items-center justify-center gap-2"
+                  >
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                    <span>View Quest</span>
+                  </button>
+                  <button
+                    onClick={onGoToDashboard}
+                    className="flex-1 py-5 rounded-2xl bg-duo-green text-white font-fredoka font-bold uppercase tracking-widest text-xs border-b-4 border-[#46a302] transition-all hover:translate-y-[-2px] hover:shadow-[0_4px_0_#46a302] active:translate-y-[2px] active:border-b-0 flex items-center justify-center"
+                  >
+                    Dashboard
+                  </button>
                 </div>
               </div>
             </div>
