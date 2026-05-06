@@ -102,13 +102,15 @@ function SurveyItem({ survey, index, onDelete }: { survey: SurveyWithStats; inde
 
           {/* Title + meta */}
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-0.5">
-              <h3 className="text-sm sm:text-xl font-black text-gray-900 truncate tracking-tight group-hover:text-orange-600 transition-colors">
+            <div className="flex items-center gap-2 mb-0.5 min-w-0">
+              <h3 className="text-sm sm:text-xl font-black text-gray-900 truncate tracking-tight min-w-0 flex-1">
                 {survey.title}
               </h3>
-              <StatusBadge status={survey.status} paymentStatus={survey.paymentStatus} />
+              <div className="flex-shrink-0">
+                <StatusBadge status={survey.status} paymentStatus={survey.paymentStatus} />
+              </div>
             </div>
-            <p className="text-gray-400 text-[9px] sm:text-[10px] font-black uppercase tracking-widest truncate">
+            <p className="text-gray-400 text-[9px] sm:text-[10px] font-black uppercase tracking-widest truncate w-full">
               {getAdventureLabel(survey.adventureType)} · {formatDate(survey.createdAt)}
             </p>
           </div>
@@ -279,94 +281,94 @@ export default function DashboardPage() {
       </header>
 
       {/* Stats Tactile Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-6">
         {/* Total Responses */}
-        <div className="bg-white border-4 border-gray-100 rounded-2xl sm:rounded-[32px] p-4 sm:p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.02)] group hover:border-indigo-100 transition-all">
-           <div className="flex items-center justify-between mb-4 sm:mb-8">
-              <div className="p-2 sm:p-3 rounded-xl sm:rounded-2xl bg-indigo-50 text-indigo-600 border-2 border-indigo-100">
+        <div className="min-w-0 bg-white border-[3px] sm:border-4 border-gray-100 rounded-2xl sm:rounded-[32px] p-3 sm:p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.02)] sm:shadow-[8px_8px_0px_0px_rgba(0,0,0,0.02)] group hover:border-indigo-100 transition-all overflow-hidden">
+           <div className="flex items-center justify-between mb-3 sm:mb-8">
+              <div className="p-1.5 sm:p-3 rounded-xl sm:rounded-2xl bg-indigo-50 text-indigo-600 border-2 border-indigo-100 flex-shrink-0">
                 <BarChart3 className="w-4 h-4 sm:w-6 sm:h-6" />
               </div>
-              <span className="text-[9px] font-black text-indigo-300 uppercase tracking-widest hidden sm:block">Global XP</span>
+              <span className="text-[8px] sm:text-[9px] font-black text-indigo-300 uppercase tracking-wider sm:tracking-widest hidden sm:block truncate ml-2">Global XP</span>
            </div>
            <div>
-              <p className="text-3xl sm:text-5xl font-black text-gray-900 tabular-nums leading-none">
+              <p className="text-2xl sm:text-5xl font-black text-gray-900 tabular-nums leading-none truncate">
                 {totalResponses}
               </p>
-              <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-2 sm:mt-3">Total Responses</p>
+              <p className="text-[8px] sm:text-[9px] font-black text-gray-400 uppercase tracking-wider sm:tracking-widest mt-1.5 sm:mt-3 truncate">Total Responses</p>
            </div>
         </div>
 
         {/* Active Surveys */}
-        <div className="bg-white border-4 border-gray-100 rounded-2xl sm:rounded-[32px] p-4 sm:p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.02)] group hover:border-green-100 transition-all">
-           <div className="flex items-center justify-between mb-4 sm:mb-8">
-              <div className="p-2 sm:p-3 rounded-xl sm:rounded-2xl bg-green-50 text-green-600 border-2 border-green-100">
+        <div className="min-w-0 bg-white border-[3px] sm:border-4 border-gray-100 rounded-2xl sm:rounded-[32px] p-3 sm:p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.02)] sm:shadow-[8px_8px_0px_0px_rgba(0,0,0,0.02)] group hover:border-green-100 transition-all overflow-hidden">
+           <div className="flex items-center justify-between mb-3 sm:mb-8">
+              <div className="p-1.5 sm:p-3 rounded-xl sm:rounded-2xl bg-green-50 text-green-600 border-2 border-green-100 flex-shrink-0">
                 <CheckCircle2 className="w-4 h-4 sm:w-6 sm:h-6" />
               </div>
-              <span className="text-[9px] font-black text-green-300 uppercase tracking-widest hidden sm:block">Active Quests</span>
+              <span className="text-[8px] sm:text-[9px] font-black text-green-300 uppercase tracking-wider sm:tracking-widest hidden sm:block truncate ml-2">Active Quests</span>
            </div>
            <div>
-              <p className="text-3xl sm:text-5xl font-black text-gray-900 tabular-nums leading-none">
+              <p className="text-2xl sm:text-5xl font-black text-gray-900 tabular-nums leading-none truncate">
                 {activeSurveys}
               </p>
-              <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-2 sm:mt-3">Currently Live</p>
+              <p className="text-[8px] sm:text-[9px] font-black text-gray-400 uppercase tracking-wider sm:tracking-widest mt-1.5 sm:mt-3 truncate">Currently Live</p>
            </div>
         </div>
 
         {/* Total Surveys */}
-        <div className="bg-white border-4 border-gray-100 rounded-2xl sm:rounded-[32px] p-4 sm:p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.02)] group hover:border-orange-100 transition-all">
-           <div className="flex items-center justify-between mb-4 sm:mb-8">
-              <div className="p-2 sm:p-3 rounded-xl sm:rounded-2xl bg-orange-50 text-orange-600 border-2 border-orange-100">
+        <div className="min-w-0 bg-white border-[3px] sm:border-4 border-gray-100 rounded-2xl sm:rounded-[32px] p-3 sm:p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.02)] sm:shadow-[8px_8px_0px_0px_rgba(0,0,0,0.02)] group hover:border-orange-100 transition-all overflow-hidden">
+           <div className="flex items-center justify-between mb-3 sm:mb-8">
+              <div className="p-1.5 sm:p-3 rounded-xl sm:rounded-2xl bg-orange-50 text-orange-600 border-2 border-orange-100 flex-shrink-0">
                 <Clock className="w-4 h-4 sm:w-6 sm:h-6" />
               </div>
-              <span className="text-[9px] font-black text-orange-300 uppercase tracking-widest hidden sm:block">Mission History</span>
+              <span className="text-[8px] sm:text-[9px] font-black text-orange-300 uppercase tracking-wider sm:tracking-widest hidden sm:block truncate ml-2">Mission History</span>
            </div>
            <div>
-              <p className="text-3xl sm:text-5xl font-black text-gray-900 tabular-nums leading-none">
+              <p className="text-2xl sm:text-5xl font-black text-gray-900 tabular-nums leading-none truncate">
                 {surveys.length}
               </p>
-              <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-2 sm:mt-3">Total Created</p>
+              <p className="text-[8px] sm:text-[9px] font-black text-gray-400 uppercase tracking-wider sm:tracking-widest mt-1.5 sm:mt-3 truncate">Total Created</p>
            </div>
         </div>
 
         {/* XP Card */}
         <div
-          className="rounded-2xl sm:rounded-[32px] p-4 sm:p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.08)] flex flex-col justify-between relative overflow-hidden border-4"
+          className="min-w-0 rounded-2xl sm:rounded-[32px] p-3 sm:p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.08)] sm:shadow-[8px_8px_0px_0px_rgba(0,0,0,0.08)] flex flex-col justify-between relative overflow-hidden border-[3px] sm:border-4"
           style={{ background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)', borderColor: '#1a1a2e' }}
         >
           {/* Glow blob */}
           <div
-            className="absolute -top-6 -right-6 w-28 h-28 rounded-full blur-2xl opacity-40 pointer-events-none"
+            className="absolute -top-6 -right-6 w-20 h-20 sm:w-28 sm:h-28 rounded-full blur-2xl opacity-40 pointer-events-none"
             style={{ background: currentLevel.color }}
           />
 
           <div className="relative z-10">
             {/* Level badge */}
-            <div className="flex items-center justify-between mb-3 sm:mb-5">
+            <div className="flex items-center justify-between mb-2 sm:mb-5">
               <span
-                className="text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full"
+                className="text-[8px] sm:text-[10px] font-black uppercase tracking-wider sm:tracking-widest px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full truncate mr-1"
                 style={{ background: `${currentLevel.color}22`, color: currentLevel.color, border: `1.5px solid ${currentLevel.color}44` }}
               >
                 {currentLevel.name}
               </span>
-              <span className="text-white/30 text-[10px] font-black uppercase tracking-widest">⭐ XP</span>
+              <span className="text-white/30 text-[8px] sm:text-[10px] font-black uppercase tracking-wider sm:tracking-widest flex-shrink-0">⭐ XP</span>
             </div>
 
             {/* XP number */}
-            <p className="text-3xl sm:text-5xl font-black text-white tabular-nums leading-none">
+            <p className="text-2xl sm:text-5xl font-black text-white tabular-nums leading-none truncate mt-1">
               <AnimatedXP target={totalXp} />
             </p>
-            <p className="text-[9px] font-black uppercase tracking-widest mt-1.5 sm:mt-2" style={{ color: currentLevel.color }}>
+            <p className="text-[8px] sm:text-[9px] font-black uppercase tracking-wider sm:tracking-widest mt-1 sm:mt-2 truncate" style={{ color: currentLevel.color }}>
               Total XP Earned
             </p>
           </div>
 
           {/* Progress bar */}
-          <div className="relative z-10 mt-4">
-            <div className="flex justify-between text-[9px] font-black uppercase tracking-wider mb-1.5" style={{ color: 'rgba(255,255,255,0.3)' }}>
-              <span>{currentLevel.name}</span>
-              {currentLevel.nextLabel && <span>{currentLevel.nextLabel}</span>}
+          <div className="relative z-10 mt-3 sm:mt-4">
+            <div className="flex justify-between text-[8px] sm:text-[9px] font-black uppercase tracking-wider mb-1 sm:mb-1.5" style={{ color: 'rgba(255,255,255,0.3)' }}>
+              <span className="truncate mr-1">{currentLevel.name}</span>
+              {currentLevel.nextLabel && <span className="truncate">{currentLevel.nextLabel}</span>}
             </div>
-            <div className="w-full h-2 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.08)' }}>
+            <div className="w-full h-1.5 sm:h-2 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.08)' }}>
               <motion.div
                 className="h-full rounded-full"
                 style={{ background: currentLevel.color }}
@@ -376,7 +378,7 @@ export default function DashboardPage() {
               />
             </div>
             {currentLevel.max !== Infinity && (
-              <p className="text-[9px] font-bold mt-1.5 text-right" style={{ color: 'rgba(255,255,255,0.25)' }}>
+              <p className="text-[8px] sm:text-[9px] font-bold mt-1 sm:mt-1.5 text-right truncate" style={{ color: 'rgba(255,255,255,0.25)' }}>
                 {totalXp} / {currentLevel.max} XP
               </p>
             )}

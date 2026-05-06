@@ -63,14 +63,14 @@ export default function DashboardLayout({
     <div className="min-h-[100dvh] bg-white overflow-x-hidden flex relative">
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
-      <div className="flex-1 flex flex-col min-h-[100dvh] lg:pl-0 relative z-10">
+      <div className="flex-1 min-w-0 flex flex-col min-h-[100dvh] lg:pl-0 relative z-10">
         <DashboardHeader onMenuClick={() => setSidebarOpen(true)} />
 
-        <main className="flex-1 p-4 md:p-8 overflow-x-hidden">
+        <main className="flex-1 min-w-0 overflow-x-hidden py-4 md:py-8 w-full">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="max-w-[1400px] mx-auto w-full"
+            className="max-w-[1400px] mx-auto w-full px-4 md:px-8"
           >
             {children}
           </motion.div>
