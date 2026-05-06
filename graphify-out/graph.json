@@ -2591,25 +2591,11 @@
       "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/lib/ai/responseAnalyzer.ts:99"
     },
     {
-      "id": "file::page",
-      "label": "page.tsx",
-      "fileType": "code",
-      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/page.tsx",
-      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/page.tsx:1"
-    },
-    {
       "id": "page::getlevel",
       "label": "getLevel",
       "fileType": "code",
       "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/page.tsx",
       "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/page.tsx:34"
-    },
-    {
-      "id": "page::getlevelprogress",
-      "label": "getLevelProgress",
-      "fileType": "code",
-      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/page.tsx",
-      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/page.tsx:38"
     },
     {
       "id": "page::animatedxp",
@@ -3086,6 +3072,132 @@
       "fileType": "code",
       "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/sw.js",
       "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/sw.js:1"
+    },
+    {
+      "id": "file::page",
+      "label": "page.tsx",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/games/page.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/games/page.tsx:1"
+    },
+    {
+      "id": "file::dartthrow",
+      "label": "DartThrow.tsx",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx:1"
+    },
+    {
+      "id": "dartthrow::polarscore",
+      "label": "polarScore",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx:64"
+    },
+    {
+      "id": "dartthrow::playimpact",
+      "label": "playImpact",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx:82"
+    },
+    {
+      "id": "dartthrow::haptic",
+      "label": "haptic",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx:107"
+    },
+    {
+      "id": "dartthrow::spawnparticles",
+      "label": "spawnParticles",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx:119"
+    },
+    {
+      "id": "dartthrow::drawboard",
+      "label": "drawBoard",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx:128"
+    },
+    {
+      "id": "dartthrow::drawflights",
+      "label": "drawFlights",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx:158"
+    },
+    {
+      "id": "dartthrow::drawdartside",
+      "label": "drawDartSide",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx:171"
+    },
+    {
+      "id": "dartthrow::drawslingshot",
+      "label": "drawSlingshot",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx:183"
+    },
+    {
+      "id": "dartthrow::drawarcpreview",
+      "label": "drawArcPreview",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx:195"
+    },
+    {
+      "id": "dartthrow::drawpowerring",
+      "label": "drawPowerRing",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx:204"
+    },
+    {
+      "id": "dartthrow::drawscorepopup",
+      "label": "drawScorePopup",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx:214"
+    },
+    {
+      "id": "dartthrow::drawshadow",
+      "label": "drawShadow",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx:240"
+    },
+    {
+      "id": "dartthrow::drawwindgust",
+      "label": "drawWindGust",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx:248"
+    },
+    {
+      "id": "DartThrow::easein3",
+      "label": "easeIn3",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx:270"
+    },
+    {
+      "id": "DartThrow::easeout2",
+      "label": "easeOut2",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx:271"
+    },
+    {
+      "id": "dartthrow::canvasxy",
+      "label": "canvasXY",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx:311"
     }
   ],
   "edges": [
@@ -5881,15 +5993,6 @@
     },
     {
       "source": "file::page",
-      "target": "page::getlevelprogress",
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/page.tsx",
-      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/page.tsx:38",
-      "weight": 1
-    },
-    {
-      "source": "file::page",
       "target": "page::animatedxp",
       "relation": "contains",
       "confidence": "EXTRACTED",
@@ -6436,12 +6539,156 @@
       "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/sw.js",
       "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/sw.js:1",
       "weight": 1
+    },
+    {
+      "source": "file::dartthrow",
+      "target": "dartthrow::polarscore",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx:64",
+      "weight": 1
+    },
+    {
+      "source": "file::dartthrow",
+      "target": "dartthrow::playimpact",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx:82",
+      "weight": 1
+    },
+    {
+      "source": "file::dartthrow",
+      "target": "dartthrow::haptic",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx:107",
+      "weight": 1
+    },
+    {
+      "source": "file::dartthrow",
+      "target": "dartthrow::spawnparticles",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx:119",
+      "weight": 1
+    },
+    {
+      "source": "file::dartthrow",
+      "target": "dartthrow::drawboard",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx:128",
+      "weight": 1
+    },
+    {
+      "source": "file::dartthrow",
+      "target": "dartthrow::drawflights",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx:158",
+      "weight": 1
+    },
+    {
+      "source": "file::dartthrow",
+      "target": "dartthrow::drawdartside",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx:171",
+      "weight": 1
+    },
+    {
+      "source": "file::dartthrow",
+      "target": "dartthrow::drawslingshot",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx:183",
+      "weight": 1
+    },
+    {
+      "source": "file::dartthrow",
+      "target": "dartthrow::drawarcpreview",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx:195",
+      "weight": 1
+    },
+    {
+      "source": "file::dartthrow",
+      "target": "dartthrow::drawpowerring",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx:204",
+      "weight": 1
+    },
+    {
+      "source": "file::dartthrow",
+      "target": "dartthrow::drawscorepopup",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx:214",
+      "weight": 1
+    },
+    {
+      "source": "file::dartthrow",
+      "target": "dartthrow::drawshadow",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx:240",
+      "weight": 1
+    },
+    {
+      "source": "file::dartthrow",
+      "target": "dartthrow::drawwindgust",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx:248",
+      "weight": 1
+    },
+    {
+      "source": "file::dartthrow",
+      "target": "DartThrow::easein3",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx:270",
+      "weight": 1
+    },
+    {
+      "source": "file::dartthrow",
+      "target": "DartThrow::easeout2",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx:271",
+      "weight": 1
+    },
+    {
+      "source": "file::dartthrow",
+      "target": "dartthrow::canvasxy",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx:311",
+      "weight": 1
     }
   ],
   "metadata": {
-    "files": 82,
-    "nodes": 441,
-    "edges": 372,
-    "builtAt": "2026-05-06T08:52:53.791Z"
+    "files": 84,
+    "nodes": 457,
+    "edges": 387,
+    "builtAt": "2026-05-06T10:39:45.903Z"
   }
 }
