@@ -1,25 +1,20 @@
 'use client';
 
-import { useEffect, useState, useCallback, useRef } from 'react';
-import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import { useEffect, useState, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
-import { 
-  PlusCircle, 
-  Trash2, 
-  ChevronRight, 
-  BarChart3, 
-  CheckCircle2, 
-  Clock, 
-  Users, 
+import {
+  PlusCircle,
+  Trash2,
+  ChevronRight,
+  BarChart3,
+  CheckCircle2,
+  Clock,
   RefreshCcw,
-  Sparkles,
-  ArrowRight
 } from 'lucide-react';
-import MagneticButton from '@/components/ui/MagneticButton';
-import { BentoGrid, BentoCard } from '@/components/ui/BentoGrid';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { subscribeToUserSurveys, getSurveyQuickStats, deleteSurvey } from '@/lib/firebase/firestore';
-import { getAdventureImage, getAdventureLabel, formatDate, formatDuration } from '@/lib/utils/helpers';
+import { getAdventureImage, getAdventureLabel, formatDate } from '@/lib/utils/helpers';
 import { Survey, SurveyQuickStats } from '@/lib/types';
 
 interface SurveyWithStats extends Survey {
@@ -105,10 +100,10 @@ function SurveyItem({ survey, index, onDelete }: { survey: SurveyWithStats; inde
 }
 
 export default function DashboardPage() {
-  const { firebaseUser, user } = useAuthContext();
+  const { firebaseUser } = useAuthContext();
   const [surveys, setSurveys] = useState<SurveyWithStats[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [, setError] = useState<string | null>(null);
 
   // Modal & Toast State
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -134,7 +129,7 @@ export default function DashboardPage() {
         setLoading(false);
       });
       return unsubscribe;
-    } catch (err) {
+    } catch {
       setError('Connection failed');
       setLoading(false);
       return () => { };
@@ -160,8 +155,8 @@ export default function DashboardPage() {
       await deleteSurvey(surveyToDelete.id);
       setDeleteModalOpen(false);
       setSurveyToDelete(null);
-    } catch (err) {
-      console.error(err);
+    } catch (e) {
+      console.error(e);
     } finally {
       setIsDeleting(false);
     }
@@ -172,12 +167,13 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="space-y-12 py-10">
+      <div className="space-y-8 py-10">
         <div className="h-10 w-64 bg-neutral-200 rounded-full animate-pulse" />
-        <BentoGrid>
-          <BentoCard className="col-span-2 h-40 bg-neutral-100/50 border-dashed animate-pulse" />
-          <BentoCard className="h-40 bg-neutral-100/50 border-dashed animate-pulse" />
-        </BentoGrid>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {[1,2,3,4].map(i => (
+            <div key={i} className="h-24 bg-neutral-100/50 rounded-3xl animate-pulse" />
+          ))}
+        </div>
         <div className="space-y-4">
           {[1,2,3].map(i => (
             <div key={i} className="h-24 w-full bg-neutral-100/50 rounded-3xl animate-pulse" />

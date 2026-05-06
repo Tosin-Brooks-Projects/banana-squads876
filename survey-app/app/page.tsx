@@ -4,7 +4,7 @@ import Link from 'next/link';
 import AnimatedButton from '@/components/ui/AnimatedButton';
 import Footer from '@/components/Footer';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/Card';
 import { Marquee } from '@/components/ui/3d-testimonials';
 import { Navbar1 } from '@/components/ui/navbar-1';
 import { HeroSection03 } from '@/components/ui/hero-03';

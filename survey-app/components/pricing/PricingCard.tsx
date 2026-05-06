@@ -20,7 +20,7 @@ export default function PricingCard({
   isSelected = false,
   onSelect,
   disabled = false,
-  disabledReason,
+  disabledReason: _disabledReason, // eslint-disable-line @typescript-eslint/no-unused-vars
   compact = false,
   isLoading = false,
 }: PricingCardProps) {

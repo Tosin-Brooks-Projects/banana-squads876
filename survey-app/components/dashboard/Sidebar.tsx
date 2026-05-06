@@ -4,16 +4,12 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  LayoutDashboard, 
-  PlusCircle, 
-  Settings, 
-  CreditCard, 
-  LogOut, 
-  ChevronRight,
-  Zap,
-  Heart,
-  Sparkles
+import {
+  LayoutDashboard,
+  PlusCircle,
+  Settings,
+  CreditCard,
+  LogOut,
 } from 'lucide-react';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { signOut } from '@/lib/firebase/auth';
@@ -76,7 +72,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
 
           {/* Navigation */}
           <nav className="flex-1 px-4 py-8 space-y-4">
-            {navItems.map((item, i) => {
+            {navItems.map((item) => {
               const active = isActive(item.href);
               const Icon = item.icon;
               

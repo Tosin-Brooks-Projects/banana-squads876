@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { LogOut, Settings, Bell, Menu, User, ChevronDown, Sparkles, PartyPopper } from 'lucide-react';
+import { LogOut, Settings, Menu, User, ChevronDown, Sparkles } from 'lucide-react';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { signOut } from '@/lib/firebase/auth';
 

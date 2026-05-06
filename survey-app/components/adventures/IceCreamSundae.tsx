@@ -361,7 +361,7 @@ function BowlSelection({ question, options, onSelect }: {
 
 // ─── Stage 1: Scoop Selection ─────────────────────────────────────────────────
 
-function BaseScoops({ question, options, onSelect, onBack }: {
+function BaseScoops({ question, options, onSelect, onBack: _onBack }: {
   question?: Question;
   options: Array<typeof scoopOptions[0] & { answerValue: string }>;
   onSelect: (visualId: string, answerValue: string) => void;
@@ -427,7 +427,7 @@ function InlineFormError({ message }: { message: string }) {
   );
 }
 
-function FormCapture({ formData, setFormData, onSubmit, onBack }: {
+function FormCapture({ formData, setFormData, onSubmit, onBack: _onBack }: {
   formData: FormData;
   setFormData: React.Dispatch<React.SetStateAction<FormData>>;
   onSubmit: (e: React.FormEvent) => void;
@@ -509,7 +509,7 @@ function FormCapture({ formData, setFormData, onSubmit, onBack }: {
 
 // ─── Stage 3: Sauce Selection ─────────────────────────────────────────────────
 
-function SauceSelection({ question, options, onSelect, onBack }: {
+function SauceSelection({ question, options, onSelect, onBack: _onBack }: {
   question?: Question;
   options: Array<typeof sauceOptions[0] & { answerValue: string }>;
   onSelect: (visualId: string, answerValue: string) => void;
@@ -561,7 +561,7 @@ function SauceSelection({ question, options, onSelect, onBack }: {
 
 // ─── Stage 4: Toppings Selection ──────────────────────────────────────────────
 
-function ToppingsSelection({ question, options, selectedToppings, onToggle, onComplete, onBack, allowMultiple = true }: {
+function ToppingsSelection({ question, options, selectedToppings, onToggle, onComplete, onBack: _onBack, allowMultiple = true }: {
   question?: Question;
   options: Array<typeof toppingOptions[0] & { answerValue: string }>;
   selectedToppings: string[];

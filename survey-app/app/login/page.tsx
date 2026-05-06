@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/ui/AnimatedButton';
 import Input from '@/components/ui/Input';
-import { Card } from '@/components/ui/card';
+import { Card } from '@/components/ui/Card';
 import { Spinner } from '@/components/ui/LoadingStates';
 import { signInWithGoogle, sendMagicLink } from '@/lib/firebase/auth';
 import { useAuthContext } from '@/contexts/AuthContext';

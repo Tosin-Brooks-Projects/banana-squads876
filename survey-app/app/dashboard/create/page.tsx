@@ -2,31 +2,21 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { motion, AnimatePresence, Reorder } from 'framer-motion';
-import { 
-  Sparkles, 
-  PlusCircle, 
-  ChevronLeft, 
-  ChevronRight, 
-  Zap, 
-  Layout, 
-  Trash2, 
-  GripVertical,
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  Sparkles,
+  ChevronLeft,
+  Zap,
+  Layout,
   Check,
   Rocket
 } from 'lucide-react';
 import { useAuthContext } from '@/contexts/AuthContext';
-import MagneticButton from '@/components/ui/MagneticButton';
-import { BentoGrid, BentoCard } from '@/components/ui/BentoGrid';
-import Input from '@/components/ui/Input';
-import { Card } from '@/components/ui/card';
 import { Spinner } from '@/components/ui/LoadingStates';
-import QuestionEditor, { isQuestionValid } from '@/components/QuestionEditor';
 import SurveySuccessModal from '@/components/SurveySuccessModal';
-import { AdventureType, Question, MultipleChoiceQuestion, PricingTier, PRICING_TIERS, FREE_TIER_THEMES, SurveySettings } from '@/lib/types';
+import { AdventureType, Question, PricingTier, FREE_TIER_THEMES } from '@/lib/types';
 import { getAdventureLabel } from '@/lib/utils/helpers';
 import {
-  createSurvey as createSurveyInFirestore,
   createFreeSurveyAtomic,
   checkSlugExists,
   getSuggestedSlugs,
@@ -129,15 +119,15 @@ export default function CreateSurveyPage() {
   const [slugAvailable, setSlugAvailable] = useState<boolean | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [slugSuggestions, setSlugSuggestions] = useState<string[]>([]);
+  const [, setSlugSuggestions] = useState<string[]>([]);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [createdSurvey, setCreatedSurvey] = useState<{ id: string; url: string } | null>(null);
   const [slugManuallyEdited, setSlugManuallyEdited] = useState(false);
-  const [hasUsedFreeTier, setHasUsedFreeTier] = useState(false);
+  const [, setHasUsedFreeTier] = useState(false);
   const [showAIUpgradeModal, setShowAIUpgradeModal] = useState(false);
   const [paidForAI, setPaidForAI] = useState(false);
   const [paidTier, setPaidTier] = useState<PricingTier | null>(null);
-  const [shouldAutoGenerate, setShouldAutoGenerate] = useState(false);
+  const [, setShouldAutoGenerate] = useState(false);
 
   useEffect(() => {
     async function checkFreeTierUsage() {
@@ -246,7 +236,7 @@ export default function CreateSurveyPage() {
       }));
       setFormData(prev => ({ ...prev, questions: generatedQuestions }));
       setCurrentStep(4); // Go to launch/review
-    } catch (err) {
+    } catch {
       setErrors({ general: 'Failed to generate questions.' });
     } finally {
       setIsGenerating(false);
@@ -257,7 +247,7 @@ export default function CreateSurveyPage() {
     if (!firebaseUser) return;
     setIsCreating(true);
     try {
-      const surveyData = {
+      const surveyData: Omit<import('@/lib/types').Survey, 'id'> = {
         userId: firebaseUser.uid,
         title: formData.title,
         slug: formData.slug,
@@ -265,17 +255,20 @@ export default function CreateSurveyPage() {
         questions: formData.questions,
         status: 'published',
         createdAt: new Date(),
+        updatedAt: new Date(),
         pricingTier: formData.pricingTier || 'free',
         settings: {
-          collectRespondentInfo: formData.preferences.anonymity === 'collect-info'
-        }
+          allowAnonymous: formData.preferences.anonymity !== 'collect-info',
+          showProgressBar: true,
+          randomizeQuestions: false,
+        },
       };
-      const id = await createFreeSurveyAtomic(firebaseUser.uid, surveyData as any);
+      const id = await createFreeSurveyAtomic(firebaseUser.uid, surveyData);
       setCreatedSurvey({ id, url: `${user?.username}/${formData.slug}` });
       setShowSuccessModal(true);
       localStorage.removeItem(STORAGE_KEY);
-    } catch (err) {
-      console.error(err);
+    } catch (e) {
+      console.error(e);
       setErrors({ general: 'Failed to create survey. Please try again.' });
     } finally {
       setIsCreating(false);
@@ -404,7 +397,7 @@ export default function CreateSurveyPage() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {THEMES.map((theme, i) => (
+              {THEMES.map((theme) => (
                 <button
                   key={theme.value}
                   onClick={() => setFormData(prev => ({ ...prev, theme: theme.value }))}
@@ -652,7 +645,7 @@ export default function CreateSurveyPage() {
                      <div className="bg-white border-2 border-duo-gray p-8 rounded-[2.5rem] shadow-[0_4px_0_#e5e5e5] relative overflow-hidden transition-all hover:translate-y-[-2px] hover:shadow-[0_8px_0_#e5e5e5] z-10">
                         {/* World Icon Floating */}
                         <div className="absolute -top-4 -right-4 w-20 h-20 bg-white border-2 border-duo-gray rounded-full shadow-[0_4px_0_#e5e5e5] flex items-center justify-center text-4xl animate-float">
-                           {THEMES.find(t => t.value === formData.theme)?.icon || '📋'}
+                           {{'classic':'📋','ice-cream-sundae':'🍨','pizza-builder':'🍕','garden-grower':'🌱','dream-home':'🏠','coffee-brewer':'☕'}[formData.theme] || '📋'}
                         </div>
 
                         <div className="flex items-center gap-2 mb-4">

@@ -2694,6 +2694,713 @@
       "fileType": "code",
       "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/MagneticButton.tsx",
       "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/MagneticButton.tsx:42"
+    },
+    {
+      "id": "file::sw",
+      "label": "sw.js",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/sw.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/sw.js:1"
+    },
+    {
+      "id": "sw::s",
+      "label": "s",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/sw.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/sw.js:1"
+    },
+    {
+      "id": "sw::r",
+      "label": "r",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/sw.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/sw.js:1"
+    },
+    {
+      "id": "file::workbox_f1770938",
+      "label": "workbox-f1770938.js",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox-f1770938::e",
+      "label": "e",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::s",
+      "label": "s",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::s::constructor",
+      "label": ".constructor",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox-f1770938::n",
+      "label": "n",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::r",
+      "label": "r",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::r::constructor",
+      "label": ".constructor",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::r::setcatchhandler",
+      "label": ".setCatchHandler",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::i",
+      "label": "i",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::i::constructor",
+      "label": ".constructor",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::a",
+      "label": "a",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::a::constructor",
+      "label": ".constructor",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::a::routes",
+      "label": ".routes",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::a::addfetchlistener",
+      "label": ".addFetchListener",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::a::addcachelistener",
+      "label": ".addCacheListener",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::a::handlerequest",
+      "label": ".handleRequest",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::a::findmatchingroute",
+      "label": ".findMatchingRoute",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::a::setdefaulthandler",
+      "label": ".setDefaultHandler",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::a::setcatchhandler",
+      "label": ".setCatchHandler",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::a::registerroute",
+      "label": ".registerRoute",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::a::unregisterroute",
+      "label": ".unregisterRoute",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox-f1770938::c",
+      "label": "c",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::h",
+      "label": "h",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox-f1770938::f",
+      "label": "f",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox-f1770938::w",
+      "label": "w",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox-f1770938::d",
+      "label": "d",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::p",
+      "label": "p",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::y",
+      "label": "y",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::y::constructor",
+      "label": ".constructor",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::m",
+      "label": "m",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::v",
+      "label": "v",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::v::constructor",
+      "label": ".constructor",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::v::fetch",
+      "label": ".fetch",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::v::fetchandcacheput",
+      "label": ".fetchAndCachePut",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::v::cachematch",
+      "label": ".cacheMatch",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::v::cacheput",
+      "label": ".cachePut",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::v::getcachekey",
+      "label": ".getCacheKey",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::v::hascallback",
+      "label": ".hasCallback",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::v::runcallbacks",
+      "label": ".runCallbacks",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::v::iteratecallbacks",
+      "label": ".iterateCallbacks",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::v::waituntil",
+      "label": ".waitUntil",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::v::donewaiting",
+      "label": ".doneWaiting",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::v::destroy",
+      "label": ".destroy",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::v::r",
+      "label": ".R",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::r::handle",
+      "label": ".handle",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::r::handleall",
+      "label": ".handleAll",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::r::q",
+      "label": ".q",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::r::d",
+      "label": ".D",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::b",
+      "label": "b",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::q",
+      "label": "q",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::get",
+      "label": "get",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::o",
+      "label": "O",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::t",
+      "label": "T",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::k",
+      "label": "k",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox-f1770938::b",
+      "label": "B",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::j",
+      "label": "j",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox-f1770938::k",
+      "label": "K",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::a::i",
+      "label": ".I",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::a::c",
+      "label": ".C",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::a::settimestamp",
+      "label": ".setTimestamp",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::a::gettimestamp",
+      "label": ".getTimestamp",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::a::expireentries",
+      "label": ".expireEntries",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::a::n",
+      "label": ".N",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::a::getdb",
+      "label": ".getDb",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::f",
+      "label": "F",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::f::constructor",
+      "label": ".constructor",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::f::expireentries",
+      "label": ".expireEntries",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::f::updatetimestamp",
+      "label": ".updateTimestamp",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::f::isurlexpired",
+      "label": ".isURLExpired",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::f::delete",
+      "label": ".delete",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::_",
+      "label": "$",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::z",
+      "label": "z",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::g",
+      "label": "G",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::g::constructor",
+      "label": ".constructor",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::x",
+      "label": "X",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::y::u",
+      "label": ".U",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::y::k",
+      "label": ".K",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::y::s",
+      "label": ".S",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::y::a",
+      "label": ".A",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::z::constructor",
+      "label": ".constructor",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::z::strategy",
+      "label": ".strategy",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::z::precache",
+      "label": ".precache",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::z::addtocachelist",
+      "label": ".addToCacheList",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::z::install",
+      "label": ".install",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::z::activate",
+      "label": ".activate",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::z::geturlstocachekeys",
+      "label": ".getURLsToCacheKeys",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::z::getcachedurls",
+      "label": ".getCachedURLs",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::z::getcachekeyforurl",
+      "label": ".getCacheKeyForURL",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::z::getintegrityforcachekey",
+      "label": ".getIntegrityForCacheKey",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::z::matchprecache",
+      "label": ".matchPrecache",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::z::createhandlerboundtourl",
+      "label": ".createHandlerBoundToURL",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox-f1770938::tt",
+      "label": "tt",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::et",
+      "label": "et",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::et::constructor",
+      "label": ".constructor",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::u",
+      "label": "U",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::constructor",
+      "label": "constructor",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::deletecacheandmetadata",
+      "label": "deleteCacheAndMetadata",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
+    },
+    {
+      "id": "workbox_f1770938::st",
+      "label": "st",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1"
     }
   ],
   "edges": [
@@ -5558,12 +6265,903 @@
       "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/MagneticButton.tsx",
       "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/MagneticButton.tsx:42",
       "weight": 1
+    },
+    {
+      "source": "file::sw",
+      "target": "sw::s",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/sw.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/sw.js:1",
+      "weight": 1
+    },
+    {
+      "source": "file::sw",
+      "target": "sw::r",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/sw.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/sw.js:1",
+      "weight": 1
+    },
+    {
+      "source": "file::workbox_f1770938",
+      "target": "workbox-f1770938::e",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "file::workbox_f1770938",
+      "target": "workbox_f1770938::s",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::s",
+      "target": "workbox_f1770938::s::constructor",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "file::workbox_f1770938",
+      "target": "workbox-f1770938::n",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "file::workbox_f1770938",
+      "target": "workbox_f1770938::r",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::r",
+      "target": "workbox_f1770938::r::constructor",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::r",
+      "target": "workbox_f1770938::r::setcatchhandler",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "file::workbox_f1770938",
+      "target": "workbox_f1770938::i",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::i",
+      "target": "workbox_f1770938::i::constructor",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "file::workbox_f1770938",
+      "target": "workbox_f1770938::a",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::a",
+      "target": "workbox_f1770938::a::constructor",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::a",
+      "target": "workbox_f1770938::a::routes",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::a",
+      "target": "workbox_f1770938::a::addfetchlistener",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::a",
+      "target": "workbox_f1770938::a::addcachelistener",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::a",
+      "target": "workbox_f1770938::a::handlerequest",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::a",
+      "target": "workbox_f1770938::a::findmatchingroute",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::a",
+      "target": "workbox_f1770938::a::setdefaulthandler",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::a",
+      "target": "workbox_f1770938::a::setcatchhandler",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::a",
+      "target": "workbox_f1770938::a::registerroute",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::a",
+      "target": "workbox_f1770938::a::unregisterroute",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "file::workbox_f1770938",
+      "target": "workbox-f1770938::c",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "file::workbox_f1770938",
+      "target": "workbox_f1770938::h",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "file::workbox_f1770938",
+      "target": "workbox-f1770938::f",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "file::workbox_f1770938",
+      "target": "workbox-f1770938::w",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "file::workbox_f1770938",
+      "target": "workbox-f1770938::d",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "file::workbox_f1770938",
+      "target": "workbox_f1770938::p",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "file::workbox_f1770938",
+      "target": "workbox_f1770938::y",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::y",
+      "target": "workbox_f1770938::y::constructor",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "file::workbox_f1770938",
+      "target": "workbox_f1770938::m",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "file::workbox_f1770938",
+      "target": "workbox_f1770938::v",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::v",
+      "target": "workbox_f1770938::v::constructor",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::v",
+      "target": "workbox_f1770938::v::fetch",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::v",
+      "target": "workbox_f1770938::v::fetchandcacheput",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::v",
+      "target": "workbox_f1770938::v::cachematch",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::v",
+      "target": "workbox_f1770938::v::cacheput",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::v",
+      "target": "workbox_f1770938::v::getcachekey",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::v",
+      "target": "workbox_f1770938::v::hascallback",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::v",
+      "target": "workbox_f1770938::v::runcallbacks",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::v",
+      "target": "workbox_f1770938::v::iteratecallbacks",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::v",
+      "target": "workbox_f1770938::v::waituntil",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::v",
+      "target": "workbox_f1770938::v::donewaiting",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::v",
+      "target": "workbox_f1770938::v::destroy",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::v",
+      "target": "workbox_f1770938::v::r",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::r",
+      "target": "workbox_f1770938::r::handle",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::r",
+      "target": "workbox_f1770938::r::handleall",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::r",
+      "target": "workbox_f1770938::r::q",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::r",
+      "target": "workbox_f1770938::r::d",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "file::workbox_f1770938",
+      "target": "workbox_f1770938::b",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "file::workbox_f1770938",
+      "target": "workbox_f1770938::q",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "file::workbox_f1770938",
+      "target": "workbox_f1770938::get",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "file::workbox_f1770938",
+      "target": "workbox_f1770938::o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "file::workbox_f1770938",
+      "target": "workbox_f1770938::t",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "file::workbox_f1770938",
+      "target": "workbox_f1770938::k",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "file::workbox_f1770938",
+      "target": "workbox-f1770938::b",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "file::workbox_f1770938",
+      "target": "workbox_f1770938::j",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "file::workbox_f1770938",
+      "target": "workbox-f1770938::k",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::a",
+      "target": "workbox_f1770938::a::i",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::a",
+      "target": "workbox_f1770938::a::c",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::a",
+      "target": "workbox_f1770938::a::settimestamp",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::a",
+      "target": "workbox_f1770938::a::gettimestamp",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::a",
+      "target": "workbox_f1770938::a::expireentries",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::a",
+      "target": "workbox_f1770938::a::n",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::a",
+      "target": "workbox_f1770938::a::getdb",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "file::workbox_f1770938",
+      "target": "workbox_f1770938::f",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::f",
+      "target": "workbox_f1770938::f::constructor",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::f",
+      "target": "workbox_f1770938::f::expireentries",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::f",
+      "target": "workbox_f1770938::f::updatetimestamp",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::f",
+      "target": "workbox_f1770938::f::isurlexpired",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::f",
+      "target": "workbox_f1770938::f::delete",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "file::workbox_f1770938",
+      "target": "workbox_f1770938::_",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "file::workbox_f1770938",
+      "target": "workbox_f1770938::z",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "file::workbox_f1770938",
+      "target": "workbox_f1770938::g",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::g",
+      "target": "workbox_f1770938::g::constructor",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "file::workbox_f1770938",
+      "target": "workbox_f1770938::x",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::y",
+      "target": "workbox_f1770938::y::u",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::y",
+      "target": "workbox_f1770938::y::k",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::y",
+      "target": "workbox_f1770938::y::s",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::y",
+      "target": "workbox_f1770938::y::a",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::z",
+      "target": "workbox_f1770938::z::constructor",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::z",
+      "target": "workbox_f1770938::z::strategy",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::z",
+      "target": "workbox_f1770938::z::precache",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::z",
+      "target": "workbox_f1770938::z::addtocachelist",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::z",
+      "target": "workbox_f1770938::z::install",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::z",
+      "target": "workbox_f1770938::z::activate",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::z",
+      "target": "workbox_f1770938::z::geturlstocachekeys",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::z",
+      "target": "workbox_f1770938::z::getcachedurls",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::z",
+      "target": "workbox_f1770938::z::getcachekeyforurl",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::z",
+      "target": "workbox_f1770938::z::getintegrityforcachekey",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::z",
+      "target": "workbox_f1770938::z::matchprecache",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::z",
+      "target": "workbox_f1770938::z::createhandlerboundtourl",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "file::workbox_f1770938",
+      "target": "workbox-f1770938::tt",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "file::workbox_f1770938",
+      "target": "workbox_f1770938::et",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "workbox_f1770938::et",
+      "target": "workbox_f1770938::et::constructor",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "file::workbox_f1770938",
+      "target": "workbox_f1770938::u",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "file::workbox_f1770938",
+      "target": "workbox_f1770938::constructor",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "file::workbox_f1770938",
+      "target": "workbox_f1770938::deletecacheandmetadata",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
+    },
+    {
+      "source": "file::workbox_f1770938",
+      "target": "workbox_f1770938::st",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/workbox-f1770938.js:1",
+      "weight": 1
     }
   ],
   "metadata": {
-    "files": 80,
-    "nodes": 385,
-    "edges": 318,
-    "builtAt": "2026-05-05T14:29:23.075Z"
+    "files": 82,
+    "nodes": 486,
+    "edges": 417,
+    "builtAt": "2026-05-06T00:42:47.838Z"
   }
 }

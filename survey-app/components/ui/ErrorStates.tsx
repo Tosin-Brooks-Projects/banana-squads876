@@ -1,7 +1,7 @@
 'use client';
 import { motion } from 'framer-motion';
-import { Button } from './button';
-import { Card } from './card';
+import { Button } from './Button';
+import { Card } from './Card';
 interface ErrorStateProps {
   title?: string;
   message?: string;

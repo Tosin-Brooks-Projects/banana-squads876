@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import { Card } from '@/components/ui/card';
+import { Card } from '@/components/ui/Card';
 import Button from '@/components/ui/AnimatedButton';
 import Input from '@/components/ui/Input';
 import { Spinner } from '@/components/ui/LoadingStates';

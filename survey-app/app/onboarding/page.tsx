@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { Check, X, Loader2, LogOut, ArrowRight, Sparkles, Layout, Zap, Database } from 'lucide-react';
 import MagneticButton from '@/components/ui/MagneticButton';
-import { BentoGrid, BentoCard } from '@/components/ui/BentoGrid';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { updateUser, createUser, checkUsernameExists, isUsernameReserved } from '@/lib/firebase/firestore';
 import { signOut } from '@/lib/firebase/auth';
@@ -32,7 +31,7 @@ export default function OnboardingPage() {
 
   const [username, setUsername] = useState('');
   const [suggestions, setSuggestions] = useState<string[]>([]);
-  const [isChecking, setIsChecking] = useState(false);
+  const [isChecking] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [availabilityStatus, setAvailabilityStatus] = useState<'idle' | 'checking' | 'available' | 'taken'>('idle');
   const [validationError, setValidationError] = useState('');
@@ -113,7 +112,7 @@ export default function OnboardingPage() {
       }
       await refreshUser();
       router.push('/dashboard/create');
-    } catch (err) {
+    } catch {
       setError('Failed to save. Check your connection.');
     } finally {
       setIsSubmitting(false);

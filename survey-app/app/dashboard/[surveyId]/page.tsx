@@ -892,7 +892,7 @@ export default function SurveyDetailPage() {
                   className="w-full flex items-center gap-3 px-4 py-3 hover:bg-orange-50/40 transition-colors text-left"
                   onClick={() => setExpandedRows(prev => {
                     const next = new Set(prev);
-                    next.has(response.id) ? next.delete(response.id) : next.add(response.id);
+                    if (next.has(response.id)) { next.delete(response.id); } else { next.add(response.id); }
                     return next;
                   })}
                 >

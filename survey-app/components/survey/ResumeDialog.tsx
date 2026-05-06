@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Button from '@/components/ui/AnimatedButton';
-import { Card } from '@/components/ui/card';
+import { Card } from '@/components/ui/Card';
 
 interface ResumeDialogProps {
   milestone: number;
