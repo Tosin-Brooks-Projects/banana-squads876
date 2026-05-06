@@ -40,7 +40,9 @@
       "Bash(git init:*)",
       "Bash(git fetch:*)",
       "Bash(node -e:*)",
-      "Bash(cmd /c \"taskkill /F /PID 21880\")"
+      "Bash(cmd /c \"taskkill /F /PID 21880\")",
+      "Skill(graphify)",
+      "Bash(graphify query *)"
     ]
   }
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import {
@@ -20,6 +20,46 @@ import { Survey, SurveyQuickStats } from '@/lib/types';
 interface SurveyWithStats extends Survey {
   stats: SurveyQuickStats;
 }
+
+// ── XP system ─────────────────────────────────────────────────────────────────
+
+const XP_LEVELS = [
+  { name: 'Rookie',    min: 0,    max: 200,  color: '#9ca3af', nextLabel: 'Explorer' },
+  { name: 'Explorer',  min: 200,  max: 500,  color: '#60a5fa', nextLabel: 'Champion' },
+  { name: 'Champion',  min: 500,  max: 1000, color: '#34d399', nextLabel: 'Legend' },
+  { name: 'Legend',    min: 1000, max: 2000, color: '#f59e0b', nextLabel: 'Master' },
+  { name: 'Master',    min: 2000, max: Infinity, color: '#f97316', nextLabel: null },
+];
+
+function getLevel(xp: number) {
+  return XP_LEVELS.findLast(l => xp >= l.min) ?? XP_LEVELS[0];
+}
+
+function getLevelProgress(xp: number) {
+  const level = getLevel(xp);
+  if (level.max === Infinity) return 100;
+  return Math.round(((xp - level.min) / (level.max - level.min)) * 100);
+}
+
+function AnimatedXP({ target }: { target: number }) {
+  const [display, setDisplay] = useState(0);
+  const rafRef = useRef<number>(0);
+  useEffect(() => {
+    const start = performance.now();
+    const duration = 1200;
+    const animate = (now: number) => {
+      const t = Math.min((now - start) / duration, 1);
+      const ease = 1 - Math.pow(1 - t, 3);
+      setDisplay(Math.round(ease * target));
+      if (t < 1) rafRef.current = requestAnimationFrame(animate);
+    };
+    rafRef.current = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [target]);
+  return <>{display.toLocaleString()}</>;
+}
+
+// ── Status badge ──────────────────────────────────────────────────────────────
 
 // Premium Status Badge
 function StatusBadge({ status, paymentStatus }: { status: string; paymentStatus?: string }) {
@@ -164,6 +204,9 @@ export default function DashboardPage() {
 
   const totalResponses = surveys.reduce((acc, s) => acc + s.stats.totalResponses, 0);
   const activeSurveys = surveys.filter((s) => s.status === 'published').length;
+  const totalXp = surveys.length * 50 + totalResponses * 10;
+  const currentLevel = getLevel(totalXp);
+  const levelProgress = getLevelProgress(totalXp);
 
   if (loading) {
     return (
@@ -285,26 +328,59 @@ export default function DashboardPage() {
            </div>
         </div>
 
-        {/* Mascot Card */}
-        <div className="bg-gray-900 border-4 border-gray-900 rounded-2xl sm:rounded-[32px] p-4 sm:p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.1)] flex flex-col justify-between relative overflow-hidden group">
-           <div className="absolute bottom-[-15%] right-[-10%] w-32 h-32 opacity-30 group-hover:scale-110 group-hover:-rotate-6 transition-all duration-700 pointer-events-none">
-              <img src="/orange-kea-mascot.png" alt="" className="w-full h-full object-contain" />
-           </div>
-           <div className="relative z-10">
-              <div className="flex items-center gap-3 mb-4">
-                 <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
-                 <p className="text-white font-black text-[10px] uppercase tracking-widest">Elite Surveyor</p>
-              </div>
-              <p className="text-white font-black text-lg leading-tight mb-1">Master League</p>
-              <p className="text-white/40 text-[10px] font-bold uppercase">Top 5% Global ✨</p>
-           </div>
-           <div className="mt-4 flex gap-1">
-              {[1,2,3,4,5].map(i => (
-                <div key={i} className="h-1 flex-1 bg-white/10 rounded-full overflow-hidden">
-                   <div className="h-full bg-orange-500 w-full animate-pulse" style={{ animationDelay: `${i * 0.2}s` }} />
-                </div>
-              ))}
-           </div>
+        {/* XP Card */}
+        <div
+          className="rounded-2xl sm:rounded-[32px] p-4 sm:p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.08)] flex flex-col justify-between relative overflow-hidden border-4"
+          style={{ background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)', borderColor: '#1a1a2e' }}
+        >
+          {/* Glow blob */}
+          <div
+            className="absolute -top-6 -right-6 w-28 h-28 rounded-full blur-2xl opacity-40 pointer-events-none"
+            style={{ background: currentLevel.color }}
+          />
+
+          <div className="relative z-10">
+            {/* Level badge */}
+            <div className="flex items-center justify-between mb-3 sm:mb-5">
+              <span
+                className="text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full"
+                style={{ background: `${currentLevel.color}22`, color: currentLevel.color, border: `1.5px solid ${currentLevel.color}44` }}
+              >
+                {currentLevel.name}
+              </span>
+              <span className="text-white/30 text-[10px] font-black uppercase tracking-widest">⭐ XP</span>
+            </div>
+
+            {/* XP number */}
+            <p className="text-3xl sm:text-5xl font-black text-white tabular-nums leading-none">
+              <AnimatedXP target={totalXp} />
+            </p>
+            <p className="text-[9px] font-black uppercase tracking-widest mt-1.5 sm:mt-2" style={{ color: currentLevel.color }}>
+              Total XP Earned
+            </p>
+          </div>
+
+          {/* Progress bar */}
+          <div className="relative z-10 mt-4">
+            <div className="flex justify-between text-[9px] font-black uppercase tracking-wider mb-1.5" style={{ color: 'rgba(255,255,255,0.3)' }}>
+              <span>{currentLevel.name}</span>
+              {currentLevel.nextLabel && <span>{currentLevel.nextLabel}</span>}
+            </div>
+            <div className="w-full h-2 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.08)' }}>
+              <motion.div
+                className="h-full rounded-full"
+                style={{ background: currentLevel.color }}
+                initial={{ width: 0 }}
+                animate={{ width: `${levelProgress}%` }}
+                transition={{ duration: 1.2, ease: [0.34, 1.56, 0.64, 1], delay: 0.3 }}
+              />
+            </div>
+            {currentLevel.max !== Infinity && (
+              <p className="text-[9px] font-bold mt-1.5 text-right" style={{ color: 'rgba(255,255,255,0.25)' }}>
+                {totalXp} / {currentLevel.max} XP
+              </p>
+            )}
+          </div>
         </div>
       </div>
 

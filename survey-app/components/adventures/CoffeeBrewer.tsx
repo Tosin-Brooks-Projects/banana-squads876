@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Question, Answer, OnProgressCallback, isMultipleChoiceQuestion } from '@/lib/types';
 import FinalThoughts from './shared/FinalThoughts';
@@ -20,10 +20,7 @@ interface CoffeeBrewerProps {
   allowAnonymous?: boolean;
 }
 
-interface FormData {
-  name: string;
-  email: string;
-}
+interface FormData { name: string; email: string }
 
 interface SelectedChoices {
   beans: string;
@@ -33,69 +30,62 @@ interface SelectedChoices {
 }
 
 interface AnswerMap {
-  [questionId: string]: {
-    visualId: string | string[];
-    answerValue: string | string[];
-  };
+  [questionId: string]: { visualId: string | string[]; answerValue: string | string[] };
 }
 
-// Visual options
+// ── Visual data ───────────────────────────────────────────────────────────────
+
 const beanOptions = [
-  { id: 'light', name: 'Light Roast', emoji: '☀️', color: 'bg-amber-200' },
-  { id: 'medium', name: 'Medium Roast', emoji: '⚡', color: 'bg-amber-500' },
-  { id: 'dark', name: 'Dark Roast', emoji: '🌑', color: 'bg-amber-900' },
+  { id: 'light',  name: 'Light Roast',  emoji: '☀️', desc: 'Bright & fruity',  roastColor: '#d4a055', cupLiquid: '#e8c882' },
+  { id: 'medium', name: 'Medium Roast', emoji: '🌅', desc: 'Balanced & smooth', roastColor: '#8b4513', cupLiquid: '#8b4513' },
+  { id: 'dark',   name: 'Dark Roast',   emoji: '🌑', desc: 'Bold & intense',    roastColor: '#2c1a0e', cupLiquid: '#1a0d05' },
+  { id: 'decaf',  name: 'Decaf',        emoji: '😴', desc: 'All the taste',     roastColor: '#6b4c2a', cupLiquid: '#6b4c2a' },
 ];
 
 const grindOptions = [
-  { id: 'fine', name: 'Fine', emoji: '🔬', dots: 4 },
-  { id: 'medium', name: 'Medium', emoji: '⚖️', dots: 2 },
-  { id: 'coarse', name: 'Coarse', emoji: '🪨', dots: 1 },
+  { id: 'fine',   name: 'Fine',   emoji: '🔬', desc: 'Espresso-ready',  dotSize: 2, dots: 9 },
+  { id: 'medium', name: 'Medium', emoji: '⚖️', desc: 'Pour-over perfect', dotSize: 3, dots: 6 },
+  { id: 'coarse', name: 'Coarse', emoji: '🪨', desc: 'French press',     dotSize: 5, dots: 4 },
+  { id: 'whole',  name: 'Whole Bean', emoji: '🫘', desc: 'Grind-your-own', dotSize: 7, dots: 3 },
 ];
 
 const methodOptions = [
-  { id: 'drip', name: 'Drip', emoji: '☕' },
-  { id: 'frenchpress', name: 'French Press', emoji: '🫖' },
-  { id: 'espresso', name: 'Espresso', emoji: '⚡' },
+  { id: 'espresso',    name: 'Espresso',     emoji: '⚡', desc: 'Fast & punchy',    steamCount: 5 },
+  { id: 'pourover',    name: 'Pour-over',    emoji: '🫗', desc: 'Clean & precise',  steamCount: 3 },
+  { id: 'frenchpress', name: 'French Press', emoji: '🫖', desc: 'Rich & full-body', steamCount: 4 },
+  { id: 'coldbrew',    name: 'Cold Brew',    emoji: '🧊', desc: 'Smooth & cold',    steamCount: 0 },
+  { id: 'drip',        name: 'Drip',         emoji: '☕', desc: 'Classic & easy',   steamCount: 2 },
 ];
 
 const finishingOptions = [
-  { id: 'option1', name: 'Option 1', emoji: '🍬' },
-  { id: 'option2', name: 'Option 2', emoji: '🥛' },
-  { id: 'option3', name: 'Option 3', emoji: '🍯' },
-  { id: 'option4', name: 'Option 4', emoji: '✨' },
+  { id: 'black',    name: 'Black',        emoji: '☕', desc: 'Pure & unadulterated' },
+  { id: 'milk',     name: 'Milk',         emoji: '🥛', desc: 'Creamy & mellow' },
+  { id: 'oat',      name: 'Oat Milk',     emoji: '🌾', desc: 'Plant-based smooth' },
+  { id: 'sugar',    name: 'Sugar',        emoji: '🍬', desc: 'A touch of sweet' },
+  { id: 'honey',    name: 'Honey',        emoji: '🍯', desc: 'Natural sweetness' },
+  { id: 'caramel',  name: 'Caramel',      emoji: '🍮', desc: 'Indulgent drizzle' },
 ];
 
-const STAGE_EMOJIS = ['☕', '⚙️', '🫖', '✨'];
+const COMBO_PHRASES = [
+  'Barista approved! ☕', 'Great taste! 🤌', 'Coffee connoisseur! 🏆',
+  'Brewing perfection! ✨', 'Bold choice! 💪', 'Nice pick! 🌟',
+];
 
 const confettiColors = ['#58cc02', '#ffc700', '#1cb0f6', '#a570ff', '#cc348d', '#e67348'];
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
 
 function getQuestionOptions(question: Question | undefined): string[] {
   if (!question) return [];
   if ('options' in question && question.options) return question.options;
   if (question.type === 'rating' && 'scale' in question) {
-    const scale = question.scale || 5;
-    return Array.from({ length: scale }, (_, i) => {
-      const v = i + 1;
-      if (v === 1 && question.startLabel) return question.startLabel;
-      if (v === scale && question.endLabel) return question.endLabel;
-      return String(v);
-    });
-  }
-  if (question.type === 'emoji-slider' && 'scale' in question) {
-    const scale = question.scale || 5;
-    return Array.from({ length: scale }, (_, i) => {
-      const v = i + 1;
-      if (v === 1 && question.labels?.start) return question.labels.start;
-      if (v === scale && question.labels?.end) return question.labels.end;
-      return String(v);
-    });
+    return Array.from({ length: question.scale || 5 }, (_, i) => String(i + 1));
   }
   return [];
 }
 
 function mapQuestionToVisualOptions<T extends { id: string; name: string }>(
-  question: Question | undefined,
-  visualOptions: T[]
+  question: Question | undefined, visualOptions: T[]
 ): Array<T & { answerValue: string; uniqueId: string }> {
   const opts = getQuestionOptions(question);
   if (opts.length === 0) return [];
@@ -105,46 +95,44 @@ function mapQuestionToVisualOptions<T extends { id: string; name: string }>(
   });
 }
 
-// PickedBadge micro-feedback
-function PickedBadge({ show }: { show: boolean }) {
+// ── XP float particle ─────────────────────────────────────────────────────────
+
+function XPParticle({ id: _id, onDone }: { id: number; onDone: () => void }) {
   return (
-    <AnimatePresence>
-      {show && (
-        <motion.span
-          initial={{ opacity: 0, scale: 0.7, y: 4 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.7 }}
-          className="inline-flex items-center gap-1 px-2 py-0.5 bg-duo-green text-white text-[10px] font-black uppercase tracking-wider rounded-full"
-        >
-          <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-          </svg>
-          Picked!
-        </motion.span>
-      )}
-    </AnimatePresence>
+    <motion.div
+      className="fixed pointer-events-none z-50 font-fredoka font-bold text-amber-600 text-lg select-none"
+      style={{ right: 56, top: 20 }}
+      initial={{ opacity: 1, y: 0 }}
+      animate={{ opacity: 0, y: -50 }}
+      transition={{ duration: 0.9, ease: 'easeOut' }}
+      onAnimationComplete={onDone}
+    >
+      +10 XP
+    </motion.div>
   );
 }
+
+// ── Confetti ──────────────────────────────────────────────────────────────────
 
 function Confetti({ isActive }: { isActive: boolean }) {
   const [particles, setParticles] = useState<Array<{ id: number; x: number; color: string; delay: number; duration: number }>>([]);
   useEffect(() => {
     if (isActive) {
-      setParticles(Array.from({ length: 50 }, (_, i) => ({
+      setParticles(Array.from({ length: 60 }, (_, i) => ({
         id: i, x: Math.random() * 100,
         color: confettiColors[Math.floor(Math.random() * confettiColors.length)],
-        delay: Math.random() * 0.5, duration: 2 + Math.random() * 2,
+        delay: Math.random() * 0.6, duration: 2 + Math.random() * 2,
       })));
     }
   }, [isActive]);
   if (!isActive) return null;
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden z-50">
-      {particles.map((p) => (
+      {particles.map(p => (
         <motion.div key={p.id} className="absolute w-3 h-3 rounded-sm"
           style={{ left: `${p.x}%`, top: -20, backgroundColor: p.color }}
           initial={{ y: -20, rotate: 0, opacity: 1 }}
-          animate={{ y: typeof window !== 'undefined' ? window.innerHeight + 50 : 800, rotate: 360, opacity: [1, 1, 0] }}
+          animate={{ y: typeof window !== 'undefined' ? window.innerHeight + 60 : 900, rotate: 540, opacity: [1, 1, 0] }}
           transition={{ duration: p.duration, delay: p.delay, ease: 'linear' }}
         />
       ))}
@@ -152,61 +140,127 @@ function Confetti({ isActive }: { isActive: boolean }) {
   );
 }
 
-// Coffee cup display
-function CoffeeDisplay({ selectedChoices, stage }: { selectedChoices: SelectedChoices; stage: number }) {
-  const bean = beanOptions.find(b => selectedChoices.beans.startsWith(b.id));
-  const method = methodOptions.find(m => selectedChoices.method.startsWith(m.id));
+// ── Coffee cup scene ──────────────────────────────────────────────────────────
 
-  const cupColor = bean ? (bean.id === 'light' ? 'bg-amber-200' : bean.id === 'medium' ? 'bg-amber-500' : 'bg-amber-900') : 'bg-cloud-gray';
+function CoffeeScene({ selectedChoices, stage }: { selectedChoices: SelectedChoices; stage: number }) {
+  const beanId = selectedChoices.beans.replace(/-\d+$/, '');
+  const methodId = selectedChoices.method.replace(/-\d+$/, '');
+  const bean = beanOptions.find(b => b.id === beanId);
+  const method = methodOptions.find(m => m.id === methodId);
+
+  const isCold = method?.id === 'coldbrew';
+  const steamCount = method?.steamCount ?? 0;
+  const liquidColor = bean?.cupLiquid ?? '#8b4513';
+  const fillPct = stage >= 3 ? 70 : stage >= 2 ? 40 : stage >= 1 ? 15 : 0;
 
   return (
-    <div className="flex flex-col items-center gap-3">
-      {/* Cup */}
-      <div className="relative">
-        {/* Steam */}
-        {stage >= 3 && (
-          <div className="absolute -top-6 left-1/2 -translate-x-1/2 flex gap-1">
-            {[0, 1, 2].map((i) => (
+    <div className="relative w-48 h-48 sm:w-56 sm:h-56 mx-auto select-none flex items-end justify-center pb-4">
+
+      {/* Steam wisps above cup */}
+      <AnimatePresence>
+        {stage >= 3 && !isCold && steamCount > 0 && (
+          <div className="absolute top-2 left-1/2 -translate-x-1/2 flex gap-2">
+            {Array.from({ length: steamCount }, (_, i) => (
               <motion.div
                 key={i}
-                className="w-0.5 h-4 bg-gray-300 rounded-full"
-                animate={{ opacity: [0, 0.7, 0], y: [0, -8] }}
-                transition={{ duration: 1.5, delay: i * 0.4, repeat: Infinity }}
+                className="w-1 rounded-full"
+                style={{ height: 24, background: 'rgba(200,200,200,0.5)' }}
+                animate={{ opacity: [0, 0.8, 0], y: [0, -18], scaleX: [1, 1.5, 0.5] }}
+                transition={{ duration: 1.8, delay: i * 0.3, repeat: Infinity, ease: 'easeOut' }}
               />
             ))}
           </div>
         )}
-        {/* Cup body */}
-        <div className="relative w-20 h-20">
-          {/* Cup shape */}
-          <div className={`absolute inset-0 rounded-b-[2rem] rounded-t-xl border-4 border-cloud-gray shadow-[0_4px_0_rgba(0,0,0,0.08)] ${stage >= 1 ? cupColor : 'bg-cloud-gray/40'} transition-colors duration-500`} />
-          {/* Handle */}
-          <div className="absolute right-0 top-4 w-4 h-6 border-4 border-cloud-gray rounded-r-full border-l-0" />
-          {/* Method emoji overlay */}
-          {method && stage >= 2 && (
-            <motion.div className="absolute inset-0 flex items-center justify-center text-2xl"
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-              {method.emoji}
-            </motion.div>
-          )}
+      </AnimatePresence>
+
+      {/* Ice cubes for cold brew */}
+      <AnimatePresence>
+        {stage >= 3 && isCold && (
+          <div className="absolute top-6 left-1/2 -translate-x-1/2 flex gap-1">
+            {[0, 1, 2].map(i => (
+              <motion.div
+                key={i}
+                className="w-4 h-4 rounded-sm border border-sky-200"
+                style={{ background: 'rgba(186,230,253,0.7)' }}
+                initial={{ y: -20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: i * 0.1, type: 'spring' }}
+              />
+            ))}
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Cup body */}
+      <div className="relative w-28 h-32">
+        {/* Cup shape (trapezoid via clip) */}
+        <div
+          className="absolute inset-0 rounded-b-[2.5rem] rounded-t-lg overflow-hidden border-4 shadow-[0_6px_0_rgba(0,0,0,0.1)]"
+          style={{ borderColor: '#d6b896', background: '#f5f0e8' }}
+        >
+          {/* Liquid fill */}
+          <motion.div
+            className="absolute bottom-0 left-0 right-0 rounded-b-[2rem]"
+            style={{ background: liquidColor }}
+            animate={{ height: `${fillPct}%` }}
+            transition={{ duration: 0.8, ease: [0.34, 1.56, 0.64, 1] }}
+          />
+
+          {/* Foam / crema on top of liquid */}
+          <AnimatePresence>
+            {stage >= 2 && fillPct > 0 && (
+              <motion.div
+                className="absolute left-0 right-0 h-3 rounded-full"
+                style={{
+                  bottom: `${fillPct}%`,
+                  background: isCold ? 'rgba(186,230,253,0.5)' : 'rgba(255,220,160,0.7)',
+                  marginBottom: -6,
+                }}
+                initial={{ opacity: 0, scaleX: 0 }}
+                animate={{ opacity: 1, scaleX: 1 }}
+                transition={{ delay: 0.5, type: 'spring' }}
+              />
+            )}
+          </AnimatePresence>
+
           {/* Empty hint */}
           {stage === 0 && (
-            <div className="absolute inset-0 flex items-center justify-center text-xl opacity-30">☕</div>
+            <div className="absolute inset-0 flex items-center justify-center text-3xl opacity-20">☕</div>
           )}
         </div>
+
+        {/* Handle */}
+        <div
+          className="absolute right-[-14px] top-6 w-5 h-9 rounded-r-full border-4"
+          style={{ borderColor: '#d6b896', borderLeft: 'none', background: 'transparent' }}
+        />
+
+        {/* Saucer */}
+        <div
+          className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-36 h-4 rounded-full border-2"
+          style={{ borderColor: '#d6b896', background: '#f5f0e8' }}
+        />
       </div>
 
-      {/* Stage breadcrumb */}
-      <div className="flex items-center gap-1.5">
-        {STAGE_EMOJIS.map((emoji, i) => (
-          <span key={i} className={`text-sm transition-all ${i < stage ? 'opacity-100' : 'opacity-20'}`}>
-            {emoji}
-          </span>
-        ))}
-      </div>
+      {/* Method badge floating above */}
+      <AnimatePresence>
+        {method && stage >= 2 && (
+          <motion.div
+            className="absolute top-8 right-4 text-2xl"
+            initial={{ scale: 0, rotate: -20 }}
+            animate={{ scale: 1, rotate: 0 }}
+            exit={{ scale: 0 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 18 }}
+          >
+            {method.emoji}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
+
+// ── Main component ────────────────────────────────────────────────────────────
 
 export default function CoffeeBrewer({ questions, onComplete, onProgress, initialState, allowAnonymous = false }: CoffeeBrewerProps) {
   const [currentStage, setCurrentStage] = useState(initialState?.currentStage ?? 0);
@@ -218,6 +272,10 @@ export default function CoffeeBrewer({ questions, onComplete, onProgress, initia
   const [showConfetti, setShowConfetti] = useState(false);
   const [additionalThoughts, setAdditionalThoughts] = useState('');
   const [pickedId, setPickedId] = useState<string | null>(null);
+  const [xp, setXp] = useState(0);
+  const [xpParticles, setXpParticles] = useState<number[]>([]);
+  const [comboText, setComboText] = useState('');
+  const particleCounter = useRef(0);
 
   const reportProgress = useCallback(() => {
     if (!onProgress || currentStage === 0 || currentStage >= 6) return;
@@ -235,23 +293,34 @@ export default function CoffeeBrewer({ questions, onComplete, onProgress, initia
 
   useEffect(() => { reportProgress(); }, [currentStage, reportProgress]);
 
-  const mappedBeanOptions = mapQuestionToVisualOptions(questions[0], beanOptions);
-  const mappedGrindOptions = mapQuestionToVisualOptions(questions[1], grindOptions);
-  const mappedMethodOptions = mapQuestionToVisualOptions(questions[2], methodOptions);
-  const mappedFinishingOptions = mapQuestionToVisualOptions(questions[3], finishingOptions);
+  const addXp = () => {
+    setXp(prev => prev + 10);
+    const id = ++particleCounter.current;
+    setXpParticles(prev => [...prev, id]);
+    setComboText(COMBO_PHRASES[Math.floor(Math.random() * COMBO_PHRASES.length)]);
+    setTimeout(() => setComboText(''), 1800);
+  };
+
+  const removeParticle = (id: number) => setXpParticles(prev => prev.filter(p => p !== id));
 
   const pickWithBadge = (uniqueId: string, advance: () => void) => {
     setPickedId(uniqueId);
-    setTimeout(() => { setPickedId(null); advance(); }, 600);
+    addXp();
+    setTimeout(() => { setPickedId(null); advance(); }, 650);
   };
 
-  const handleBeansSelect = (uniqueId: string, answerValue: string) => {
+  const mappedBeanOptions    = mapQuestionToVisualOptions(questions[0], beanOptions);
+  const mappedGrindOptions   = mapQuestionToVisualOptions(questions[1], grindOptions);
+  const mappedMethodOptions  = mapQuestionToVisualOptions(questions[2], methodOptions);
+  const mappedFinishingOptions = mapQuestionToVisualOptions(questions[3], finishingOptions);
+
+  const handleBeansSelect  = (uniqueId: string, answerValue: string) => {
     setSelectedChoices(prev => ({ ...prev, beans: uniqueId }));
     if (questions[0]) setAnswerMap(prev => ({ ...prev, [questions[0].id]: { visualId: uniqueId, answerValue } }));
     pickWithBadge(uniqueId, () => setCurrentStage(1));
   };
 
-  const handleGrindSelect = (uniqueId: string, answerValue: string) => {
+  const handleGrindSelect  = (uniqueId: string, answerValue: string) => {
     setSelectedChoices(prev => ({ ...prev, grind: uniqueId }));
     if (questions[1]) setAnswerMap(prev => ({ ...prev, [questions[1].id]: { visualId: uniqueId, answerValue } }));
     pickWithBadge(uniqueId, () => setCurrentStage(2));
@@ -264,32 +333,32 @@ export default function CoffeeBrewer({ questions, onComplete, onProgress, initia
   };
 
   const finishingQuestion = questions[3];
-  const allowMultipleFinishing = finishingQuestion &&
-    isMultipleChoiceQuestion(finishingQuestion) &&
-    finishingQuestion.allowMultiple === true;
+  const allowMultipleFinishing = finishingQuestion && isMultipleChoiceQuestion(finishingQuestion) && finishingQuestion.allowMultiple === true;
 
-  const handleFinishingSelect = (uniqueId: string, answerValue: string) => {
+  const handleFinishingToggle = (uniqueId: string, answerValue: string) => {
     if (allowMultipleFinishing) {
       setSelectedChoices(prev => {
         const cur = Array.isArray(prev.finishing) ? prev.finishing : (prev.finishing ? [prev.finishing] : []);
         const isSelected = cur.includes(uniqueId);
+        if (!isSelected) addXp();
         return { ...prev, finishing: isSelected ? cur.filter(id => id !== uniqueId) : [...cur, uniqueId] };
       });
       if (questions[3]) {
         setAnswerMap(prev => {
           const entry = prev[questions[3].id];
-          const ids = Array.isArray(entry?.visualId) ? entry.visualId : (entry?.visualId ? [entry.visualId] : []);
+          const ids  = Array.isArray(entry?.visualId)    ? entry.visualId    : (entry?.visualId    ? [entry.visualId]    : []);
           const vals = Array.isArray(entry?.answerValue) ? entry.answerValue : (entry?.answerValue ? [entry.answerValue] : []);
           const isSelected = ids.includes(uniqueId);
           return { ...prev, [questions[3].id]: {
-            visualId: isSelected ? ids.filter(id => id !== uniqueId) : [...ids, uniqueId],
-            answerValue: isSelected ? vals.filter(v => v !== answerValue) : [...vals, answerValue],
+            visualId:    isSelected ? ids.filter(id => id !== uniqueId)      : [...ids, uniqueId],
+            answerValue: isSelected ? vals.filter(v => v !== answerValue)    : [...vals, answerValue],
           }};
         });
       }
     } else {
       setSelectedChoices(prev => ({ ...prev, finishing: uniqueId }));
       if (questions[3]) setAnswerMap(prev => ({ ...prev, [questions[3].id]: { visualId: uniqueId, answerValue } }));
+      pickWithBadge(uniqueId, () => setCurrentStage(5));
     }
   };
 
@@ -306,7 +375,7 @@ export default function CoffeeBrewer({ questions, onComplete, onProgress, initia
     }
     answers.push({ questionId: 'additional_thoughts', value: additionalThoughts });
     onComplete(answers);
-    setTimeout(() => setShowConfetti(false), 4000);
+    setTimeout(() => setShowConfetti(false), 5000);
   };
 
   const handleBack = () => {
@@ -325,95 +394,164 @@ export default function CoffeeBrewer({ questions, onComplete, onProgress, initia
     : (selectedChoices.finishing ? [selectedChoices.finishing] : []);
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen flex flex-col" style={{ background: 'linear-gradient(to bottom, #fdf6ec 0%, #fffbf5 100%)' }}>
       <Confetti isActive={showConfetti} />
+      {xpParticles.map(id => <XPParticle key={id} id={id} onDone={() => removeParticle(id)} />)}
 
-      {/* Top bar */}
+      {/* ── HUD ── */}
       {showTopBar && (
-        <div className="w-full px-4 pt-6 pb-4 max-w-lg mx-auto">
-          <div className="flex items-center gap-4 mb-4">
+        <motion.div
+          initial={{ y: -60, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          className="w-full px-4 pt-5 pb-3 max-w-lg mx-auto"
+        >
+          <div className="flex items-center gap-3 mb-3">
             <button
               onClick={handleBack}
               disabled={currentStage <= 1}
-              className="flex-shrink-0 w-10 h-10 rounded-2xl border-2 border-cloud-gray shadow-[0_3px_0_#e5e5e5] flex items-center justify-center text-graphite disabled:opacity-30 transition-all active:translate-y-[2px] active:shadow-none"
+              className="flex-shrink-0 w-10 h-10 rounded-2xl border-2 border-amber-100 bg-white shadow-[0_3px_0_#fde68a] flex items-center justify-center text-graphite disabled:opacity-20 active:translate-y-[2px] active:shadow-none transition-all"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
               </svg>
             </button>
-            <div className="flex-1 h-4 bg-cloud-gray rounded-full overflow-hidden border-2 border-cloud-gray">
-              <motion.div className="h-full bg-duo-green rounded-full"
-                initial={{ width: 0 }} animate={{ width: `${progressPct}%` }}
-                transition={{ duration: 0.4, ease: 'easeOut' }} />
+
+            <div className="flex-1 h-4 bg-white rounded-full overflow-hidden border-2 border-amber-100 shadow-inner">
+              <motion.div
+                className="h-full rounded-full"
+                style={{ background: 'linear-gradient(90deg, #92400e 0%, #d97706 100%)' }}
+                initial={{ width: 0 }}
+                animate={{ width: `${progressPct}%` }}
+                transition={{ duration: 0.5, ease: [0.34, 1.56, 0.64, 1] }}
+              />
             </div>
-            <span className="flex-shrink-0 text-[10px] font-black text-graphite uppercase tracking-wider">
-              {Math.min(currentStage, totalDisplayStages)}/{totalDisplayStages}
-            </span>
+
+            <div className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 border-2 border-amber-200 rounded-2xl">
+              <span className="text-xs">☕</span>
+              <span className="font-fredoka font-bold text-sm text-almost-black"><motion.span key={xp} initial={{ scale: 1.4, color: '#f59e0b' }} animate={{ scale: 1, color: '#1a1a1a' }} transition={{ type: 'spring', stiffness: 400, damping: 20 }} style={{ display: 'inline-block' }}>{xp}</motion.span> XP</span>
+            </div>
           </div>
+
+          <div className="h-5 flex justify-center">
+            <AnimatePresence mode="wait">
+              {comboText && (
+                <motion.p
+                  key={comboText}
+                  initial={{ opacity: 0, y: -8, scale: 0.9 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 4 }}
+                  className="text-xs font-black text-amber-700 uppercase tracking-widest"
+                >
+                  {comboText}
+                </motion.p>
+              )}
+            </AnimatePresence>
+          </div>
+        </motion.div>
+      )}
+
+      {/* ── Coffee scene ── */}
+      {currentStage < 6 && (
+        <div className="flex justify-center pt-2 pb-2">
+          <CoffeeScene selectedChoices={selectedChoices} stage={currentStage} />
         </div>
       )}
 
-      {/* Main */}
-      <div className="flex-1 flex flex-col px-4 max-w-lg mx-auto w-full pb-8">
-        {currentStage < 6 && (
-          <div className="py-6 flex justify-center">
-            <CoffeeDisplay selectedChoices={selectedChoices} stage={currentStage} />
-          </div>
-        )}
-
+      {/* ── Stage content ── */}
+      <div className="flex-1 flex flex-col px-4 max-w-lg mx-auto w-full pb-8 pt-2">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentStage}
-            initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -30 }} transition={{ duration: 0.25 }}
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -16 }}
+            transition={{ duration: 0.22, ease: 'easeOut' }}
           >
             {currentStage === 0 && (
-              <OptionStage
-                stageLabel="☕ Beans First"
-                question={questions[0]}
-                fallback="Pick your beans"
-                options={mappedBeanOptions.map(o => ({ ...o, emoji: beanOptions.find(b => o.uniqueId.startsWith(b.id))?.emoji || '☕' }))}
-                onSelect={handleBeansSelect}
-                pickedId={pickedId}
-                cols={3}
-              />
+              <CoffeeStageWrapper emoji="🫘" label="Stage 1 · Beans">
+                <StageQuestion question={questions[0]} fallback="Pick your beans" />
+                <div className="grid grid-cols-2 gap-3">
+                  {mappedBeanOptions.map((opt, i) => {
+                    const visual = beanOptions.find(b => opt.uniqueId.startsWith(b.id)) || beanOptions[0];
+                    return (
+                      <CoffeeCard
+                        key={opt.uniqueId}
+                        emoji={visual.emoji}
+                        name={opt.answerValue}
+                        desc={visual.desc}
+                        accentColor={visual.roastColor}
+                        index={i}
+                        isPicked={pickedId === opt.uniqueId}
+                        isSelected={false}
+                        onClick={() => handleBeansSelect(opt.uniqueId, opt.answerValue)}
+                      />
+                    );
+                  })}
+                </div>
+              </CoffeeStageWrapper>
             )}
+
             {currentStage === 1 && (
-              <OptionStage
-                stageLabel="⚙️ Grind Size"
-                question={questions[1]}
-                fallback="Choose your grind"
-                options={mappedGrindOptions.map(o => ({ ...o, emoji: grindOptions.find(g => o.uniqueId.startsWith(g.id))?.emoji || '⚙️' }))}
-                onSelect={handleGrindSelect}
-                pickedId={pickedId}
-                cols={3}
-              />
+              <CoffeeStageWrapper emoji="⚙️" label="Stage 2 · Grind">
+                <StageQuestion question={questions[1]} fallback="Choose your grind size" />
+                <div className="grid grid-cols-2 gap-3">
+                  {mappedGrindOptions.map((opt, i) => {
+                    const visual = grindOptions.find(g => opt.uniqueId.startsWith(g.id)) || grindOptions[0];
+                    return (
+                      <GrindCard
+                        key={opt.uniqueId}
+                        visual={visual}
+                        name={opt.answerValue}
+                        index={i}
+                        isPicked={pickedId === opt.uniqueId}
+                        onClick={() => handleGrindSelect(opt.uniqueId, opt.answerValue)}
+                      />
+                    );
+                  })}
+                </div>
+              </CoffeeStageWrapper>
             )}
+
             {currentStage === 2 && (
-              <OptionStage
-                stageLabel="🫖 Brew Method"
-                question={questions[2]}
-                fallback="How do you brew?"
-                options={mappedMethodOptions.map(o => ({ ...o, emoji: methodOptions.find(m => o.uniqueId.startsWith(m.id))?.emoji || '☕' }))}
-                onSelect={handleMethodSelect}
-                pickedId={pickedId}
-                cols={3}
-              />
+              <CoffeeStageWrapper emoji="🫖" label="Stage 3 · Method">
+                <StageQuestion question={questions[2]} fallback="How do you brew?" />
+                <div className="grid grid-cols-2 gap-3">
+                  {mappedMethodOptions.map((opt, i) => {
+                    const visual = methodOptions.find(m => opt.uniqueId.startsWith(m.id)) || methodOptions[0];
+                    return (
+                      <CoffeeCard
+                        key={opt.uniqueId}
+                        emoji={visual.emoji}
+                        name={opt.answerValue}
+                        desc={visual.desc}
+                        accentColor="#92400e"
+                        index={i}
+                        isPicked={pickedId === opt.uniqueId}
+                        isSelected={false}
+                        onClick={() => handleMethodSelect(opt.uniqueId, opt.answerValue)}
+                      />
+                    );
+                  })}
+                </div>
+              </CoffeeStageWrapper>
             )}
+
             {currentStage === 3 && !allowAnonymous && (
               <FormCapture formData={formData} setFormData={setFormData} onSubmit={() => setCurrentStage(4)} />
             )}
+
             {currentStage === 4 && (
-              <FinishingSelection
+              <FinishingStage
                 question={questions[3]}
-                options={mappedFinishingOptions.map(o => ({ ...o, emoji: finishingOptions.find(f => o.uniqueId.startsWith(f.id))?.emoji || '✨' }))}
+                options={mappedFinishingOptions}
                 selected={finishingSelected}
-                allowMultiple={allowMultipleFinishing}
-                onSelect={handleFinishingSelect}
-                onContinue={() => setCurrentStage(5)}
+                allowMultiple={!!allowMultipleFinishing}
                 pickedId={pickedId}
+                onToggle={handleFinishingToggle}
+                onContinue={() => { addXp(); setCurrentStage(5); }}
               />
             )}
+
             {currentStage === 5 && (
               <FinalThoughts
                 value={additionalThoughts}
@@ -424,16 +562,17 @@ export default function CoffeeBrewer({ questions, onComplete, onProgress, initia
                 respondentName={formData.name}
               />
             )}
-            {currentStage === 6 && <CompletionStage />}
+
+            {currentStage === 6 && <CompletionStage xp={xp} />}
           </motion.div>
         </AnimatePresence>
       </div>
 
       {currentStage < 6 && (
-        <div className="py-6 text-center">
+        <div className="py-4 text-center">
           <a href="https://unboringsurveys.com" target="_blank" rel="noopener noreferrer"
-            className="font-fredoka text-sm font-bold text-silver hover:text-duo-green transition-colors">
-            Unboring<span className="text-duo-green">.</span>
+            className="font-fredoka text-sm font-bold text-silver hover:text-amber-600 transition-colors">
+            Unboring<span className="text-amber-600">.</span>
           </a>
         </div>
       )}
@@ -441,58 +580,224 @@ export default function CoffeeBrewer({ questions, onComplete, onProgress, initia
   );
 }
 
-// Generic option grid (used for beans, grind, method)
-function OptionStage({
-  stageLabel, question, fallback, options, onSelect, pickedId, cols,
-}: {
-  stageLabel: string;
-  question?: Question;
-  fallback: string;
-  options: Array<{ uniqueId: string; answerValue: string; emoji: string }>;
-  onSelect: (uniqueId: string, answerValue: string) => void;
-  pickedId: string | null;
-  cols: number;
-}) {
+// ── Sub-components ────────────────────────────────────────────────────────────
+
+function CoffeeStageWrapper({ emoji, label, children }: { emoji: string; label: string; children: React.ReactNode }) {
   return (
-    <div>
-      <div className="mb-4">
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-duo-green/10 text-duo-green text-[10px] font-black uppercase tracking-widest rounded-full border border-duo-green/20">
-          {stageLabel}
-        </span>
-      </div>
-      <h2 className="font-fredoka text-2xl sm:text-3xl font-bold text-almost-black leading-tight mb-7">
-        {question?.question || fallback}
-      </h2>
-      <div className={`grid grid-cols-${cols} gap-3`}>
-        {options.map((option, index) => {
-          const isPicked = pickedId === option.uniqueId;
-          return (
-            <motion.button
-              key={option.uniqueId}
-              initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.06 }}
-              onClick={() => onSelect(option.uniqueId, option.answerValue)}
-              whileTap={{ scale: 0.97 }}
-              className={`p-4 rounded-2xl border-2 text-center transition-all ${
-                isPicked
-                  ? 'bg-duo-green/10 border-duo-green shadow-[0_3px_0_#46a302]'
-                  : 'bg-white border-cloud-gray shadow-[0_3px_0_#e5e5e5] hover:border-duo-green/40'
-              }`}
-            >
-              <div className="text-3xl mb-2">{option.emoji}</div>
-              <div className="font-fredoka font-bold text-almost-black text-sm leading-snug">{option.answerValue}</div>
-              <div className="mt-1.5 h-5 flex justify-center">
-                <PickedBadge show={isPicked} />
-              </div>
-            </motion.button>
-          );
-        })}
-      </div>
+    <div className="space-y-5">
+      <motion.div
+        initial={{ x: -20, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ type: 'spring', stiffness: 400, damping: 28 }}
+        className="inline-flex items-center gap-2 px-4 py-2 bg-white border-2 border-amber-100 rounded-2xl shadow-[0_2px_0_#fde68a]"
+      >
+        <span>{emoji}</span>
+        <span className="font-fredoka font-bold text-sm text-almost-black uppercase tracking-wide">{label}</span>
+      </motion.div>
+      {children}
     </div>
   );
 }
 
-// Stage 3: Form Capture
+function StageQuestion({ question, fallback }: { question?: Question; fallback: string }) {
+  return (
+    <h2 className="font-fredoka text-2xl sm:text-3xl font-bold text-almost-black leading-tight">
+      {question?.question || fallback}
+    </h2>
+  );
+}
+
+function CoffeeCard({
+  emoji, name, desc, accentColor, index, isPicked, isSelected, onClick,
+}: {
+  emoji: string; name: string; desc: string; accentColor: string;
+  index: number; isPicked: boolean; isSelected: boolean; onClick: () => void;
+}) {
+  return (
+    <motion.button
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.07, type: 'spring', stiffness: 400, damping: 28 }}
+      whileTap={{ scale: 0.94 }}
+      onClick={onClick}
+      className={`relative p-4 rounded-3xl border-2 text-left transition-all overflow-hidden ${
+        isPicked || isSelected
+          ? 'border-amber-500 bg-amber-50 shadow-[0_4px_0_#d97706]'
+          : 'border-amber-100 bg-white shadow-[0_4px_0_#fde68a] hover:border-amber-400 active:translate-y-[3px] active:shadow-none'
+      }`}
+    >
+      <div className="absolute top-0 right-0 w-16 h-16 rounded-bl-[3rem] opacity-10" style={{ background: accentColor }} />
+
+      <div className="flex flex-col gap-2">
+        <motion.span
+          className="text-4xl"
+          animate={isPicked ? { rotate: [0, -15, 15, -8, 0], scale: [1, 1.3, 1] } : {}}
+          transition={{ duration: 0.4 }}
+        >
+          {emoji}
+        </motion.span>
+        <div>
+          <div className="font-fredoka font-bold text-almost-black text-base leading-tight">{name}</div>
+          <div className="font-bold text-graphite text-xs mt-0.5">{desc}</div>
+        </div>
+      </div>
+
+      <AnimatePresence>
+        {(isPicked || isSelected) && (
+          <motion.div
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0, opacity: 0 }}
+            className="absolute top-2.5 right-2.5 w-7 h-7 bg-amber-500 rounded-full flex items-center justify-center shadow-md"
+          >
+            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+            </svg>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.button>
+  );
+}
+
+// Grind card shows dot pattern to visualise grind size
+function GrindCard({
+  visual, name, index, isPicked, onClick,
+}: {
+  visual: typeof grindOptions[0]; name: string; index: number; isPicked: boolean; onClick: () => void;
+}) {
+  return (
+    <motion.button
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.07, type: 'spring', stiffness: 400, damping: 28 }}
+      whileTap={{ scale: 0.94 }}
+      onClick={onClick}
+      className={`relative p-4 rounded-3xl border-2 text-left transition-all overflow-hidden ${
+        isPicked
+          ? 'border-amber-500 bg-amber-50 shadow-[0_4px_0_#d97706]'
+          : 'border-amber-100 bg-white shadow-[0_4px_0_#fde68a] hover:border-amber-400 active:translate-y-[3px] active:shadow-none'
+      }`}
+    >
+      {/* Dot pattern visualising grind size */}
+      <div className="flex flex-wrap gap-1 mb-3 w-14 h-10 items-center">
+        {Array.from({ length: visual.dots }, (_, i) => (
+          <motion.div
+            key={i}
+            className="rounded-full bg-amber-800"
+            style={{ width: visual.dotSize, height: visual.dotSize }}
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: index * 0.07 + i * 0.04, type: 'spring' }}
+          />
+        ))}
+      </div>
+      <div className="font-fredoka font-bold text-almost-black text-base leading-tight">{name}</div>
+      <div className="font-bold text-graphite text-xs mt-0.5">{visual.desc}</div>
+
+      <AnimatePresence>
+        {isPicked && (
+          <motion.div
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0, opacity: 0 }}
+            className="absolute top-2.5 right-2.5 w-7 h-7 bg-amber-500 rounded-full flex items-center justify-center shadow-md"
+          >
+            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+            </svg>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.button>
+  );
+}
+
+function FinishingStage({
+  question, options, selected, allowMultiple, pickedId, onToggle, onContinue,
+}: {
+  question?: Question;
+  options: Array<typeof finishingOptions[0] & { answerValue: string; uniqueId: string }>;
+  selected: string[];
+  allowMultiple: boolean;
+  pickedId: string | null;
+  onToggle: (id: string, val: string) => void;
+  onContinue: () => void;
+}) {
+  const count = selected.length;
+  return (
+    <div className="space-y-5">
+      <motion.div
+        initial={{ x: -20, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ type: 'spring', stiffness: 400, damping: 28 }}
+        className="flex items-center gap-2"
+      >
+        <div className="inline-flex items-center gap-2 px-4 py-2 bg-white border-2 border-amber-100 rounded-2xl shadow-[0_2px_0_#fde68a]">
+          <span>✨</span>
+          <span className="font-fredoka font-bold text-sm text-almost-black uppercase tracking-wide">Stage 4 · Finishing</span>
+        </div>
+        <AnimatePresence mode="wait">
+          {allowMultiple && count > 0 && (
+            <motion.div
+              key={count}
+              initial={{ scale: 0.5, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.5, opacity: 0 }}
+              transition={{ type: 'spring', stiffness: 500, damping: 22 }}
+              className="w-8 h-8 bg-amber-500 rounded-full flex items-center justify-center shadow-md"
+            >
+              <span className="font-fredoka font-bold text-white text-sm">{count}</span>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
+
+      <h2 className="font-fredoka text-2xl sm:text-3xl font-bold text-almost-black leading-tight">
+        {question?.question || 'Any finishing touches?'}
+      </h2>
+
+      <div className="grid grid-cols-2 gap-3">
+        {options.map((opt, i) => {
+          const visual = finishingOptions.find(f => opt.uniqueId.startsWith(f.id)) || finishingOptions[0];
+          const isSelected = selected.includes(opt.uniqueId);
+          const isPicked = !allowMultiple && pickedId === opt.uniqueId;
+          return (
+            <CoffeeCard
+              key={opt.uniqueId}
+              emoji={visual.emoji}
+              name={opt.answerValue}
+              desc={visual.desc}
+              accentColor="#92400e"
+              index={i}
+              isPicked={isPicked || isSelected}
+              isSelected={isSelected}
+              onClick={() => onToggle(opt.uniqueId, opt.answerValue)}
+            />
+          );
+        })}
+      </div>
+
+      {allowMultiple && (
+        <motion.button
+          onClick={onContinue}
+          whileTap={{ scale: 0.97 }}
+          className="w-full py-5 bg-amber-700 text-white font-fredoka font-bold text-xl uppercase tracking-widest rounded-3xl border-b-4 border-amber-900 shadow-[0_5px_0_#78350f] transition-all hover:brightness-110 active:translate-y-[4px] active:shadow-none active:border-b-0 flex items-center justify-center gap-2"
+        >
+          <motion.span
+            animate={{ rotate: [0, -10, 10, 0] }}
+            transition={{ duration: 2, repeat: Infinity, repeatDelay: 1 }}
+            style={{ display: 'inline-block' }}
+          >
+            ☕
+          </motion.span>
+          Brew It!
+        </motion.button>
+      )}
+    </div>
+  );
+}
+
 function FormCapture({
   formData, setFormData, onSubmit,
 }: {
@@ -503,148 +808,85 @@ function FormCapture({
   return (
     <div>
       <div className="text-center mb-8">
-        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', bounce: 0.5 }}
-          className="w-20 h-20 bg-duo-green/10 rounded-[1.5rem] border-2 border-duo-green/20 flex items-center justify-center mx-auto mb-5">
-          <span className="text-4xl">☕</span>
+        <motion.div
+          initial={{ scale: 0, rotate: -20 }}
+          animate={{ scale: 1, rotate: 0 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 18 }}
+          className="text-6xl mb-5"
+        >
+          ☕
         </motion.div>
         <h2 className="font-fredoka text-3xl font-bold text-almost-black mb-2">Almost brewed…</h2>
-        <p className="text-graphite text-sm font-medium">Who&apos;s ordering this coffee?</p>
+        <p className="text-graphite font-bold text-sm">Who&apos;s ordering this coffee?</p>
       </div>
+
       <div className="space-y-4 mb-8">
-        <div>
-          <label className="block text-[10px] font-black text-graphite uppercase tracking-widest mb-2 ml-1">
-            Name <span className="text-silver">(optional)</span>
-          </label>
-          <input type="text" value={formData.name}
-            onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-            placeholder="Your name"
-            className="w-full p-4 rounded-2xl border-2 border-cloud-gray focus:border-duo-green focus:ring-0 outline-none transition-all text-almost-black font-bold text-sm shadow-[0_3px_0_#e5e5e5] focus:shadow-[0_3px_0_#46a302]"
-          />
-        </div>
-        <div>
-          <label className="block text-[10px] font-black text-graphite uppercase tracking-widest mb-2 ml-1">
-            Email <span className="text-silver">(optional)</span>
-          </label>
-          <input type="email" value={formData.email}
-            onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-            placeholder="your@email.com"
-            className="w-full p-4 rounded-2xl border-2 border-cloud-gray focus:border-duo-green focus:ring-0 outline-none transition-all text-almost-black font-bold text-sm shadow-[0_3px_0_#e5e5e5] focus:shadow-[0_3px_0_#46a302]"
-          />
-        </div>
+        {(['name', 'email'] as const).map(field => (
+          <div key={field}>
+            <label className="block text-[10px] font-black text-graphite uppercase tracking-widest mb-2 ml-1">
+              {field === 'name' ? 'Name' : 'Email'} <span className="text-silver">(optional)</span>
+            </label>
+            <input
+              type={field === 'email' ? 'email' : 'text'}
+              value={formData[field]}
+              onChange={e => setFormData(prev => ({ ...prev, [field]: e.target.value }))}
+              placeholder={field === 'email' ? 'your@email.com' : 'Your name'}
+              className="w-full p-4 rounded-2xl border-2 border-amber-100 bg-white focus:border-amber-500 focus:ring-0 outline-none transition-all text-almost-black font-bold text-sm shadow-[0_3px_0_#fde68a] focus:shadow-[0_3px_0_#d97706]"
+            />
+          </div>
+        ))}
       </div>
-      <button onClick={onSubmit}
-        className="w-full py-5 bg-duo-green text-white font-fredoka font-bold text-xl uppercase tracking-widest rounded-2xl border-b-4 border-[#46a302] shadow-[0_4px_0_#3f8f01] transition-all hover:brightness-105 active:translate-y-[3px] active:shadow-none active:border-b-0">
+
+      <button
+        onClick={onSubmit}
+        className="w-full py-5 bg-amber-700 text-white font-fredoka font-bold text-xl uppercase tracking-widest rounded-3xl border-b-4 border-amber-900 shadow-[0_5px_0_#78350f] transition-all hover:brightness-110 active:translate-y-[4px] active:shadow-none active:border-b-0"
+      >
         Finishing Touches ✨
       </button>
     </div>
   );
 }
 
-// Stage 4: Finishing Selection
-function FinishingSelection({
-  question, options, selected, allowMultiple, onSelect, onContinue, pickedId,
-}: {
-  question?: Question;
-  options: Array<{ uniqueId: string; answerValue: string; emoji: string }>;
-  selected: string[];
-  allowMultiple: boolean | undefined;
-  onSelect: (uniqueId: string, answerValue: string) => void;
-  onContinue: () => void;
-  pickedId: string | null;
-}) {
-  const count = selected.length;
-
+function CompletionStage({ xp }: { xp: number }) {
   return (
-    <div>
-      <div className="mb-4 flex items-center gap-2">
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-duo-green/10 text-duo-green text-[10px] font-black uppercase tracking-widest rounded-full border border-duo-green/20">
-          ✨ Finishing
-        </span>
-        {allowMultiple && count > 0 && (
-          <motion.span key={count} initial={{ scale: 0.7 }} animate={{ scale: 1 }}
-            className="inline-flex items-center px-2.5 py-1 bg-duo-green text-white text-[10px] font-black uppercase tracking-wider rounded-full">
-            {count} picked
-          </motion.span>
-        )}
-      </div>
-      <h2 className="font-fredoka text-2xl sm:text-3xl font-bold text-almost-black leading-tight mb-7">
-        {question?.question || 'Any finishing touches?'}
-      </h2>
-      <div className="grid grid-cols-2 gap-3 mb-6">
-        {options.map((option, index) => {
-          const isSelected = selected.includes(option.uniqueId);
-          const isPicked = !allowMultiple && pickedId === option.uniqueId;
-          return (
-            <motion.button
-              key={option.uniqueId}
-              initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.06 }}
-              onClick={() => {
-                if (!allowMultiple) {
-                  onSelect(option.uniqueId, option.answerValue);
-                } else {
-                  onSelect(option.uniqueId, option.answerValue);
-                }
-              }}
-              whileTap={{ scale: 0.97 }}
-              className={`p-4 rounded-2xl border-2 text-left transition-all ${
-                isSelected || isPicked
-                  ? 'bg-duo-green/10 border-duo-green shadow-[0_3px_0_#46a302]'
-                  : 'bg-white border-cloud-gray shadow-[0_3px_0_#e5e5e5] hover:border-duo-green/40'
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <span className={`w-5 h-5 rounded border-2 flex-shrink-0 flex items-center justify-center transition-all ${
-                  isSelected || isPicked ? 'border-duo-green bg-duo-green' : 'border-cloud-gray'
-                }`}>
-                  {(isSelected || isPicked) && (
-                    <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                    </svg>
-                  )}
-                </span>
-                <span className="text-xl">{option.emoji}</span>
-                <span className="font-bold text-almost-black text-xs leading-snug">{option.answerValue}</span>
-              </div>
-              {!allowMultiple && (
-                <div className="mt-1.5 h-5 flex justify-center">
-                  <PickedBadge show={isPicked} />
-                </div>
-              )}
-            </motion.button>
-          );
-        })}
-      </div>
-
-      {allowMultiple && (
-        <motion.button
-          onClick={onContinue}
-          whileTap={{ scale: 0.97 }}
-          className="w-full py-5 bg-duo-green text-white font-fredoka font-bold text-xl uppercase tracking-widest rounded-2xl border-b-4 border-[#46a302] shadow-[0_4px_0_#3f8f01] transition-all hover:brightness-105 active:translate-y-[3px] active:shadow-none active:border-b-0 flex items-center justify-center gap-2"
-        >
-          <motion.span animate={{ rotate: [0, -10, 10, 0] }} transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 1 }}>
-            ☕
-          </motion.span>
-          Brew It!
-        </motion.button>
-      )}
-    </div>
-  );
-}
-
-// Stage 6: Completion
-function CompletionStage() {
-  return (
-    <motion.div className="text-center py-12"
-      initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-      transition={{ type: 'spring', stiffness: 200, damping: 15 }}>
-      <motion.div className="text-7xl mb-6"
-        animate={{ scale: [1, 1.2, 1], rotate: [0, -10, 10, 0] }}
-        transition={{ duration: 0.6, repeat: 2, repeatDelay: 0.5 }}>
+    <motion.div
+      className="text-center py-10"
+      initial={{ scale: 0.85, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      transition={{ type: 'spring', stiffness: 200, damping: 15 }}
+    >
+      <motion.div
+        className="text-8xl mb-6"
+        animate={{ scale: [1, 1.18, 0.95, 1.08, 1], rotate: [0, -8, 8, -4, 0] }}
+        transition={{ duration: 0.7, delay: 0.2 }}
+      >
         ☕
       </motion.div>
-      <h2 className="font-fredoka text-4xl font-bold text-duo-green mb-2">Coffee Ready!</h2>
-      <p className="text-graphite font-bold text-sm uppercase tracking-widest">Quest Complete!</p>
+      <motion.h2
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4 }}
+        className="font-fredoka text-5xl font-bold text-amber-700 mb-2"
+      >
+        Coffee Ready!
+      </motion.h2>
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.6 }}
+        className="text-graphite font-black text-sm uppercase tracking-widest mb-6"
+      >
+        Quest Complete!
+      </motion.p>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.8, type: 'spring' }}
+        className="inline-flex items-center gap-2 px-6 py-3 bg-amber-50 border-2 border-amber-200 rounded-2xl"
+      >
+        <span className="text-xl">☕</span>
+        <span className="font-fredoka font-bold text-almost-black text-lg"><motion.span key={xp} initial={{ scale: 1.3, color: '#f59e0b' }} animate={{ scale: 1, color: '#1a1a1a' }} transition={{ type: 'spring', stiffness: 400, damping: 20 }} style={{ display: 'inline-block' }}>{xp}</motion.span> XP Earned!</span>
+      </motion.div>
     </motion.div>
   );
 }
