@@ -3,7 +3,7 @@
 import { useEffect, useState, useMemo, useRef, useCallback } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
-import { Check, Copy, Trophy, Lock, Mail, RefreshCw, Trash2, Frown, CreditCard, Rocket, CircleStop, Timer, CalendarDays, User, Dice5, Globe, ExternalLink, Share2, ChevronLeft, Pencil } from 'lucide-react';
+import { Check, Copy, Trophy, Lock, Mail, RefreshCw, Trash2, Frown, CreditCard, Rocket, CircleStop, Timer, User, Dice5, Globe, ExternalLink, Share2, ChevronLeft, Pencil, X } from 'lucide-react';
 import Link from 'next/link';
 import { CSVLink } from 'react-csv';
 import { useAuthContext } from '@/contexts/AuthContext';
@@ -207,7 +207,11 @@ export default function SurveyDetailPage() {
   const [editedDescription, setEditedDescription] = useState('');
   const [savingDescription, setSavingDescription] = useState(false);
   const titleInputRef = useRef<HTMLInputElement>(null);
-  const expirationInputRef = useRef<HTMLInputElement>(null);
+
+  // Expiration date picker
+  const [showExpirationEdit, setShowExpirationEdit] = useState(false);
+  const [expirationDateInput, setExpirationDateInput] = useState('');
+  const [expirationTimeInput, setExpirationTimeInput] = useState('');
 
   // ── Data fetching ──────────────────────────────────────────────────────────
 
@@ -282,18 +286,32 @@ export default function SurveyDetailPage() {
     } finally { setUpdatingStatus(false); }
   };
 
-  const handleExpirationChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!survey || updatingExpiration) return;
-    const value = e.target.value;
+  const openExpirationEdit = () => {
+    if (survey?.settings?.expiresAt) {
+      const d = new Date(survey.settings.expiresAt);
+      const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
+      setExpirationDateInput(local.toISOString().slice(0, 10));
+      setExpirationTimeInput(local.toISOString().slice(11, 16));
+    } else {
+      setExpirationDateInput('');
+      setExpirationTimeInput('23:59');
+    }
+    setShowExpirationEdit(true);
+  };
+
+  const handleSaveExpiration = async () => {
+    if (!survey || !expirationDateInput || updatingExpiration) return;
+    const combined = `${expirationDateInput}T${expirationTimeInput || '23:59'}`;
+    const parsed = new Date(combined);
+    if (isNaN(parsed.getTime())) { showToast('Invalid date'); return; }
     const prev = survey.settings;
-    const parsed = value ? new Date(value) : undefined;
-    if (parsed && isNaN(parsed.getTime())) { showToast('Invalid date'); return; }
     const updated = { ...survey.settings, expiresAt: parsed };
     setUpdatingExpiration(true);
     setSurvey({ ...survey, settings: updated });
+    setShowExpirationEdit(false);
     try {
       await updateSurvey(surveyId, { settings: updated });
-      showToast(value ? 'Expiration set' : 'Expiration removed');
+      showToast('Expiration set');
     } catch {
       setSurvey({ ...survey, settings: prev });
       showToast('Failed to update expiration');
@@ -534,41 +552,44 @@ export default function SurveyDetailPage() {
       {/* ── Stats row ─────────────────────────────────────────────────────── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {/* Responses — hero metric */}
-        <div className="bg-orange-50 border border-orange-100 rounded-2xl p-4 relative overflow-hidden">
-          <p className="text-[11px] font-bold font-outfit text-orange-400 uppercase tracking-widest mb-1">Responses</p>
-          <p className="text-3xl font-bold text-orange-600 tabular-nums leading-none">{responses.length}</p>
-          {survey.responseLimit && (
-            <div className="mt-2 space-y-1">
-              <div className="h-1 w-full bg-orange-100 rounded-full overflow-hidden">
+        <div className="bg-white border border-[#e5e5e5] rounded-2xl p-4 relative overflow-hidden border-l-[3px] border-l-orange-400">
+          <p className="text-[10px] font-bold font-outfit text-[#afafaf] uppercase tracking-widest mb-2">Responses</p>
+          <p className="text-3xl font-bold text-orange-500 tabular-nums leading-none">{responses.length}</p>
+          {survey.responseLimit ? (
+            <div className="mt-2.5 space-y-1">
+              <div className="h-1 w-full bg-[#f0f0f0] rounded-full overflow-hidden">
                 <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${Math.min((responses.length / survey.responseLimit) * 100, 100)}%` }}
+                  transition={{ duration: 0.6, ease: 'easeOut' }}
                   className="h-full bg-orange-400 rounded-full"
                 />
               </div>
-              <p className="text-[10px] text-orange-400 font-outfit">{survey.responseLimit - responses.length} remaining</p>
+              <p className="text-[10px] text-[#afafaf] font-outfit tabular-nums">{survey.responseLimit - responses.length} of {survey.responseLimit} remaining</p>
             </div>
+          ) : (
+            <p className="text-[10px] text-[#afafaf] font-outfit mt-1">total collected</p>
           )}
         </div>
 
         {/* Completion rate */}
         <div className="bg-white border border-[#e5e5e5] rounded-2xl p-4">
-          <p className="text-[11px] font-bold font-outfit text-[#afafaf] uppercase tracking-widest mb-1">Completion</p>
+          <p className="text-[10px] font-bold font-outfit text-[#afafaf] uppercase tracking-widest mb-2">Completion</p>
           <p className="text-3xl font-bold text-[#3c3c3c] tabular-nums leading-none">100%</p>
           <p className="text-[10px] text-[#afafaf] font-outfit mt-1">of started surveys</p>
         </div>
 
         {/* Avg time */}
         <div className="bg-white border border-[#e5e5e5] rounded-2xl p-4">
-          <p className="text-[11px] font-bold font-outfit text-[#afafaf] uppercase tracking-widest mb-1">Avg. time</p>
+          <p className="text-[10px] font-bold font-outfit text-[#afafaf] uppercase tracking-widest mb-2">Avg. time</p>
           <p className="text-3xl font-bold text-[#3c3c3c] tabular-nums leading-none">{responses.length > 0 ? formatDuration(avgCompletionTime) : '—'}</p>
           <p className="text-[10px] text-[#afafaf] font-outfit mt-1">per respondent</p>
         </div>
 
         {/* Created */}
         <div className="bg-white border border-[#e5e5e5] rounded-2xl p-4">
-          <p className="text-[11px] font-bold font-outfit text-[#afafaf] uppercase tracking-widest mb-1">Created</p>
-          <p className="text-base font-bold text-[#3c3c3c] leading-tight">{formatDate(survey.createdAt)}</p>
+          <p className="text-[10px] font-bold font-outfit text-[#afafaf] uppercase tracking-widest mb-2">Created</p>
+          <p className="text-sm font-bold text-[#3c3c3c] leading-tight">{formatDate(survey.createdAt)}</p>
           <p className="text-[10px] text-[#afafaf] font-outfit mt-1">launch date</p>
         </div>
       </div>
@@ -681,50 +702,95 @@ export default function SurveyDetailPage() {
             </div>
 
             {/* Expiration */}
-            <div className="flex items-center gap-3 p-4">
-              <div className={`w-9 h-9 flex-shrink-0 rounded-xl flex items-center justify-center ${survey.settings?.expiresAt ? 'bg-orange-50' : 'bg-[#f5f5f5]'}`}>
-                <Timer className={`w-4 h-4 ${survey.settings?.expiresAt ? 'text-orange-500' : 'text-[#afafaf]'}`} />
+            <div className="p-4 space-y-3">
+              <div className="flex items-center gap-3">
+                <div className={`w-9 h-9 flex-shrink-0 rounded-xl flex items-center justify-center ${survey.settings?.expiresAt ? 'bg-orange-50' : 'bg-[#f5f5f5]'}`}>
+                  <Timer className={`w-4 h-4 ${survey.settings?.expiresAt ? 'text-orange-500' : 'text-[#afafaf]'}`} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-bold font-outfit text-[#3c3c3c]">Expiration</p>
+                  <p className="text-xs font-outfit truncate">
+                    {survey.settings?.expiresAt
+                      ? (new Date(survey.settings.expiresAt) < new Date()
+                        ? <span className="text-red-500">Expired</span>
+                        : <span className="text-[#afafaf]">{formatDateTime(new Date(survey.settings.expiresAt))}</span>)
+                      : <span className="text-[#c8c8c8]">No expiration set</span>}
+                  </p>
+                </div>
+                <div className="flex items-center gap-1 flex-shrink-0">
+                  {!showExpirationEdit && (
+                    <button
+                      onClick={openExpirationEdit}
+                      disabled={updatingExpiration}
+                      className="text-xs font-bold font-outfit text-orange-500 hover:text-orange-600 px-2.5 py-1.5 rounded-lg hover:bg-orange-50 transition-all cursor-pointer"
+                    >
+                      {survey.settings?.expiresAt ? 'Edit' : 'Set'}
+                    </button>
+                  )}
+                  {survey.settings?.expiresAt && !showExpirationEdit && (
+                    <button
+                      onClick={handleClearExpiration}
+                      disabled={updatingExpiration}
+                      aria-label="Remove expiration"
+                      className="w-7 h-7 flex items-center justify-center text-[#c8c8c8] hover:text-red-400 hover:bg-red-50 rounded-lg transition-all cursor-pointer"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-bold font-outfit text-[#3c3c3c]">Expiration</p>
-                <p className="text-xs text-[#afafaf] font-outfit truncate">
-                  {survey.settings?.expiresAt
-                    ? (new Date(survey.settings.expiresAt) < new Date() ? 'Expired' : `Expires ${formatDateTime(new Date(survey.settings.expiresAt))}`)
-                    : 'No expiration'}
-                </p>
-              </div>
-              <div className="flex items-center gap-1 flex-shrink-0">
-                <input
-                  ref={expirationInputRef}
-                  type="datetime-local"
-                  className="sr-only"
-                  value={survey.settings?.expiresAt ? (() => {
-                    const d = new Date(survey.settings.expiresAt!);
-                    const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
-                    local.setSeconds(0); local.setMilliseconds(0);
-                    return local.toISOString().slice(0, 16);
-                  })() : ''}
-                  onChange={handleExpirationChange}
-                  disabled={updatingExpiration}
-                  min={new Date().toISOString().slice(0, 16)}
-                />
-                <button
-                  onClick={() => expirationInputRef.current?.showPicker()}
-                  disabled={updatingExpiration}
-                  className="w-8 h-8 flex items-center justify-center bg-[#f5f5f5] border border-[#e5e5e5] rounded-lg hover:border-orange-300 hover:text-orange-500 text-[#afafaf] transition-all cursor-pointer"
-                >
-                  <CalendarDays className="w-3.5 h-3.5" />
-                </button>
-                {survey.settings?.expiresAt && (
-                  <button
-                    onClick={handleClearExpiration}
-                    disabled={updatingExpiration}
-                    className="w-8 h-8 flex items-center justify-center bg-[#f5f5f5] border border-[#e5e5e5] rounded-lg hover:border-red-300 hover:text-red-500 text-[#afafaf] transition-all cursor-pointer"
+
+              {/* Inline date/time picker panel */}
+              <AnimatePresence>
+                {showExpirationEdit && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.18, ease: 'easeOut' }}
+                    className="overflow-hidden"
                   >
-                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-                  </button>
+                    <div className="bg-[#fafafa] border border-[#e5e5e5] rounded-xl p-3 space-y-3">
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-bold font-outfit text-[#afafaf] uppercase tracking-widest block">Date</label>
+                          <input
+                            type="date"
+                            value={expirationDateInput}
+                            onChange={e => setExpirationDateInput(e.target.value)}
+                            min={new Date().toISOString().slice(0, 10)}
+                            className="w-full px-3 py-2 text-sm font-outfit text-[#3c3c3c] bg-white border border-[#e5e5e5] rounded-xl focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-400/30 transition-all cursor-pointer"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-bold font-outfit text-[#afafaf] uppercase tracking-widest block">Time</label>
+                          <input
+                            type="time"
+                            value={expirationTimeInput}
+                            onChange={e => setExpirationTimeInput(e.target.value)}
+                            className="w-full px-3 py-2 text-sm font-outfit text-[#3c3c3c] bg-white border border-[#e5e5e5] rounded-xl focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-400/30 transition-all cursor-pointer"
+                          />
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={handleSaveExpiration}
+                          disabled={!expirationDateInput || updatingExpiration}
+                          className="flex-1 py-2 bg-orange-500 hover:bg-orange-600 text-white font-bold font-outfit text-xs rounded-xl shadow-[0_2px_0_#c2410c] active:translate-y-[1px] active:shadow-none transition-all disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1"
+                        >
+                          {updatingExpiration ? 'Saving…' : 'Save'}
+                        </button>
+                        <button
+                          onClick={() => setShowExpirationEdit(false)}
+                          className="px-4 py-2 bg-white border border-[#e5e5e5] text-[#777777] font-bold font-outfit text-xs rounded-xl hover:bg-[#f5f5f5] transition-all cursor-pointer"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  </motion.div>
                 )}
-              </div>
+              </AnimatePresence>
             </div>
           </div>
 
@@ -813,21 +879,23 @@ export default function SurveyDetailPage() {
         <div className="flex-1 min-w-0">
 
           {/* Tab bar */}
-          <div className="flex items-center gap-1 border-b border-[#e5e5e5] mb-4">
+          <div className="flex items-center gap-0.5 border-b border-[#e5e5e5] mb-5">
             {TABS.map(tab => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-bold font-outfit border-b-2 -mb-px transition-colors focus-visible:outline-none rounded-t-lg ${
+                className={`flex items-center gap-2 px-4 py-2.5 text-sm font-bold font-outfit border-b-2 -mb-px transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1 rounded-t-lg ${
                   activeTab === tab.id
                     ? 'border-[#3c3c3c] text-[#3c3c3c]'
-                    : 'border-transparent text-[#afafaf] hover:text-[#777777]'
+                    : 'border-transparent text-[#afafaf] hover:text-[#555555] hover:border-[#e5e5e5]'
                 }`}
               >
                 {tab.label}
                 {tab.count !== undefined && (
-                  <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${
-                    activeTab === tab.id ? 'bg-[#f0f0f0] text-[#777777]' : 'bg-[#f5f5f5] text-[#c8c8c8]'
+                  <span className={`text-[10px] px-1.5 py-0.5 rounded-md font-bold tabular-nums transition-colors ${
+                    activeTab === tab.id
+                      ? 'bg-[#3c3c3c] text-white'
+                      : 'bg-[#f0f0f0] text-[#c8c8c8]'
                   }`}>
                     {tab.count}
                   </span>
