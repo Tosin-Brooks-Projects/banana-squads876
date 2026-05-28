@@ -8,7 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Marquee } from '@/components/ui/3d-testimonials';
 import { Navbar1 } from '@/components/ui/navbar-1';
-import { HeroSection03 } from '@/components/ui/hero-03';
+import { WebGLShader } from '@/components/ui/web-gl-shader';
 import { CallToAction, FooterLinks } from '@/components/ui/cta-3';
 import BlurText from '@/components/ui/BlurText';
 import DotField from '@/components/ui/DotField';
@@ -377,10 +377,59 @@ export default function Home() {
 
       {/* SECTION 1: HERO */}
       <section className="lg:snap-start min-h-screen lg:h-screen flex flex-col justify-between bg-white relative overflow-hidden border-b border-[#e5e5e5] pt-16">
-        <div className="flex-1 flex items-center">
-          <HeroSection03 />
+        {/* Shader background */}
+        <WebGLShader />
+
+        {/* Radial scrim — keeps text readable, lets waves bleed through at edges */}
+        <div
+          className="absolute inset-0 z-[1] pointer-events-none"
+          style={{
+            background: 'radial-gradient(ellipse 70% 65% at 50% 50%, rgba(255,255,255,0.96) 30%, rgba(255,255,255,0.7) 60%, transparent 100%)',
+          }}
+        />
+
+        {/* Centered content */}
+        <div className="relative z-10 flex-1 flex items-center justify-center px-6">
+          <div className="flex flex-col items-center text-center gap-6 max-w-3xl">
+            {/* Live badge */}
+            <div className="flex items-center gap-1.5">
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
+                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-green-400" />
+              </span>
+              <p className="text-xs text-green-600 font-outfit font-medium">Free to start — no credit card</p>
+            </div>
+
+            {/* Headline */}
+            <h1 className="text-[#3c3c3c] font-fredoka font-bold tracking-tight leading-[0.95] text-[clamp(3rem,9vw,7rem)]">
+              Surveys people<br />
+              <span className="text-orange-500">actually finish.</span>
+            </h1>
+
+            {/* Subtext */}
+            <p className="text-[#555555] font-outfit text-base md:text-lg max-w-xl leading-relaxed">
+              Turn boring forms into immersive adventures. AI builds your questions.
+              Respondents play through them. You get 3× more completions.
+            </p>
+
+            {/* CTAs */}
+            <div className="flex flex-col sm:flex-row items-center gap-3 pt-2">
+              <Link href="/login">
+                <button className="px-7 py-3.5 bg-orange-500 hover:bg-orange-600 text-white font-bold font-outfit rounded-xl shadow-[0_4px_0_#c2410c] active:translate-y-[2px] active:shadow-none transition-all text-sm flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white cursor-pointer">
+                  Start for free <ArrowRight className="w-4 h-4" />
+                </button>
+              </Link>
+              <Link href="/demo">
+                <button className="px-7 py-3.5 bg-white hover:bg-[#f5f5f5] text-[#3c3c3c] font-bold font-outfit rounded-xl border border-[#e5e5e5] hover:border-[#c8c8c8] transition-all text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3c3c3c]/20 focus-visible:ring-offset-1 cursor-pointer">
+                  See a demo
+                </button>
+              </Link>
+            </div>
+          </div>
         </div>
-        <div className="hidden lg:flex pb-6 justify-center text-xs text-[#afafaf] font-outfit gap-1 select-none">
+
+        {/* Scroll hint */}
+        <div className="relative z-10 hidden lg:flex pb-6 justify-center text-xs text-[#afafaf] font-outfit gap-1 select-none">
           <motion.span
             animate={{ y: [0, 4, 0], opacity: [0.5, 1, 0.5] }}
             transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}

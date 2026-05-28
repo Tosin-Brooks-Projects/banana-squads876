@@ -3723,6 +3723,34 @@
       "fileType": "code",
       "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx",
       "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx:271"
+    },
+    {
+      "id": "file::web_gl_shader",
+      "label": "web-gl-shader.tsx",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/web-gl-shader.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/web-gl-shader.tsx:1"
+    },
+    {
+      "id": "web-gl-shader::initscene",
+      "label": "initScene",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/web-gl-shader.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/web-gl-shader.tsx:72"
+    },
+    {
+      "id": "web-gl-shader::animate",
+      "label": "animate",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/web-gl-shader.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/web-gl-shader.tsx:114"
+    },
+    {
+      "id": "web-gl-shader::handleresize",
+      "label": "handleResize",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/web-gl-shader.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/web-gl-shader.tsx:122"
     }
   ],
   "edges": [
@@ -7793,12 +7821,39 @@
       "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx",
       "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx:271",
       "weight": 1
+    },
+    {
+      "source": "file::web_gl_shader",
+      "target": "web-gl-shader::initscene",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/web-gl-shader.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/web-gl-shader.tsx:72",
+      "weight": 1
+    },
+    {
+      "source": "file::web_gl_shader",
+      "target": "web-gl-shader::animate",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/web-gl-shader.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/web-gl-shader.tsx:114",
+      "weight": 1
+    },
+    {
+      "source": "file::web_gl_shader",
+      "target": "web-gl-shader::handleresize",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/web-gl-shader.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/web-gl-shader.tsx:122",
+      "weight": 1
     }
   ],
   "metadata": {
-    "files": 94,
-    "nodes": 532,
-    "edges": 452,
-    "builtAt": "2026-05-28T14:13:52.950Z"
+    "files": 95,
+    "nodes": 536,
+    "edges": 455,
+    "builtAt": "2026-05-28T14:28:14.503Z"
   }
 }
