@@ -36,7 +36,7 @@ export default function SurveySuccessModal({
 
   const [copied, setCopied] = useState(false);
 
-  const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || 'https://unboringsurveys.com').replace(/\/$/, '');
+  const baseUrl = (typeof window !== 'undefined' ? window.location.origin : (process.env.NEXT_PUBLIC_APP_URL || 'https://banana-squads876.vercel.app')).replace(/\/$/, '');
   const fullUrl = `${baseUrl}/${surveyUrl}`;
 
   const copyToClipboard = async () => {

@@ -3,7 +3,7 @@
 import { useEffect, useState, useMemo, useRef, useCallback } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
-import { Check, Copy, Trophy, Lock, Mail, RefreshCw, Trash2, Frown, CreditCard, Rocket, CircleStop, Timer, CalendarDays, User, Dice5 } from 'lucide-react';
+import { Check, Copy, Trophy, Lock, Mail, RefreshCw, Trash2, Frown, CreditCard, Rocket, CircleStop, Timer, CalendarDays, User, Dice5, Globe, ExternalLink, Share2, ChevronLeft, Pencil } from 'lucide-react';
 import Link from 'next/link';
 import { CSVLink } from 'react-csv';
 import { useAuthContext } from '@/contexts/AuthContext';
@@ -21,6 +21,7 @@ import html2canvas from 'html2canvas';
 
 const ITEMS_PER_PAGE = 50;
 const CSV_EXPORT_TIERS: PricingTier[] = ['starter', 'pro', 'business', 'enterprise'];
+type TabId = 'overview' | 'questions' | 'responses';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -72,7 +73,7 @@ function Toast({ message, show, onClose }: { message: string; show: boolean; onC
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 40 }}
-            className="flex items-center gap-2 bg-gray-900 text-white text-sm font-bold px-4 py-3 rounded-2xl shadow-xl pointer-events-auto"
+            className="flex items-center gap-2 bg-[#3c3c3c] text-white text-sm font-bold font-outfit px-4 py-3 rounded-2xl shadow-xl pointer-events-auto"
           >
             <span className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
               <Check className="w-3 h-3 text-white" strokeWidth={3} />
@@ -86,27 +87,19 @@ function Toast({ message, show, onClose }: { message: string; show: boolean; onC
 }
 
 function LoadingSkeleton() {
-  const reducedMotion = useReducedMotion();
   return (
-    <div className="flex flex-col items-center justify-center py-24 gap-6">
-      <motion.div
-        animate={reducedMotion ? {} : { y: [0, -16, 0], rotate: [0, 5, -5, 0] }}
-        transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-      >
-        <img src="/orange-kea-mascot.png" alt="Loading" className="w-24 h-24 drop-shadow-xl" />
-      </motion.div>
-      <div className="text-center">
-        <p className="font-black text-gray-900 text-lg">Gathering your results…</p>
-        <div className="flex gap-1.5 justify-center mt-3">
-          {[0, 1, 2].map(i => (
-            <motion.div
-              key={i}
-              animate={{ opacity: [0.2, 1, 0.2] }}
-              transition={{ duration: 1, repeat: Infinity, delay: i * 0.2 }}
-              className="w-2 h-2 bg-orange-500 rounded-full"
-            />
-          ))}
+    <div className="w-full max-w-5xl mx-auto px-4 lg:px-0 pt-8 space-y-4 animate-pulse">
+      <div className="h-8 bg-[#f0f0f0] rounded-xl w-48" />
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        {[...Array(4)].map((_, i) => <div key={i} className="h-24 bg-[#f0f0f0] rounded-2xl" />)}
+      </div>
+      <div className="h-14 bg-[#f0f0f0] rounded-2xl" />
+      <div className="flex gap-4">
+        <div className="w-72 shrink-0 space-y-3">
+          <div className="h-48 bg-[#f0f0f0] rounded-2xl" />
+          <div className="h-32 bg-[#f0f0f0] rounded-2xl" />
         </div>
+        <div className="flex-1 h-96 bg-[#f0f0f0] rounded-2xl" />
       </div>
     </div>
   );
@@ -114,12 +107,12 @@ function LoadingSkeleton() {
 
 function StatusBadge({ status }: { status: string }) {
   const styles: Record<string, string> = {
-    published: 'bg-green-100 text-green-700 border-green-200',
-    closed:    'bg-red-100 text-red-700 border-red-200',
-    draft:     'bg-yellow-100 text-yellow-700 border-yellow-200',
+    published: 'bg-green-50 text-green-700 border-green-200',
+    closed:    'bg-red-50 text-red-600 border-red-200',
+    draft:     'bg-[#f5f5f5] text-[#777777] border-[#e5e5e5]',
   };
   return (
-    <span className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wide border-2 ${styles[status] ?? styles.draft}`}>
+    <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold font-outfit uppercase tracking-widest border ${styles[status] ?? styles.draft}`}>
       {status}
     </span>
   );
@@ -136,17 +129,19 @@ function CopyButton({ text }: { text: string }) {
     <button
       onClick={copy}
       aria-label={copied ? 'Copied!' : 'Copy link'}
-      className="flex-shrink-0 w-8 h-8 rounded-lg bg-white border-2 border-gray-200 flex items-center justify-center text-gray-400 hover:text-orange-500 hover:border-orange-300 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1"
+      className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px] font-bold font-outfit transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1 ${
+        copied
+          ? 'bg-green-500 text-white'
+          : 'bg-white border border-[#e5e5e5] text-[#777777] hover:border-orange-300 hover:text-orange-500'
+      }`}
     >
-      {copied
-        ? <Check className="w-3.5 h-3.5 text-green-500" strokeWidth={3} />
-        : <Copy className="w-3.5 h-3.5" />
-      }
+      {copied ? <Check className="w-3.5 h-3.5" strokeWidth={2.5} /> : <Copy className="w-3.5 h-3.5" strokeWidth={2} />}
+      {copied ? 'Copied!' : 'Copy'}
     </button>
   );
 }
 
-function IconButton({ onClick, title, children, danger }: {
+function IconBtn({ onClick, title, children, danger }: {
   onClick: () => void; title: string; children: React.ReactNode; danger?: boolean;
 }) {
   return (
@@ -154,10 +149,10 @@ function IconButton({ onClick, title, children, danger }: {
       onClick={onClick}
       aria-label={title}
       title={title}
-      className={`w-10 h-10 flex items-center justify-center rounded-xl border-2 transition-all active:translate-y-0.5 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 ${
+      className={`w-9 h-9 flex items-center justify-center rounded-xl border transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 ${
         danger
-          ? 'bg-red-50 border-red-100 text-red-400 hover:bg-red-500 hover:text-white hover:border-red-500 focus-visible:ring-red-500'
-          : 'bg-white border-gray-200 text-gray-500 hover:border-orange-300 hover:text-orange-500 focus-visible:ring-orange-500'
+          ? 'bg-white border-[#e5e5e5] text-[#afafaf] hover:bg-red-50 hover:text-red-500 hover:border-red-200 focus-visible:ring-red-400'
+          : 'bg-white border-[#e5e5e5] text-[#afafaf] hover:border-orange-300 hover:text-orange-500 focus-visible:ring-orange-500'
       }`}
     >
       {children}
@@ -179,6 +174,8 @@ export default function SurveyDetailPage() {
   const [responses, setResponses] = useState<SurveyResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const [activeTab, setActiveTab] = useState<TabId>('overview');
 
   // UI state
   const [toast, setToast] = useState({ show: false, msg: '' });
@@ -457,526 +454,587 @@ export default function SurveyDetailPage() {
   if (error || !survey) {
     return (
       <div className="flex flex-col items-center justify-center py-24 text-center gap-4">
-        <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto"><Frown className="w-8 h-8 text-gray-400" /></div>
-        <h2 className="text-xl font-black text-gray-900">{error || 'Survey not found'}</h2>
-        <p className="text-gray-500 text-sm">This survey doesn&apos;t exist or you don&apos;t have access.</p>
-        <Link href="/dashboard" className="mt-2 px-6 py-3 bg-orange-500 text-white font-black rounded-xl border-b-4 border-orange-700 active:border-b-0 active:translate-y-1 transition-all text-sm">
-          Back to Dashboard
+        <div className="w-16 h-16 bg-[#f5f5f5] rounded-2xl flex items-center justify-center mx-auto">
+          <Frown className="w-8 h-8 text-[#afafaf]" />
+        </div>
+        <h2 className="text-xl font-bold font-outfit text-[#3c3c3c]">{error || 'Survey not found'}</h2>
+        <p className="text-[#777777] text-sm font-outfit">This survey doesn&apos;t exist or you don&apos;t have access.</p>
+        <Link href="/dashboard" className="mt-2 px-6 py-3 bg-orange-500 text-white font-bold font-outfit rounded-xl shadow-[0_3px_0_#c2410c] active:translate-y-[2px] active:shadow-none transition-all text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1">
+          Back to dashboard
         </Link>
       </div>
     );
   }
 
+  const TABS: { id: TabId; label: string; count?: number }[] = [
+    { id: 'overview',   label: 'Overview' },
+    { id: 'questions',  label: 'Questions', count: survey.questions.length },
+    { id: 'responses',  label: 'Responses', count: responses.length },
+  ];
+
   // ── JSX ────────────────────────────────────────────────────────────────────
 
   return (
-    <div className="w-full space-y-3">
+    <div className="w-full max-w-5xl mx-auto px-4 lg:px-0 pb-16 space-y-4">
 
-      {/* ── Hero card ────────────────────────────────────────────────────── */}
-      <div className="bg-white rounded-2xl border-2 border-gray-100 p-4">
+      {/* ── Page header ───────────────────────────────────────────────────── */}
+      <div className="flex items-center gap-2 pt-2 min-w-0">
+        <Link
+          href="/dashboard"
+          className="flex items-center gap-1 text-[#afafaf] hover:text-[#3c3c3c] font-outfit text-sm transition-colors flex-shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1 rounded-lg"
+        >
+          <ChevronLeft className="w-4 h-4" />
+          <span className="hidden sm:inline">All surveys</span>
+        </Link>
 
-        {/* Top row: back + status + actions */}
-        <div className="flex items-center gap-2 mb-4">
-          <Link href="/dashboard" className="flex items-center gap-1 text-gray-500 font-bold text-sm mr-auto min-w-0 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1">
-            <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
-            </svg>
-            <span className="truncate">Back</span>
-          </Link>
-          <StatusBadge status={survey.status} />
-          <IconButton onClick={handleRefresh} title="Refresh">
-            <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-          </IconButton>
-          <IconButton onClick={() => setShowDeleteModal(true)} title="Delete survey" danger>
-            <Trash2 className="w-4 h-4" />
-          </IconButton>
-        </div>
+        <span className="text-[#e5e5e5] flex-shrink-0">/</span>
 
-        {/* Survey identity — centered */}
-        <div className="flex flex-col items-center text-center gap-3">
-          <div className="w-20 h-20 rounded-3xl bg-orange-50 border-4 border-orange-100 flex items-center justify-center shadow-[0_4px_0_rgba(249,115,22,0.2)]">
-            <img src={getAdventureImage(survey.adventureType)} alt="" className="w-14 h-14 object-contain" />
-          </div>
-          <span className="px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-[10px] font-black uppercase tracking-wide border border-orange-200">
-            {getAdventureLabel(survey.adventureType)}
-          </span>
-
-          {isEditingTitle ? (
-            <div className="flex items-center gap-2 w-full max-w-xs">
-              <input
-                ref={titleInputRef}
-                autoFocus
-                value={editedTitle}
-                onChange={e => setEditedTitle(e.target.value)}
-                onKeyDown={e => { if (e.key === 'Enter') handleSaveTitle(); if (e.key === 'Escape') setIsEditingTitle(false); }}
-                className="flex-1 text-center text-lg font-black bg-white border-2 border-orange-400 rounded-xl px-3 py-1.5 focus:outline-none min-w-0"
-                disabled={savingTitle}
-              />
-              <button onClick={handleSaveTitle} disabled={savingTitle} className="p-1.5 bg-green-100 text-green-600 rounded-lg border border-green-200">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
-              </button>
-              <button onClick={() => setIsEditingTitle(false)} className="p-1.5 bg-gray-100 text-gray-500 rounded-lg border border-gray-200">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>
-              </button>
-            </div>
-          ) : (
-            <button
-              onClick={() => { setEditedTitle(survey.title); setIsEditingTitle(true); }}
-              className="group flex items-center gap-2 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1"
-            >
-              <h1 className="text-xl font-black text-gray-900 group-hover:text-orange-600 transition-colors">
-                {survey.title || 'Untitled Survey'}
-              </h1>
-              <svg className="w-3.5 h-3.5 text-gray-300 group-hover:text-orange-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-              </svg>
+        {/* Editable title */}
+        {isEditingTitle ? (
+          <div className="flex items-center gap-2 flex-1 min-w-0">
+            <input
+              ref={titleInputRef}
+              autoFocus
+              value={editedTitle}
+              onChange={e => setEditedTitle(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter') handleSaveTitle(); if (e.key === 'Escape') setIsEditingTitle(false); }}
+              className="flex-1 text-sm font-bold font-outfit bg-white border border-orange-400 rounded-xl px-3 py-1.5 focus:outline-none min-w-0 focus-visible:ring-2 focus-visible:ring-orange-500"
+              disabled={savingTitle}
+            />
+            <button onClick={handleSaveTitle} disabled={savingTitle} className="w-7 h-7 bg-green-50 border border-green-200 text-green-600 rounded-lg flex items-center justify-center flex-shrink-0 cursor-pointer">
+              <Check className="w-3.5 h-3.5" strokeWidth={3} />
             </button>
-          )}
-
-          <p className="text-gray-500 text-sm">
-            <span className="text-gray-900 font-black text-xl">{responses.length}</span>
-            {' '}responses collected
-          </p>
-
-          {/* Action pills */}
-          <div className="flex flex-wrap justify-center gap-2 pt-1">
-            {responses.length > 0 && (
-              <button onClick={handlePickWinner} className="flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 border-2 border-orange-200 text-orange-600 font-black text-xs rounded-xl hover:bg-orange-100 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1">
-                <Trophy className="w-3.5 h-3.5" /> Pick Winner
-              </button>
-            )}
-            {responses.length > 0 && (
-              CSV_EXPORT_TIERS.includes(survey.pricingTier || 'free') ? (
-                <CSVLink data={csvData} filename={csvFilename} className="flex items-center gap-1.5 px-3 py-1.5 bg-[#fafafa] border-2 border-[#e5e5e5] text-[#777777] font-black text-xs rounded-xl hover:border-orange-300 hover:text-orange-600 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1">
-                  ↓ Export CSV
-                </CSVLink>
-              ) : (
-                <button disabled className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 border-2 border-gray-200 text-gray-400 font-black text-xs rounded-xl opacity-60 cursor-not-allowed">
-                  <Lock className="w-3.5 h-3.5" /> CSV
-                </button>
-              )
-            )}
+            <button onClick={() => setIsEditingTitle(false)} className="w-7 h-7 bg-[#f5f5f5] border border-[#e5e5e5] text-[#afafaf] rounded-lg flex items-center justify-center flex-shrink-0 cursor-pointer">
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
           </div>
+        ) : (
+          <button
+            onClick={() => { setEditedTitle(survey.title); setIsEditingTitle(true); }}
+            className="group flex items-center gap-1.5 min-w-0 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1"
+          >
+            <h1 className="text-sm font-bold font-outfit text-[#3c3c3c] truncate group-hover:text-orange-600 transition-colors">
+              {survey.title || 'Untitled survey'}
+            </h1>
+            <Pencil className="w-3 h-3 text-[#c8c8c8] group-hover:text-orange-400 flex-shrink-0 transition-colors" />
+          </button>
+        )}
+
+        <div className="ml-auto flex items-center gap-2 flex-shrink-0">
+          <StatusBadge status={survey.status} />
+          <IconBtn onClick={handleRefresh} title="Refresh data">
+            <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+          </IconBtn>
+          <IconBtn onClick={() => setShowDeleteModal(true)} title="Delete survey" danger>
+            <Trash2 className="w-4 h-4" />
+          </IconBtn>
         </div>
       </div>
 
-      {/* ── Survey URL card ───────────────────────────────────────────────── */}
-      <div className="bg-amber-50 rounded-2xl border-2 border-amber-200 p-4">
-        <p className="text-amber-700 text-[10px] font-black uppercase tracking-wide mb-2">Public Survey Link</p>
-        <div className="flex items-center gap-2 mb-3">
-          <code className="flex-1 min-w-0 text-sm font-bold text-amber-700 truncate bg-white/80 px-3 py-2 rounded-xl border-2 border-amber-200/50">
-            {surveyUrl}
-          </code>
-          <CopyButton text={surveyUrl} />
+      {/* ── Stats row ─────────────────────────────────────────────────────── */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        {/* Responses — hero metric */}
+        <div className="bg-orange-50 border border-orange-100 rounded-2xl p-4 relative overflow-hidden">
+          <p className="text-[11px] font-bold font-outfit text-orange-400 uppercase tracking-widest mb-1">Responses</p>
+          <p className="text-3xl font-bold text-orange-600 tabular-nums leading-none">{responses.length}</p>
+          {survey.responseLimit && (
+            <div className="mt-2 space-y-1">
+              <div className="h-1 w-full bg-orange-100 rounded-full overflow-hidden">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${Math.min((responses.length / survey.responseLimit) * 100, 100)}%` }}
+                  className="h-full bg-orange-400 rounded-full"
+                />
+              </div>
+              <p className="text-[10px] text-orange-400 font-outfit">{survey.responseLimit - responses.length} remaining</p>
+            </div>
+          )}
         </div>
-        <div className="flex gap-2">
-          <Link href={surveyUrl} target="_blank" className="flex-1 py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-black text-sm rounded-xl border-b-4 border-amber-800 active:border-b-0 active:translate-y-1 transition-all text-center block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-1">
-            Open Survey
+
+        {/* Completion rate */}
+        <div className="bg-white border border-[#e5e5e5] rounded-2xl p-4">
+          <p className="text-[11px] font-bold font-outfit text-[#afafaf] uppercase tracking-widest mb-1">Completion</p>
+          <p className="text-3xl font-bold text-[#3c3c3c] tabular-nums leading-none">100%</p>
+          <p className="text-[10px] text-[#afafaf] font-outfit mt-1">of started surveys</p>
+        </div>
+
+        {/* Avg time */}
+        <div className="bg-white border border-[#e5e5e5] rounded-2xl p-4">
+          <p className="text-[11px] font-bold font-outfit text-[#afafaf] uppercase tracking-widest mb-1">Avg. time</p>
+          <p className="text-3xl font-bold text-[#3c3c3c] tabular-nums leading-none">{responses.length > 0 ? formatDuration(avgCompletionTime) : '—'}</p>
+          <p className="text-[10px] text-[#afafaf] font-outfit mt-1">per respondent</p>
+        </div>
+
+        {/* Created */}
+        <div className="bg-white border border-[#e5e5e5] rounded-2xl p-4">
+          <p className="text-[11px] font-bold font-outfit text-[#afafaf] uppercase tracking-widest mb-1">Created</p>
+          <p className="text-base font-bold text-[#3c3c3c] leading-tight">{formatDate(survey.createdAt)}</p>
+          <p className="text-[10px] text-[#afafaf] font-outfit mt-1">launch date</p>
+        </div>
+      </div>
+
+      {/* ── Share strip ───────────────────────────────────────────────────── */}
+      <div className="bg-white border border-[#e5e5e5] rounded-2xl px-4 py-3 flex items-center gap-3">
+        <Globe className="w-4 h-4 text-[#afafaf] flex-shrink-0" />
+        <code className="flex-1 min-w-0 text-[13px] font-outfit text-[#3c3c3c] truncate">{surveyUrl}</code>
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <CopyButton text={surveyUrl} />
+          <Link
+            href={surveyUrl}
+            target="_blank"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-[#e5e5e5] text-[#777777] hover:border-orange-300 hover:text-orange-500 rounded-lg text-[12px] font-bold font-outfit transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1"
+          >
+            <ExternalLink className="w-3.5 h-3.5" strokeWidth={2} />
+            <span className="hidden sm:inline">Open</span>
           </Link>
           <button
             onClick={() => {
               if (navigator.share) navigator.share({ title: survey.title, url: surveyUrl });
               else { navigator.clipboard.writeText(surveyUrl); showToast('Link copied!'); }
             }}
-            className="flex-1 py-2.5 bg-white border-2 border-amber-200 text-amber-700 font-black text-sm rounded-xl hover:bg-amber-100 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-1"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-[#e5e5e5] text-[#777777] hover:border-orange-300 hover:text-orange-500 rounded-lg text-[12px] font-bold font-outfit transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1"
           >
-            Share
+            <Share2 className="w-3.5 h-3.5" strokeWidth={2} />
+            <span className="hidden sm:inline">Share</span>
           </button>
         </div>
       </div>
 
-      {/* ── Payment banner ─────────────────────────────────────────────────── */}
-      {survey.paymentStatus === 'unpaid' && survey.pricingTier && survey.pricingTier !== 'free' && (
-        <div className="bg-white rounded-2xl border-2 border-amber-200 p-4">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center flex-shrink-0"><CreditCard className="w-5 h-5 text-amber-600" /></div>
-            <div className="min-w-0">
-              <p className="font-black text-gray-900 text-sm">Payment Required</p>
-              <p className="text-xs text-gray-500">Complete payment to publish this survey.</p>
+      {/* ── Two-column body ───────────────────────────────────────────────── */}
+      <div className="flex flex-col lg:flex-row gap-4 items-start">
+
+        {/* LEFT SIDEBAR */}
+        <div className="w-full lg:w-64 xl:w-72 shrink-0 space-y-3">
+
+          {/* Survey identity */}
+          <div className="bg-white border border-[#e5e5e5] rounded-2xl p-4 text-center space-y-3">
+            <div className="w-16 h-16 bg-orange-50 border border-orange-100 rounded-2xl flex items-center justify-center mx-auto">
+              <img src={getAdventureImage(survey.adventureType)} alt="" className="w-10 h-10 object-contain" />
             </div>
-          </div>
-          <div className="grid grid-cols-2 gap-2 mb-4">
-            {(Object.values(PRICING_TIERS) as Array<{ id: PricingTier; name: string; price: number; responseLimit: number }>)
-              .filter(t => t.id !== 'free')
-              .map(tier => {
-                const selected = (selectedPaymentTier || survey.pricingTier) === tier.id;
-                return (
+            <span className="inline-block px-2.5 py-1 rounded-full bg-orange-50 text-orange-600 text-[10px] font-bold font-outfit uppercase tracking-widest border border-orange-100">
+              {getAdventureLabel(survey.adventureType)}
+            </span>
+
+            {/* Description */}
+            <div className="text-left">
+              {isEditingDescription ? (
+                <div className="space-y-2">
+                  <textarea
+                    autoFocus
+                    value={editedDescription}
+                    onChange={e => setEditedDescription(e.target.value)}
+                    rows={3}
+                    className="w-full border border-orange-400 rounded-xl px-3 py-2 text-sm font-outfit resize-none focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
+                    disabled={savingDescription}
+                    placeholder="Describe your survey…"
+                  />
+                  <div className="flex gap-2">
+                    <button onClick={handleSaveDescription} disabled={savingDescription} className="flex-1 py-2 bg-orange-500 text-white font-bold font-outfit text-xs rounded-xl shadow-[0_2px_0_#c2410c] active:translate-y-[1px] active:shadow-none transition-all cursor-pointer">
+                      {savingDescription ? 'Saving…' : 'Save'}
+                    </button>
+                    <button onClick={() => setIsEditingDescription(false)} className="px-3 py-2 bg-[#f5f5f5] text-[#777777] font-bold font-outfit text-xs rounded-xl cursor-pointer">Cancel</button>
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  <p className="text-sm text-[#777777] font-outfit leading-relaxed mb-1.5">
+                    {survey.description || <span className="italic text-[#c8c8c8]">No description.</span>}
+                  </p>
                   <button
-                    key={tier.id}
-                    onClick={() => setSelectedPaymentTier(tier.id)}
-                    disabled={processingPayment}
-                    className={`p-3 rounded-xl border-2 text-left transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1 ${selected ? 'border-orange-400 bg-orange-50' : 'border-gray-200 bg-gray-50 hover:border-gray-300'}`}
+                    onClick={() => { setEditedDescription(survey.description || ''); setIsEditingDescription(true); }}
+                    className="text-xs font-bold font-outfit text-orange-500 hover:text-orange-600 transition-colors cursor-pointer"
                   >
-                    <div className="font-black text-gray-900">${tier.price}</div>
-                    <div className="text-xs text-gray-500">{tier.name}</div>
-                    <div className="text-[10px] text-gray-400 mt-0.5">{tier.responseLimit.toLocaleString()} responses</div>
+                    {survey.description ? 'Edit' : '+ Add description'}
                   </button>
-                );
-              })}
-          </div>
-          <button
-            onClick={handleCompletePayment}
-            disabled={processingPayment}
-            className="w-full py-3 bg-orange-500 text-white font-black text-sm rounded-xl border-b-4 border-orange-700 active:border-b-0 active:translate-y-1 transition-all disabled:opacity-50"
-          >
-            {processingPayment ? 'Redirecting…' : `Pay $${PRICING_TIERS[selectedPaymentTier || survey.pricingTier!]?.price}`}
-          </button>
-        </div>
-      )}
-
-      {/* ── Response cap banner ───────────────────────────────────────────── */}
-      {survey.responseLimit && survey.pricingTier && user && firebaseUser && survey.paymentStatus !== 'unpaid' && (
-        <ResponseCapBanner
-          currentResponses={responses.length}
-          responseLimit={survey.responseLimit}
-          currentTier={survey.pricingTier as PricingTier}
-          surveyId={surveyId}
-          surveyTitle={survey.title}
-          getAuthToken={() => firebaseUser.getIdToken()}
-        />
-      )}
-
-      {/* ── Stats row ─────────────────────────────────────────────────────── */}
-      <div className="grid grid-cols-2 gap-3">
-        {/* Responses */}
-        <div className="bg-orange-500 rounded-2xl p-4 text-white overflow-hidden relative">
-          <div className="absolute -top-4 -right-4 w-20 h-20 bg-white/10 rounded-full blur-xl" />
-          <p className="text-orange-100 text-[10px] font-black uppercase tracking-wide mb-1 relative z-10">Responses</p>
-          <p className="text-4xl font-black relative z-10">{responses.length}</p>
-          {survey.responseLimit && (
-            <>
-              <div className="mt-2 h-1.5 w-full bg-orange-700 rounded-full overflow-hidden relative z-10">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${Math.min((responses.length / survey.responseLimit) * 100, 100)}%` }}
-                  className="h-full bg-white rounded-full"
-                />
-              </div>
-              <p className="text-[9px] text-orange-200 mt-1 font-bold relative z-10">{survey.responseLimit - responses.length} left</p>
-            </>
-          )}
-        </div>
-
-        {/* Launch date */}
-        <div className="bg-white rounded-2xl border-2 border-gray-100 p-4">
-          <p className="text-gray-400 text-[10px] font-black uppercase tracking-wide mb-2">Launch Date</p>
-          <div className="flex items-center gap-2">
-            <CalendarDays className="w-6 h-6 text-gray-400 flex-shrink-0" />
-            <div className="min-w-0">
-              <p className="font-black text-gray-900 text-sm leading-tight truncate">{formatDate(survey.createdAt)}</p>
-              <p className="text-[9px] text-gray-400 font-bold uppercase">Mission Start</p>
+                </div>
+              )}
             </div>
           </div>
-        </div>
-      </div>
 
-      {/* ── Controls card ─────────────────────────────────────────────────── */}
-      <div className="bg-white rounded-2xl border-2 border-gray-100 divide-y-2 divide-gray-100">
-        {/* Status toggle */}
-        <div className="flex items-center gap-3 p-4">
-          <div className={`w-10 h-10 flex-shrink-0 rounded-xl flex items-center justify-center ${survey.status === 'published' ? 'bg-green-100' : 'bg-gray-100'}`}>
-            {survey.status === 'published'
-              ? <Rocket className="w-5 h-5 text-green-600" />
-              : <CircleStop className="w-5 h-5 text-gray-400" />}
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-black text-gray-900">Survey Status</p>
-            <p className="text-xs text-gray-400 truncate">{survey.status === 'published' ? 'Live — accepting responses' : 'Inactive'}</p>
-          </div>
-          <button
-            role="switch"
-            aria-checked={survey.status === 'published'}
-            aria-label="Survey active status"
-            onClick={handleStatusToggle}
-            disabled={updatingStatus || survey.status === 'draft'}
-            className={`flex-shrink-0 relative h-7 w-12 rounded-full border-2 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1 ${
-              survey.status === 'published' ? 'bg-orange-500 border-orange-600' : 'bg-gray-200 border-gray-300'
-            } ${updatingStatus || survey.status === 'draft' ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
-          >
-            <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-all ${survey.status === 'published' ? 'left-5' : 'left-0.5'}`} />
-          </button>
-        </div>
-
-        {/* Expiration */}
-        <div className="flex items-center gap-3 p-4">
-          <div className={`w-10 h-10 flex-shrink-0 rounded-xl flex items-center justify-center ${survey.settings?.expiresAt ? 'bg-orange-50' : 'bg-gray-100'}`}>
-            <Timer className={`w-5 h-5 ${survey.settings?.expiresAt ? 'text-orange-500' : 'text-gray-400'}`} />
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-black text-gray-900">Expiration</p>
-            <p className="text-xs text-gray-400 truncate">
-              {survey.settings?.expiresAt
-                ? (new Date(survey.settings.expiresAt) < new Date() ? 'Expired' : `Expires ${formatDateTime(new Date(survey.settings.expiresAt))}`)
-                : 'No expiration set'}
-            </p>
-          </div>
-          <div className="flex items-center gap-1.5 flex-shrink-0">
-            <input
-              ref={expirationInputRef}
-              type="datetime-local"
-              className="sr-only"
-              value={survey.settings?.expiresAt ? (() => {
-                const d = new Date(survey.settings.expiresAt!);
-                const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
-                local.setSeconds(0); local.setMilliseconds(0);
-                return local.toISOString().slice(0, 16);
-              })() : ''}
-              onChange={handleExpirationChange}
-              disabled={updatingExpiration}
-              min={new Date().toISOString().slice(0, 16)}
-            />
-            <button
-              onClick={() => expirationInputRef.current?.showPicker()}
-              disabled={updatingExpiration}
-              className="w-9 h-9 flex items-center justify-center bg-gray-50 border-2 border-gray-200 rounded-xl hover:border-orange-400 hover:text-orange-500 transition-all"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-            </button>
-            {survey.settings?.expiresAt && (
+          {/* Controls */}
+          <div className="bg-white border border-[#e5e5e5] rounded-2xl divide-y divide-[#f5f5f5]">
+            {/* Status toggle */}
+            <div className="flex items-center gap-3 p-4">
+              <div className={`w-9 h-9 flex-shrink-0 rounded-xl flex items-center justify-center ${survey.status === 'published' ? 'bg-green-50' : 'bg-[#f5f5f5]'}`}>
+                {survey.status === 'published'
+                  ? <Rocket className="w-4 h-4 text-green-600" />
+                  : <CircleStop className="w-4 h-4 text-[#afafaf]" />}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-bold font-outfit text-[#3c3c3c]">Survey status</p>
+                <p className="text-xs text-[#afafaf] font-outfit truncate">
+                  {survey.status === 'published' ? 'Live — accepting responses' : 'Inactive'}
+                </p>
+              </div>
               <button
-                onClick={handleClearExpiration}
-                disabled={updatingExpiration}
-                className="w-9 h-9 flex items-center justify-center bg-gray-50 border-2 border-gray-200 rounded-xl hover:border-red-400 hover:text-red-500 transition-all"
+                role="switch"
+                aria-checked={survey.status === 'published'}
+                aria-label="Toggle survey active"
+                onClick={handleStatusToggle}
+                disabled={updatingStatus || survey.status === 'draft'}
+                className={`flex-shrink-0 relative h-6 w-11 rounded-full transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1 ${
+                  survey.status === 'published' ? 'bg-orange-500' : 'bg-[#e5e5e5]'
+                } ${updatingStatus || survey.status === 'draft' ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
+                <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-all ${survey.status === 'published' ? 'left-[22px]' : 'left-0.5'}`} />
+              </button>
+            </div>
+
+            {/* Expiration */}
+            <div className="flex items-center gap-3 p-4">
+              <div className={`w-9 h-9 flex-shrink-0 rounded-xl flex items-center justify-center ${survey.settings?.expiresAt ? 'bg-orange-50' : 'bg-[#f5f5f5]'}`}>
+                <Timer className={`w-4 h-4 ${survey.settings?.expiresAt ? 'text-orange-500' : 'text-[#afafaf]'}`} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-bold font-outfit text-[#3c3c3c]">Expiration</p>
+                <p className="text-xs text-[#afafaf] font-outfit truncate">
+                  {survey.settings?.expiresAt
+                    ? (new Date(survey.settings.expiresAt) < new Date() ? 'Expired' : `Expires ${formatDateTime(new Date(survey.settings.expiresAt))}`)
+                    : 'No expiration'}
+                </p>
+              </div>
+              <div className="flex items-center gap-1 flex-shrink-0">
+                <input
+                  ref={expirationInputRef}
+                  type="datetime-local"
+                  className="sr-only"
+                  value={survey.settings?.expiresAt ? (() => {
+                    const d = new Date(survey.settings.expiresAt!);
+                    const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
+                    local.setSeconds(0); local.setMilliseconds(0);
+                    return local.toISOString().slice(0, 16);
+                  })() : ''}
+                  onChange={handleExpirationChange}
+                  disabled={updatingExpiration}
+                  min={new Date().toISOString().slice(0, 16)}
+                />
+                <button
+                  onClick={() => expirationInputRef.current?.showPicker()}
+                  disabled={updatingExpiration}
+                  className="w-8 h-8 flex items-center justify-center bg-[#f5f5f5] border border-[#e5e5e5] rounded-lg hover:border-orange-300 hover:text-orange-500 text-[#afafaf] transition-all cursor-pointer"
+                >
+                  <CalendarDays className="w-3.5 h-3.5" />
+                </button>
+                {survey.settings?.expiresAt && (
+                  <button
+                    onClick={handleClearExpiration}
+                    disabled={updatingExpiration}
+                    className="w-8 h-8 flex items-center justify-center bg-[#f5f5f5] border border-[#e5e5e5] rounded-lg hover:border-red-300 hover:text-red-500 text-[#afafaf] transition-all cursor-pointer"
+                  >
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Action pills */}
+          <div className="flex flex-wrap gap-2">
+            {responses.length > 0 && (
+              <button
+                onClick={handlePickWinner}
+                className="flex items-center gap-1.5 px-3 py-2 bg-white border border-[#e5e5e5] text-[#777777] hover:border-orange-300 hover:text-orange-500 font-bold font-outfit text-xs rounded-xl transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1"
+              >
+                <Trophy className="w-3.5 h-3.5" /> Pick winner
               </button>
             )}
-          </div>
-        </div>
-
-        {/* Description */}
-        <div className="p-4">
-          {isEditingDescription ? (
-            <div className="space-y-2">
-              <textarea
-                autoFocus
-                value={editedDescription}
-                onChange={e => setEditedDescription(e.target.value)}
-                rows={3}
-                className="w-full border-2 border-orange-400 rounded-xl px-3 py-2 text-sm resize-none focus:outline-none"
-                disabled={savingDescription}
-                placeholder="Describe your survey…"
-              />
-              <div className="flex gap-2">
-                <button onClick={handleSaveDescription} disabled={savingDescription} className="flex-1 py-2 bg-orange-500 text-white font-black text-xs rounded-xl border-b-4 border-orange-700 active:border-b-0 active:translate-y-0.5 transition-all">
-                  {savingDescription ? 'Saving…' : 'Save'}
+            {responses.length > 0 && (
+              CSV_EXPORT_TIERS.includes(survey.pricingTier || 'free') ? (
+                <CSVLink
+                  data={csvData}
+                  filename={csvFilename}
+                  className="flex items-center gap-1.5 px-3 py-2 bg-white border border-[#e5e5e5] text-[#777777] hover:border-orange-300 hover:text-orange-500 font-bold font-outfit text-xs rounded-xl transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1"
+                >
+                  ↓ Export CSV
+                </CSVLink>
+              ) : (
+                <button disabled className="flex items-center gap-1.5 px-3 py-2 bg-[#f5f5f5] border border-[#e5e5e5] text-[#c8c8c8] font-bold font-outfit text-xs rounded-xl opacity-60 cursor-not-allowed">
+                  <Lock className="w-3.5 h-3.5" /> CSV
                 </button>
-                <button onClick={() => setIsEditingDescription(false)} className="px-4 py-2 bg-gray-100 text-gray-600 font-bold text-xs rounded-xl">Cancel</button>
-              </div>
-            </div>
-          ) : (
-            <div>
-              <p className="text-sm text-gray-600 mb-2">
-                {survey.description || <span className="italic text-gray-400">No description yet.</span>}
-              </p>
-              <button
-                onClick={() => { setEditedDescription(survey.description || ''); setIsEditingDescription(true); }}
-                className="text-xs font-black text-orange-500 hover:text-orange-600 transition-colors"
-              >
-                {survey.description ? 'Edit description' : '+ Add description'}
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
+              )
+            )}
+          </div>
 
-      {/* ── Analytics ─────────────────────────────────────────────────────── */}
-      {responses.length > 0 ? (
-        <>
-          {/* Overview metrics */}
-          <div className="bg-white rounded-2xl border-2 border-[#e5e5e5] p-4 shadow-[0_3px_0_#e5e5e5]">
-            <h2 className="text-base font-black text-[#3c3c3c] mb-4">Response Overview</h2>
-            <div className="grid grid-cols-2 gap-3 mb-4">
-              {/* Completion rate */}
-              <div className="bg-[#fafafa] rounded-xl p-4 border-2 border-[#e5e5e5] flex flex-col items-center gap-2">
-                <CompletionRateChart completedCount={responses.length} totalCount={responses.length} size={80} />
-                <div className="text-center">
-                  <p className="text-[10px] font-black text-[#afafaf] uppercase tracking-widest font-outfit">Completion</p>
-                  <p className="font-black text-[#3c3c3c] text-base leading-tight">100%</p>
+          {/* Payment banner */}
+          {survey.paymentStatus === 'unpaid' && survey.pricingTier && survey.pricingTier !== 'free' && (
+            <div className="bg-white border border-[#e5e5e5] rounded-2xl p-4 space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 bg-orange-50 border border-orange-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <CreditCard className="w-4 h-4 text-orange-500" />
+                </div>
+                <div className="min-w-0">
+                  <p className="font-bold font-outfit text-[#3c3c3c] text-sm">Payment required</p>
+                  <p className="text-xs text-[#afafaf] font-outfit">Complete to publish.</p>
                 </div>
               </div>
-              {/* Avg time */}
-              <div className="bg-[#fafafa] rounded-xl p-4 border-2 border-[#e5e5e5] flex flex-col items-center justify-center gap-1 text-center">
-                <p className="text-3xl font-black text-orange-500 leading-none tabular-nums">{formatDuration(avgCompletionTime)}</p>
-                <p className="text-[10px] font-black text-[#afafaf] uppercase tracking-widest font-outfit mt-1">Avg. Time</p>
-                <p className="text-xs text-[#afafaf] font-outfit">per respondent</p>
+              <div className="grid grid-cols-2 gap-2">
+                {(Object.values(PRICING_TIERS) as Array<{ id: PricingTier; name: string; price: number; responseLimit: number }>)
+                  .filter(t => t.id !== 'free')
+                  .map(tier => {
+                    const selected = (selectedPaymentTier || survey.pricingTier) === tier.id;
+                    return (
+                      <button
+                        key={tier.id}
+                        onClick={() => setSelectedPaymentTier(tier.id)}
+                        disabled={processingPayment}
+                        className={`p-3 rounded-xl border text-left transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1 ${selected ? 'border-orange-400 bg-orange-50' : 'border-[#e5e5e5] bg-[#f5f5f5] hover:border-[#c8c8c8]'}`}
+                      >
+                        <div className="font-bold font-outfit text-[#3c3c3c] text-sm">${tier.price}</div>
+                        <div className="text-xs text-[#afafaf] font-outfit">{tier.name}</div>
+                        <div className="text-[10px] text-[#c8c8c8] font-outfit mt-0.5">{tier.responseLimit.toLocaleString()} responses</div>
+                      </button>
+                    );
+                  })}
               </div>
+              <button
+                onClick={handleCompletePayment}
+                disabled={processingPayment}
+                className="w-full py-2.5 bg-orange-500 hover:bg-orange-600 text-white font-bold font-outfit text-sm rounded-xl shadow-[0_3px_0_#c2410c] active:translate-y-[2px] active:shadow-none transition-all disabled:opacity-50 cursor-pointer"
+              >
+                {processingPayment ? 'Redirecting…' : `Pay $${PRICING_TIERS[selectedPaymentTier || survey.pricingTier!]?.price}`}
+              </button>
             </div>
+          )}
 
-            {responsesOverTime.length > 1 && (
-              <div className="bg-[#fafafa] rounded-xl p-3 border-2 border-[#e5e5e5]">
-                <p className="text-[10px] font-black text-[#afafaf] uppercase tracking-widest font-outfit mb-3">Response Velocity</p>
-                <LineChartComponent data={responsesOverTime.map(({ name, value }) => ({ name, value }))} height={160} />
-              </div>
-            )}
-          </div>
-
-          {/* Question analysis */}
-          <div className="bg-white rounded-2xl border-2 border-[#e5e5e5] p-4 shadow-[0_3px_0_#e5e5e5]">
-            <h2 className="text-base font-black text-[#3c3c3c] mb-4">Question Analysis</h2>
-            <div className="space-y-4">
-              {questionAggregations.map((agg: QuestionAggregation, i: number) => (
-                <motion.div
-                  key={agg.questionId}
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.05 }}
-                  className="bg-[#fafafa] rounded-xl p-4 border-2 border-[#e5e5e5]"
-                >
-                  <div className="flex items-start gap-2 mb-3">
-                    <span className="w-5 h-5 flex-shrink-0 rounded-md bg-white border border-[#e5e5e5] flex items-center justify-center text-[10px] font-black text-[#afafaf]">{i + 1}</span>
-                    <div className="min-w-0 flex-1">
-                      <span className={`text-[9px] font-black uppercase tracking-wide px-1.5 py-0.5 rounded-full border font-outfit ${
-                        agg.type === 'rating'          ? 'bg-amber-50 text-amber-600 border-amber-200' :
-                        agg.type === 'text'            ? 'bg-orange-50 text-orange-600 border-orange-200' :
-                                                         'bg-orange-50 text-orange-500 border-orange-100'
-                      }`}>{agg.type.replace('_', ' ')}</span>
-                      <h3 className="font-black text-[#3c3c3c] text-sm leading-tight mt-1">{agg.questionText}</h3>
-                    </div>
-                  </div>
-                  <div className="bg-white rounded-lg p-3 border border-[#e5e5e5]">
-                    {agg.type === 'rating' && agg.average !== undefined && (
-                      <RatingDisplay average={agg.average} data={agg.data} totalResponses={agg.totalResponses} maxRating={agg.maxRating || 5} />
-                    )}
-                    {agg.type === 'multiple_choice' && (
-                      <BarChartComponent data={agg.data} height={Math.max(140, agg.data.length * 40)} layout="horizontal" showPercentages showCounts />
-                    )}
-                    {agg.type === 'text' && agg.textResponses && (
-                      <TextResponsesList responses={agg.textResponses} maxVisible={3} />
-                    )}
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </>
-      ) : (
-        /* Empty state */
-        <div className="bg-white rounded-2xl border-2 border-gray-100 p-8 text-center">
-          <motion.div
-            animate={reducedMotion ? {} : { y: [0, -10, 0] }}
-            transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-            className="w-24 h-24 mx-auto mb-4 bg-orange-50 rounded-3xl border-4 border-orange-100 flex items-center justify-center"
-          >
-            <img src="/orange-kea-mascot.png" alt="" className="w-16 h-16 object-contain" />
-          </motion.div>
-          <h2 className="text-lg font-black text-gray-900 mb-2">Waiting for responses!</h2>
-          <p className="text-gray-500 text-sm mb-6">Share the link below to start collecting answers.</p>
-          <div className="flex flex-col gap-2 max-w-xs mx-auto">
-            <button
-              onClick={() => { navigator.clipboard.writeText(surveyUrl); showToast('Link copied!'); }}
-              className="w-full py-3 bg-orange-500 text-white font-black text-sm rounded-xl border-b-4 border-orange-700 active:border-b-0 active:translate-y-1 transition-all"
-            >
-              Copy Survey Link
-            </button>
-            <Link href={surveyUrl} target="_blank" className="w-full py-3 bg-white border-2 border-gray-200 text-gray-600 font-black text-sm rounded-xl hover:border-orange-300 transition-all text-center block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1">
-              Preview Survey
-            </Link>
-          </div>
-        </div>
-      )}
-
-      {/* ── Respondent log ────────────────────────────────────────────────── */}
-      <div className="bg-white rounded-2xl border-2 border-gray-100 overflow-hidden">
-        <div className="p-4 border-b-2 border-gray-100 flex items-center justify-between gap-3">
-          <div className="min-w-0">
-            <h2 className="text-base font-black text-gray-900">Respondent Log</h2>
-            <p className="text-xs text-gray-400">
-              {responses.length === 0 ? 'No responses yet' : `${responses.length} total · page ${currentPage} of ${Math.max(1, totalPages)}`}
-            </p>
-          </div>
-          {responses.length > 0 && (
-            <span className="flex items-center gap-1.5 px-2.5 py-1 bg-orange-50 border-2 border-orange-100 rounded-xl flex-shrink-0">
-              <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
-              <span className="text-[9px] font-black text-orange-600 uppercase tracking-wide">Live</span>
-            </span>
+          {/* Response cap banner */}
+          {survey.responseLimit && survey.pricingTier && user && firebaseUser && survey.paymentStatus !== 'unpaid' && (
+            <ResponseCapBanner
+              currentResponses={responses.length}
+              responseLimit={survey.responseLimit}
+              currentTier={survey.pricingTier as PricingTier}
+              surveyId={surveyId}
+              surveyTitle={survey.title}
+              getAuthToken={() => firebaseUser.getIdToken()}
+            />
           )}
         </div>
 
-        {paginatedResponses.length === 0 ? (
-          <div className="p-8 text-center text-gray-400 text-sm">No responses yet</div>
-        ) : (
-          <div className="divide-y-2 divide-gray-50">
-            {paginatedResponses.map((response) => (
-              <div key={response.id}>
-                <button
-                  className="w-full flex items-center gap-3 px-4 py-3 hover:bg-orange-50/40 transition-colors text-left"
-                  onClick={() => setExpandedRows(prev => {
-                    const next = new Set(prev);
-                    if (next.has(response.id)) { next.delete(response.id); } else { next.add(response.id); }
-                    return next;
-                  })}
-                >
-                  <div className="w-8 h-8 flex-shrink-0 rounded-full bg-gray-100 border-2 border-gray-200 flex items-center justify-center"><User className="w-4 h-4 text-gray-400" /></div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-bold text-sm text-gray-900 truncate">{response.respondentName || 'Anonymous'}</p>
-                    <p className="text-xs text-gray-400 truncate">{formatDateTime(response.completedAt)}</p>
-                  </div>
-                  <span className={`flex-shrink-0 text-[10px] font-black px-2.5 py-1 rounded-lg border-2 transition-all ${
-                    expandedRows.has(response.id)
-                      ? 'bg-orange-500 text-white border-orange-600'
-                      : 'bg-white text-gray-400 border-gray-200'
-                  }`}>
-                    {expandedRows.has(response.id) ? '▲' : '▼'}
-                  </span>
-                </button>
+        {/* RIGHT: Tab panel */}
+        <div className="flex-1 min-w-0">
 
-                <AnimatePresence>
-                  {expandedRows.has(response.id) && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      className="overflow-hidden"
-                    >
-                      <div className="bg-gray-50 px-4 py-4 border-t-2 border-gray-100">
-                        {response.respondentEmail && (
-                          <p className="text-xs text-gray-500 mb-3 font-medium flex items-center gap-1.5"><Mail className="w-3.5 h-3.5 flex-shrink-0" />{response.respondentEmail}</p>
-                        )}
-                        <div className="grid grid-cols-1 gap-2">
-                          {survey.questions.map((q, qi) => (
-                            <div key={q.id} className="bg-white rounded-xl p-3 border-2 border-gray-100">
-                              <p className="text-[10px] font-black text-gray-400 uppercase tracking-wide mb-1 flex items-center gap-1.5">
-                                <span className="w-4 h-4 rounded bg-gray-100 flex items-center justify-center text-[8px] font-black">{qi + 1}</span>
-                                <span className="truncate">{q.question}</span>
-                              </p>
-                              <p className="text-sm font-bold text-gray-900">{getAnswerValue(response, q.id)}</p>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
+          {/* Tab bar */}
+          <div className="flex items-center gap-1 border-b border-[#e5e5e5] mb-4">
+            {TABS.map(tab => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-bold font-outfit border-b-2 -mb-px transition-colors focus-visible:outline-none rounded-t-lg ${
+                  activeTab === tab.id
+                    ? 'border-[#3c3c3c] text-[#3c3c3c]'
+                    : 'border-transparent text-[#afafaf] hover:text-[#777777]'
+                }`}
+              >
+                {tab.label}
+                {tab.count !== undefined && (
+                  <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${
+                    activeTab === tab.id ? 'bg-[#f0f0f0] text-[#777777]' : 'bg-[#f5f5f5] text-[#c8c8c8]'
+                  }`}>
+                    {tab.count}
+                  </span>
+                )}
+              </button>
             ))}
           </div>
-        )}
 
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="p-4 border-t-2 border-gray-100 flex items-center justify-between gap-3">
-            <button
-              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-              disabled={currentPage === 1}
-              className="px-4 py-2 text-sm font-black bg-white border-2 border-gray-200 rounded-xl disabled:opacity-30 hover:border-orange-300 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1"
-            >
-              ← Prev
-            </button>
-            <span className="text-xs font-black text-gray-400 tabular-nums">{currentPage} / {totalPages}</span>
-            <button
-              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-              disabled={currentPage === totalPages}
-              className="px-4 py-2 text-sm font-black bg-white border-2 border-gray-200 rounded-xl disabled:opacity-30 hover:border-orange-300 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1"
-            >
-              Next →
-            </button>
-          </div>
-        )}
+          {/* ── Overview tab ──────────────────────────────────────────────── */}
+          {activeTab === 'overview' && (
+            responses.length === 0 ? (
+              <div className="bg-white border border-[#e5e5e5] rounded-2xl p-10 text-center space-y-4">
+                <div className="w-16 h-16 bg-orange-50 border border-orange-100 rounded-2xl flex items-center justify-center mx-auto">
+                  <Share2 className="w-7 h-7 text-orange-300" />
+                </div>
+                <div>
+                  <h2 className="text-base font-bold font-outfit text-[#3c3c3c] mb-1">No responses yet</h2>
+                  <p className="text-sm text-[#afafaf] font-outfit">Share your survey link to start collecting answers.</p>
+                </div>
+                <button
+                  onClick={() => { navigator.clipboard.writeText(surveyUrl); showToast('Link copied!'); }}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-orange-500 hover:bg-orange-600 text-white font-bold font-outfit text-sm rounded-xl shadow-[0_3px_0_#c2410c] active:translate-y-[2px] active:shadow-none transition-all cursor-pointer"
+                >
+                  <Copy className="w-4 h-4" /> Copy survey link
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {/* Velocity chart */}
+                {responsesOverTime.length > 1 && (
+                  <div className="bg-white border border-[#e5e5e5] rounded-2xl p-5">
+                    <p className="text-[11px] font-bold font-outfit text-[#afafaf] uppercase tracking-widest mb-4">Response velocity</p>
+                    <LineChartComponent data={responsesOverTime.map(({ name, value }) => ({ name, value }))} height={180} />
+                  </div>
+                )}
+
+                {/* Completion + avg time */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="bg-white border border-[#e5e5e5] rounded-2xl p-5 flex items-center gap-4">
+                    <CompletionRateChart completedCount={responses.length} totalCount={responses.length} size={72} />
+                    <div>
+                      <p className="text-[11px] font-bold font-outfit text-[#afafaf] uppercase tracking-widest">Completion rate</p>
+                      <p className="text-2xl font-bold text-[#3c3c3c] tabular-nums">100%</p>
+                      <p className="text-xs text-[#afafaf] font-outfit">{responses.length} completed</p>
+                    </div>
+                  </div>
+                  <div className="bg-white border border-[#e5e5e5] rounded-2xl p-5 flex flex-col justify-center">
+                    <p className="text-[11px] font-bold font-outfit text-[#afafaf] uppercase tracking-widest mb-1">Avg. completion time</p>
+                    <p className="text-2xl font-bold text-orange-500 tabular-nums">{formatDuration(avgCompletionTime)}</p>
+                    <p className="text-xs text-[#afafaf] font-outfit mt-0.5">per respondent</p>
+                  </div>
+                </div>
+              </div>
+            )
+          )}
+
+          {/* ── Questions tab ─────────────────────────────────────────────── */}
+          {activeTab === 'questions' && (
+            <div className="space-y-3">
+              {questionAggregations.length === 0 ? (
+                <div className="bg-white border border-[#e5e5e5] rounded-2xl p-10 text-center">
+                  <p className="text-sm text-[#afafaf] font-outfit">No responses yet — question breakdowns will appear here.</p>
+                </div>
+              ) : (
+                questionAggregations.map((agg: QuestionAggregation, i: number) => (
+                  <motion.div
+                    key={agg.questionId}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.04 }}
+                    className="bg-white border border-[#e5e5e5] rounded-2xl p-5"
+                  >
+                    <div className="flex items-start gap-3 mb-4">
+                      <span className="w-6 h-6 flex-shrink-0 rounded-lg bg-[#f5f5f5] border border-[#e5e5e5] flex items-center justify-center text-[11px] font-bold font-outfit text-[#afafaf]">{i + 1}</span>
+                      <div className="min-w-0 flex-1">
+                        <span className={`inline-block text-[9px] font-bold font-outfit uppercase tracking-widest px-2 py-0.5 rounded-full border mb-1.5 ${
+                          agg.type === 'rating'         ? 'bg-amber-50 text-amber-600 border-amber-200' :
+                          agg.type === 'text'           ? 'bg-orange-50 text-orange-600 border-orange-200' :
+                                                          'bg-[#f5f5f5] text-[#777777] border-[#e5e5e5]'
+                        }`}>{agg.type.replace('_', ' ')}</span>
+                        <h3 className="font-bold font-outfit text-[#3c3c3c] text-sm leading-snug">{agg.questionText}</h3>
+                      </div>
+                    </div>
+                    <div className="bg-[#fafafa] rounded-xl p-4 border border-[#f0f0f0]">
+                      {agg.type === 'rating' && agg.average !== undefined && (
+                        <RatingDisplay average={agg.average} data={agg.data} totalResponses={agg.totalResponses} maxRating={agg.maxRating || 5} />
+                      )}
+                      {agg.type === 'multiple_choice' && (
+                        <BarChartComponent data={agg.data} height={Math.max(140, agg.data.length * 40)} layout="horizontal" showPercentages showCounts />
+                      )}
+                      {agg.type === 'text' && agg.textResponses && (
+                        <TextResponsesList responses={agg.textResponses} maxVisible={3} />
+                      )}
+                    </div>
+                  </motion.div>
+                ))
+              )}
+            </div>
+          )}
+
+          {/* ── Responses tab ─────────────────────────────────────────────── */}
+          {activeTab === 'responses' && (
+            <div className="bg-white border border-[#e5e5e5] rounded-2xl overflow-hidden">
+              {/* Header */}
+              <div className="px-5 py-4 border-b border-[#f5f5f5] flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-sm font-bold font-outfit text-[#3c3c3c]">Respondent log</p>
+                  <p className="text-xs text-[#afafaf] font-outfit">
+                    {responses.length === 0
+                      ? 'No responses yet'
+                      : `${responses.length} total · page ${currentPage} of ${Math.max(1, totalPages)}`}
+                  </p>
+                </div>
+                {responses.length > 0 && (
+                  <span className="flex items-center gap-1.5 px-2.5 py-1 bg-orange-50 border border-orange-100 rounded-xl flex-shrink-0">
+                    <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
+                    <span className="text-[10px] font-bold font-outfit text-orange-500 uppercase tracking-widest">Live</span>
+                  </span>
+                )}
+              </div>
+
+              {paginatedResponses.length === 0 ? (
+                <div className="p-10 text-center text-[#afafaf] text-sm font-outfit">No responses yet</div>
+              ) : (
+                <div className="divide-y divide-[#f5f5f5]">
+                  {paginatedResponses.map((response) => (
+                    <div key={response.id}>
+                      <button
+                        className="w-full flex items-center gap-3 px-5 py-3.5 hover:bg-[#fafafa] transition-colors text-left cursor-pointer"
+                        onClick={() => setExpandedRows(prev => {
+                          const next = new Set(prev);
+                          if (next.has(response.id)) { next.delete(response.id); } else { next.add(response.id); }
+                          return next;
+                        })}
+                      >
+                        <div className="w-8 h-8 flex-shrink-0 rounded-full bg-[#f5f5f5] border border-[#e5e5e5] flex items-center justify-center">
+                          <User className="w-4 h-4 text-[#afafaf]" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-bold font-outfit text-sm text-[#3c3c3c] truncate">{response.respondentName || 'Anonymous'}</p>
+                          <p className="text-xs text-[#afafaf] font-outfit truncate">{formatDateTime(response.completedAt)}</p>
+                        </div>
+                        <span className={`flex-shrink-0 text-[10px] font-bold font-outfit px-2 py-1 rounded-lg border transition-all ${
+                          expandedRows.has(response.id)
+                            ? 'bg-[#3c3c3c] text-white border-[#3c3c3c]'
+                            : 'bg-white text-[#afafaf] border-[#e5e5e5]'
+                        }`}>
+                          {expandedRows.has(response.id) ? '▲' : '▼'}
+                        </span>
+                      </button>
+
+                      <AnimatePresence>
+                        {expandedRows.has(response.id) && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="overflow-hidden"
+                          >
+                            <div className="bg-[#fafafa] px-5 py-4 border-t border-[#f0f0f0] space-y-2">
+                              {response.respondentEmail && (
+                                <p className="text-xs text-[#777777] font-outfit mb-3 flex items-center gap-1.5">
+                                  <Mail className="w-3.5 h-3.5 flex-shrink-0 text-[#afafaf]" />
+                                  {response.respondentEmail}
+                                </p>
+                              )}
+                              {survey.questions.map((q, qi) => (
+                                <div key={q.id} className="bg-white rounded-xl p-3 border border-[#e5e5e5]">
+                                  <p className="text-[10px] font-bold font-outfit text-[#afafaf] uppercase tracking-wide mb-1 flex items-center gap-1.5">
+                                    <span className="w-4 h-4 rounded bg-[#f5f5f5] flex items-center justify-center text-[8px] font-bold">{qi + 1}</span>
+                                    <span className="truncate">{q.question}</span>
+                                  </p>
+                                  <p className="text-sm font-bold font-outfit text-[#3c3c3c]">{getAnswerValue(response, q.id)}</p>
+                                </div>
+                              ))}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="px-5 py-4 border-t border-[#f5f5f5] flex items-center justify-between gap-3">
+                  <button
+                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                    className="px-4 py-2 text-sm font-bold font-outfit bg-white border border-[#e5e5e5] text-[#777777] rounded-xl disabled:opacity-30 hover:border-orange-300 hover:text-orange-500 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1"
+                  >
+                    ← Prev
+                  </button>
+                  <span className="text-xs font-bold font-outfit text-[#afafaf] tabular-nums">{currentPage} / {totalPages}</span>
+                  <button
+                    onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                    disabled={currentPage === totalPages}
+                    className="px-4 py-2 text-sm font-bold font-outfit bg-white border border-[#e5e5e5] text-[#777777] rounded-xl disabled:opacity-30 hover:border-orange-300 hover:text-orange-500 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1"
+                  >
+                    Next →
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* ── Delete modal ──────────────────────────────────────────────────── */}
@@ -984,24 +1042,27 @@ export default function SurveyDetailPage() {
         {showDeleteModal && (
           <motion.div
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50"
             onClick={() => setShowDeleteModal(false)}
           >
             <motion.div
-              initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }}
-              className="bg-white rounded-3xl border-2 border-red-100 max-w-sm w-full p-6 text-center"
+              initial={{ scale: 0.95, y: 16 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 16 }}
+              transition={{ duration: 0.18, ease: 'easeOut' }}
+              className="bg-white rounded-2xl border border-[#e5e5e5] max-w-sm w-full p-6 text-center shadow-xl"
               onClick={e => e.stopPropagation()}
             >
-              <div className="w-16 h-16 bg-red-50 rounded-2xl border-2 border-red-100 flex items-center justify-center mx-auto mb-4"><Trash2 className="w-8 h-8 text-red-400" /></div>
-              <h3 className="text-xl font-black text-gray-900 mb-2">Delete Survey?</h3>
-              <p className="text-gray-500 text-sm mb-6">
-                Delete <span className="font-bold text-gray-900">&quot;{survey.title}&quot;</span>? This is permanent — all responses will be lost.
+              <div className="w-14 h-14 bg-red-50 border border-red-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <Trash2 className="w-7 h-7 text-red-400" />
+              </div>
+              <h3 className="text-lg font-bold font-outfit text-[#3c3c3c] mb-2">Delete survey?</h3>
+              <p className="text-[#777777] font-outfit text-sm mb-6">
+                Delete <span className="font-bold text-[#3c3c3c]">&quot;{survey.title}&quot;</span>? This is permanent — all responses will be lost.
               </p>
               <div className="flex flex-col gap-2">
-                <button onClick={handleDelete} disabled={deleting} className="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-black text-sm rounded-xl border-b-4 border-red-800 active:border-b-0 active:translate-y-1 transition-all disabled:opacity-50">
-                  {deleting ? 'Deleting…' : 'Yes, Delete'}
+                <button onClick={handleDelete} disabled={deleting} className="w-full py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold font-outfit text-sm rounded-xl shadow-[0_3px_0_#b91c1c] active:translate-y-[2px] active:shadow-none transition-all disabled:opacity-50 cursor-pointer">
+                  {deleting ? 'Deleting…' : 'Yes, delete'}
                 </button>
-                <button onClick={() => setShowDeleteModal(false)} disabled={deleting} className="w-full py-3 bg-gray-100 text-gray-600 font-bold text-sm rounded-xl hover:bg-gray-200 transition-all">
+                <button onClick={() => setShowDeleteModal(false)} disabled={deleting} className="w-full py-2.5 bg-[#f5f5f5] text-[#777777] font-bold font-outfit text-sm rounded-xl hover:bg-[#ebebeb] transition-all cursor-pointer">
                   Keep it
                 </button>
               </div>
@@ -1015,39 +1076,48 @@ export default function SurveyDetailPage() {
         {showWinnerModal && (
           <motion.div
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50"
             onClick={() => !isPickingWinner && setShowWinnerModal(false)}
           >
             <motion.div
-              initial={{ scale: 0.85, rotate: -4 }} animate={{ scale: 1, rotate: 0 }} exit={{ scale: 0.85 }}
-              className="bg-white rounded-3xl border-2 border-orange-100 max-w-sm w-full p-6 text-center"
+              initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
+              className="bg-white rounded-2xl border border-[#e5e5e5] max-w-sm w-full p-6 text-center shadow-xl"
               onClick={e => e.stopPropagation()}
             >
               {isPickingWinner ? (
                 <div className="py-8">
-                  <motion.div animate={{ rotate: 360 }} transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }} className="w-16 h-16 bg-orange-50 rounded-2xl flex items-center justify-center mx-auto mb-4"><Dice5 className="w-8 h-8 text-orange-500" /></motion.div>
-                  <p className="font-black text-gray-900 text-xl">{selectedWinner?.respondentName || '…'}</p>
-                  <p className="text-gray-400 text-sm mt-1">Picking winner…</p>
+                  <motion.div
+                    animate={reducedMotion ? {} : { rotate: 360 }}
+                    transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
+                    className="w-14 h-14 bg-orange-50 border border-orange-100 rounded-2xl flex items-center justify-center mx-auto mb-4"
+                  >
+                    <Dice5 className="w-7 h-7 text-orange-500" />
+                  </motion.div>
+                  <p className="font-bold font-outfit text-[#3c3c3c] text-lg">{selectedWinner?.respondentName || '…'}</p>
+                  <p className="text-[#afafaf] font-outfit text-sm mt-1">Picking winner…</p>
                 </div>
               ) : selectedWinner ? (
                 <div ref={winnerCardRef} className="py-4">
-                  <div className="w-16 h-16 bg-orange-50 rounded-2xl flex items-center justify-center mx-auto mb-4"><Trophy className="w-8 h-8 text-orange-500" /></div>
-                  <p className="text-[10px] font-black text-orange-500 uppercase tracking-wide mb-2">Winner!</p>
-                  <p className="text-2xl font-black text-gray-900 mb-1">{selectedWinner.respondentName || 'Anonymous'}</p>
-                  {selectedWinner.respondentEmail && <p className="text-sm text-gray-500 mb-4">{selectedWinner.respondentEmail}</p>}
-                  <p className="text-xs text-gray-400">Responded {formatDateTime(selectedWinner.completedAt)}</p>
+                  <div className="w-14 h-14 bg-orange-50 border border-orange-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <Trophy className="w-7 h-7 text-orange-500" />
+                  </div>
+                  <p className="text-[11px] font-bold font-outfit text-orange-500 uppercase tracking-widest mb-2">Winner</p>
+                  <p className="text-2xl font-bold font-outfit text-[#3c3c3c] mb-1">{selectedWinner.respondentName || 'Anonymous'}</p>
+                  {selectedWinner.respondentEmail && <p className="text-sm text-[#777777] font-outfit mb-4">{selectedWinner.respondentEmail}</p>}
+                  <p className="text-xs text-[#afafaf] font-outfit">Responded {formatDateTime(selectedWinner.completedAt)}</p>
                 </div>
               ) : null}
 
               {!isPickingWinner && selectedWinner && (
                 <div className="flex flex-col gap-2 mt-4">
-                  <button onClick={handleDownloadWinnerImage} disabled={isSavingWinnerImage} className="w-full py-2.5 bg-orange-500 text-white font-black text-sm rounded-xl border-b-4 border-orange-700 active:border-b-0 active:translate-y-1 transition-all">
-                    {isSavingWinnerImage ? 'Saving…' : 'Download Image'}
+                  <button onClick={handleDownloadWinnerImage} disabled={isSavingWinnerImage} className="w-full py-2.5 bg-orange-500 hover:bg-orange-600 text-white font-bold font-outfit text-sm rounded-xl shadow-[0_3px_0_#c2410c] active:translate-y-[2px] active:shadow-none transition-all cursor-pointer">
+                    {isSavingWinnerImage ? 'Saving…' : 'Download image'}
                   </button>
-                  <button onClick={handlePickWinner} className="w-full py-2.5 bg-orange-50 border-2 border-orange-200 text-orange-600 font-black text-sm rounded-xl hover:bg-orange-100 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1">
-                    Pick Again
+                  <button onClick={handlePickWinner} className="w-full py-2.5 bg-[#f5f5f5] border border-[#e5e5e5] text-[#777777] hover:text-orange-500 hover:border-orange-200 font-bold font-outfit text-sm rounded-xl transition-all cursor-pointer">
+                    Pick again
                   </button>
-                  <button onClick={() => setShowWinnerModal(false)} className="w-full py-2.5 bg-gray-100 text-gray-500 font-bold text-sm rounded-xl hover:bg-gray-200 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-1">
+                  <button onClick={() => setShowWinnerModal(false)} className="w-full py-2.5 bg-white border border-[#e5e5e5] text-[#afafaf] font-bold font-outfit text-sm rounded-xl hover:bg-[#f5f5f5] transition-all cursor-pointer">
                     Close
                   </button>
                 </div>
