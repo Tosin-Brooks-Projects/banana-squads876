@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import {
@@ -9,8 +9,9 @@ import {
   ChevronRight,
   BarChart3,
   CheckCircle2,
+  FileText,
+  TrendingUp,
   Clock,
-  RefreshCcw,
 } from 'lucide-react';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { subscribeToUserSurveys, getSurveyQuickStats, deleteSurvey } from '@/lib/firebase/firestore';
@@ -21,47 +22,8 @@ interface SurveyWithStats extends Survey {
   stats: SurveyQuickStats;
 }
 
-// ── XP system ─────────────────────────────────────────────────────────────────
+type FilterStatus = 'all' | 'published' | 'draft' | 'closed';
 
-const XP_LEVELS = [
-  { name: 'Rookie',    min: 0,    max: 200,  color: '#9ca3af', nextLabel: 'Explorer' },
-  { name: 'Explorer',  min: 200,  max: 500,  color: '#60a5fa', nextLabel: 'Champion' },
-  { name: 'Champion',  min: 500,  max: 1000, color: '#34d399', nextLabel: 'Legend' },
-  { name: 'Legend',    min: 1000, max: 2000, color: '#f59e0b', nextLabel: 'Master' },
-  { name: 'Master',    min: 2000, max: Infinity, color: '#f97316', nextLabel: null },
-];
-
-function getLevel(xp: number) {
-  return XP_LEVELS.findLast(l => xp >= l.min) ?? XP_LEVELS[0];
-}
-
-function getLevelProgress(xp: number) {
-  const level = getLevel(xp);
-  if (level.max === Infinity) return 100;
-  return Math.round(((xp - level.min) / (level.max - level.min)) * 100);
-}
-
-function AnimatedXP({ target }: { target: number }) {
-  const [display, setDisplay] = useState(0);
-  const rafRef = useRef<number>(0);
-  useEffect(() => {
-    const start = performance.now();
-    const duration = 1200;
-    const animate = (now: number) => {
-      const t = Math.min((now - start) / duration, 1);
-      const ease = 1 - Math.pow(1 - t, 3);
-      setDisplay(Math.round(ease * target));
-      if (t < 1) rafRef.current = requestAnimationFrame(animate);
-    };
-    rafRef.current = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(rafRef.current);
-  }, [target]);
-  return <>{display.toLocaleString()}</>;
-}
-
-// ── Status badge ──────────────────────────────────────────────────────────────
-
-// Premium Status Badge
 function StatusBadge({ status, paymentStatus }: { status: string; paymentStatus?: string }) {
   const isPublished = status === 'published';
   const isClosed = status === 'closed';
@@ -69,30 +31,63 @@ function StatusBadge({ status, paymentStatus }: { status: string; paymentStatus?
 
   return (
     <span className={`
-      px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5
-      ${isPublished ? 'bg-green-500/10 text-green-600' : 
-        isClosed ? 'bg-neutral-200 text-neutral-600' : 
-        isUnpaid ? 'bg-amber-500/10 text-amber-600' : 'bg-brand-500/10 text-brand-600'}
+      px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5 flex-shrink-0
+      ${isPublished ? 'bg-green-50 text-green-600 border border-green-100' :
+        isClosed ? 'bg-[#f5f5f5] text-[#777777] border border-[#e5e5e5]' :
+        isUnpaid ? 'bg-amber-50 text-amber-600 border border-amber-100' :
+        'bg-orange-50 text-orange-600 border border-orange-100'}
     `}>
-      <span className={`w-1.5 h-1.5 rounded-full ${isPublished ? 'bg-green-500 animate-pulse' : 'bg-current opacity-40'}`} />
+      <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${isPublished ? 'bg-green-500 animate-pulse' : 'bg-current opacity-40'}`} />
       {isPublished ? 'Live' : isClosed ? 'Closed' : isUnpaid ? 'Unpaid' : 'Draft'}
     </span>
   );
 }
 
-// Tactile Survey Item
+function CompletionBar({ rate }: { rate: number }) {
+  const pct = Math.min(100, Math.max(0, rate));
+  return (
+    <div className="flex items-center gap-2 min-w-[80px]">
+      <div className="flex-1 h-1.5 bg-[#f0f0f0] rounded-full overflow-hidden">
+        <motion.div
+          className="h-full rounded-full bg-orange-400"
+          initial={{ width: 0 }}
+          animate={{ width: `${pct}%` }}
+          transition={{ duration: 0.6, ease: 'easeOut' }}
+        />
+      </div>
+      <span className="text-[11px] font-outfit text-[#afafaf] tabular-nums w-[28px] text-right flex-shrink-0">{pct}%</span>
+    </div>
+  );
+}
+
+function LastSeen({ date }: { date: Date | null | undefined }) {
+  if (!date) return <span className="text-[11px] font-outfit text-[#e5e5e5]">—</span>;
+  const now = Date.now();
+  const diff = now - new Date(date).getTime();
+  const mins = Math.floor(diff / 60000);
+  const hours = Math.floor(diff / 3600000);
+  const days = Math.floor(diff / 86400000);
+  let label: string;
+  if (mins < 60) label = `${mins}m ago`;
+  else if (hours < 24) label = `${hours}h ago`;
+  else if (days === 1) label = 'yesterday';
+  else if (days < 30) label = `${days}d ago`;
+  else label = formatDate(date);
+  return <span className="text-[11px] font-outfit text-[#afafaf]">{label}</span>;
+}
+
 function SurveyItem({ survey, index, onDelete }: { survey: SurveyWithStats; index: number; onDelete: (e: React.MouseEvent, s: SurveyWithStats) => void }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 10 }}
+      initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.05 }}
+      transition={{ delay: index * 0.04, duration: 0.2 }}
       className="group"
     >
       <Link href={`/dashboard/${survey.id}`}>
-        <div className="relative p-4 sm:p-6 flex items-center gap-3 sm:gap-6 transition-all duration-300 bg-white border-4 border-gray-100 rounded-2xl sm:rounded-[32px] shadow-[4px_4px_0px_0px_rgba(0,0,0,0.03)] sm:shadow-[8px_8px_0px_0px_rgba(0,0,0,0.03)] hover:shadow-none hover:translate-y-[4px] hover:border-orange-200">
+        <div className="relative px-4 py-3.5 flex items-center gap-3 transition-colors duration-150 bg-white border border-[#e5e5e5] rounded-2xl hover:border-orange-200 hover:bg-orange-50/30">
           {/* Icon */}
-          <div className="w-12 h-12 sm:w-16 sm:h-16 flex-shrink-0 bg-gray-50 border-2 border-gray-100 rounded-xl sm:rounded-2xl flex items-center justify-center group-hover:scale-105 transition-all p-1.5 sm:p-2 group-hover:border-orange-100">
+          <div className="w-9 h-9 flex-shrink-0 bg-[#f5f5f5] border border-[#e5e5e5] rounded-xl flex items-center justify-center p-1.5">
             <img
               src={getAdventureImage(survey.adventureType)}
               alt={survey.adventureType}
@@ -102,37 +97,49 @@ function SurveyItem({ survey, index, onDelete }: { survey: SurveyWithStats; inde
 
           {/* Title + meta */}
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-0.5 min-w-0">
-              <h3 className="text-sm sm:text-xl font-black text-gray-900 truncate tracking-tight min-w-0 flex-1">
+            <div className="flex items-center gap-2 mb-0.5">
+              <h3 className="text-sm font-bold text-[#3c3c3c] font-outfit truncate flex-1 min-w-0">
                 {survey.title}
               </h3>
-              <div className="flex-shrink-0">
-                <StatusBadge status={survey.status} paymentStatus={survey.paymentStatus} />
-              </div>
+              <StatusBadge status={survey.status} paymentStatus={survey.paymentStatus} />
             </div>
-            <p className="text-gray-400 text-[9px] sm:text-[10px] font-black uppercase tracking-widest truncate w-full">
-              {getAdventureLabel(survey.adventureType)} · {formatDate(survey.createdAt)}
+            <p className="text-[11px] font-outfit text-[#afafaf] truncate">
+              {getAdventureLabel(survey.adventureType)}
             </p>
           </div>
 
-          {/* Stats + actions */}
-          <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
-            <div className="text-right hidden sm:block">
-              <p className="text-2xl font-black text-gray-900 tabular-nums leading-none">{survey.stats.totalResponses}</p>
-              <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-0.5">Responses</p>
+          {/* Completion bar — hidden on mobile */}
+          <div className="hidden md:block w-[120px] flex-shrink-0">
+            <p className="text-[10px] font-outfit text-[#c8c8c8] mb-1">Completion</p>
+            <CompletionBar rate={Math.round(survey.stats.completionRate ?? 0)} />
+          </div>
+
+          {/* Response count */}
+          <div className="text-right flex-shrink-0 w-[52px]">
+            <p className="text-base font-bold text-[#3c3c3c] font-outfit tabular-nums leading-none">{survey.stats.totalResponses}</p>
+            <p className="text-[10px] font-outfit text-[#afafaf] mt-0.5">resp.</p>
+          </div>
+
+          {/* Last response — hidden on smaller screens */}
+          <div className="hidden lg:flex flex-col items-end flex-shrink-0 w-[72px] gap-0.5">
+            <div className="flex items-center gap-1 text-[#c8c8c8]">
+              <Clock className="w-2.5 h-2.5" />
+              <span className="text-[10px] font-outfit">last</span>
             </div>
-            <div className="text-right sm:hidden">
-              <p className="text-lg font-black text-gray-900 tabular-nums">{survey.stats.totalResponses}</p>
-              <p className="text-[8px] font-black text-gray-400 uppercase">resp.</p>
-            </div>
+            <LastSeen date={survey.stats.lastResponseDate} />
+          </div>
+
+          {/* Actions */}
+          <div className="flex items-center gap-1 flex-shrink-0">
             <button
               onClick={(e) => onDelete(e, survey)}
-              className="p-2 text-gray-300 hover:text-red-500 transition-colors"
+              aria-label={`Delete ${survey.title}`}
+              className="p-2 text-[#e5e5e5] hover:text-red-400 hover:bg-red-50 rounded-xl transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400 focus-visible:ring-offset-1 cursor-pointer"
             >
-              <Trash2 className="w-4 h-4" />
+              <Trash2 className="w-3.5 h-3.5" />
             </button>
-            <div className="p-2 sm:p-3 rounded-xl sm:rounded-2xl bg-orange-500 text-white shadow-[0_4px_0_#c2410c] group-hover:bg-orange-600 transition-all">
-              <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={4} />
+            <div className="p-2 rounded-xl bg-orange-500 text-white shadow-[0_3px_0_#c2410c] group-hover:bg-orange-600 transition-colors">
+              <ChevronRight className="w-3.5 h-3.5" strokeWidth={2.5} />
             </div>
           </div>
         </div>
@@ -141,13 +148,20 @@ function SurveyItem({ survey, index, onDelete }: { survey: SurveyWithStats; inde
   );
 }
 
+const FILTER_TABS: { label: string; value: FilterStatus }[] = [
+  { label: 'All', value: 'all' },
+  { label: 'Live', value: 'published' },
+  { label: 'Draft', value: 'draft' },
+  { label: 'Closed', value: 'closed' },
+];
+
 export default function DashboardPage() {
   const { firebaseUser } = useAuthContext();
   const [surveys, setSurveys] = useState<SurveyWithStats[]>([]);
   const [loading, setLoading] = useState(true);
   const [, setError] = useState<string | null>(null);
+  const [filter, setFilter] = useState<FilterStatus>('all');
 
-  // Modal & Toast State
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [surveyToDelete, setSurveyToDelete] = useState<SurveyWithStats | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -206,22 +220,26 @@ export default function DashboardPage() {
 
   const totalResponses = surveys.reduce((acc, s) => acc + s.stats.totalResponses, 0);
   const activeSurveys = surveys.filter((s) => s.status === 'published').length;
-  const totalXp = surveys.length * 50 + totalResponses * 10;
-  const currentLevel = getLevel(totalXp);
-  const levelProgress = getLevelProgress(totalXp);
+  const avgCompletionRate = surveys.length > 0
+    ? Math.round(surveys.reduce((acc, s) => acc + (s.stats.completionRate ?? 0), 0) / surveys.length)
+    : 0;
+
+  const filteredSurveys = filter === 'all'
+    ? surveys
+    : surveys.filter((s) => s.status === filter);
 
   if (loading) {
     return (
-      <div className="space-y-8 py-10">
-        <div className="h-10 w-64 bg-neutral-200 rounded-full animate-pulse" />
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          {[1,2,3,4].map(i => (
-            <div key={i} className="h-24 bg-neutral-100/50 rounded-3xl animate-pulse" />
+      <div className="space-y-6 py-2">
+        <div className="h-8 w-48 bg-[#e5e5e5] rounded-lg animate-pulse" />
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          {[1, 2, 3, 4].map(i => (
+            <div key={i} className="h-24 bg-[#f5f5f5] rounded-2xl animate-pulse" />
           ))}
         </div>
-        <div className="space-y-4">
-          {[1,2,3].map(i => (
-            <div key={i} className="h-24 w-full bg-neutral-100/50 rounded-3xl animate-pulse" />
+        <div className="space-y-3">
+          {[1, 2, 3].map(i => (
+            <div key={i} className="h-14 w-full bg-[#f5f5f5] rounded-2xl animate-pulse" />
           ))}
         </div>
       </div>
@@ -230,220 +248,184 @@ export default function DashboardPage() {
 
   if (surveys.length === 0) {
     return (
-      <div className="min-h-[70vh] flex flex-col items-center justify-center p-8 text-center">
-        <motion.div
-          animate={{ 
-            y: [0, -10, 0],
-            rotate: [0, 5, -5, 0]
-          }}
-          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-          className="w-32 h-32 sm:w-48 sm:h-48 bg-orange-50 rounded-[40px] border-4 border-orange-100 p-6 sm:p-8 flex items-center justify-center mb-8 sm:mb-10 shadow-xl relative"
-        >
-          <div className="absolute inset-4 bg-orange-200 blur-2xl opacity-20 rounded-full" />
-          <img src="/orange-kea-mascot.png" alt="Mascot" className="w-full h-full object-contain relative z-10" />
-        </motion.div>
-        
-        <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-gray-900 mb-3 sm:mb-4">
-          No adventures yet!
-        </h1>
-        <p className="text-gray-500 text-base sm:text-lg max-w-md mb-8 sm:mb-10 font-medium">
-          Ready to turn boring forms into engaging quests? Create your first survey adventure in seconds.
+      <div className="min-h-[60vh] flex flex-col items-center justify-center p-8 text-center">
+        <div className="w-20 h-20 bg-orange-50 border border-orange-100 rounded-2xl flex items-center justify-center mb-6">
+          <FileText className="w-9 h-9 text-orange-400" strokeWidth={1.5} />
+        </div>
+        <h2 className="text-xl font-bold text-[#3c3c3c] font-outfit mb-2 tracking-tight">
+          No surveys yet
+        </h2>
+        <p className="text-[#afafaf] font-outfit text-sm max-w-xs mb-8">
+          Create your first survey and start collecting responses.
         </p>
-        <Link href="/dashboard/create?new=true">
-          <button className="px-10 py-5 bg-orange-500 hover:bg-orange-600 text-white rounded-3xl font-black text-xl border-b-8 border-orange-700 active:border-b-0 active:translate-y-2 transition-all flex items-center gap-3 shadow-xl">
-            Start First Quest <PlusCircle className="w-6 h-6" />
-          </button>
+        <Link
+          href="/dashboard/create?new=true"
+          className="flex items-center gap-2 px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-bold font-outfit text-sm shadow-[0_3px_0_#c2410c] active:translate-y-[2px] active:shadow-none transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2"
+        >
+          <PlusCircle className="w-4 h-4" />
+          Create survey
         </Link>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 py-2 sm:space-y-12 sm:py-10">
+    <div className="space-y-5 py-2">
       {/* Header */}
-      <header className="flex items-center justify-between gap-4">
-        <div>
-           <div className="flex items-center gap-2 mb-1">
-              <div className="w-3 h-3 rounded-full bg-orange-500" />
-              <span className="text-[9px] font-black uppercase tracking-widest text-gray-400">Command Center</span>
-           </div>
-           <h1 className="text-2xl sm:text-5xl font-black tracking-tight text-gray-900">
-             Quest <span className="text-orange-500">Board</span>
-           </h1>
-        </div>
-        <Link href="/dashboard/create?new=true">
-          <button className="flex-shrink-0 px-4 sm:px-8 py-3 sm:py-4 bg-orange-500 hover:bg-orange-600 text-white rounded-2xl font-black text-xs sm:text-sm uppercase tracking-widest border-b-4 border-orange-700 transition-all active:border-b-0 active:translate-y-1 shadow-lg shadow-orange-500/20 flex items-center gap-2">
-            <PlusCircle className="w-4 h-4 sm:w-5 sm:h-5" />
-            <span className="hidden sm:inline">New Mission</span>
-            <span className="sm:hidden">New</span>
-          </button>
-        </Link>
-      </header>
-
-      {/* Stats Tactile Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-6">
-        {/* Total Responses */}
-        <div className="min-w-0 bg-white border-[3px] sm:border-4 border-gray-100 rounded-2xl sm:rounded-[32px] p-3 sm:p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.02)] sm:shadow-[8px_8px_0px_0px_rgba(0,0,0,0.02)] group hover:border-indigo-100 transition-all overflow-hidden">
-           <div className="flex items-center justify-between mb-3 sm:mb-8">
-              <div className="p-1.5 sm:p-3 rounded-xl sm:rounded-2xl bg-indigo-50 text-indigo-600 border-2 border-indigo-100 flex-shrink-0">
-                <BarChart3 className="w-4 h-4 sm:w-6 sm:h-6" />
-              </div>
-              <span className="text-[8px] sm:text-[9px] font-black text-indigo-300 uppercase tracking-wider sm:tracking-widest hidden sm:block truncate ml-2">Global XP</span>
-           </div>
-           <div>
-              <p className="text-2xl sm:text-5xl font-black text-gray-900 tabular-nums leading-none truncate">
-                {totalResponses}
-              </p>
-              <p className="text-[8px] sm:text-[9px] font-black text-gray-400 uppercase tracking-wider sm:tracking-widest mt-1.5 sm:mt-3 truncate">Total Responses</p>
-           </div>
-        </div>
-
-        {/* Active Surveys */}
-        <div className="min-w-0 bg-white border-[3px] sm:border-4 border-gray-100 rounded-2xl sm:rounded-[32px] p-3 sm:p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.02)] sm:shadow-[8px_8px_0px_0px_rgba(0,0,0,0.02)] group hover:border-green-100 transition-all overflow-hidden">
-           <div className="flex items-center justify-between mb-3 sm:mb-8">
-              <div className="p-1.5 sm:p-3 rounded-xl sm:rounded-2xl bg-green-50 text-green-600 border-2 border-green-100 flex-shrink-0">
-                <CheckCircle2 className="w-4 h-4 sm:w-6 sm:h-6" />
-              </div>
-              <span className="text-[8px] sm:text-[9px] font-black text-green-300 uppercase tracking-wider sm:tracking-widest hidden sm:block truncate ml-2">Active Quests</span>
-           </div>
-           <div>
-              <p className="text-2xl sm:text-5xl font-black text-gray-900 tabular-nums leading-none truncate">
-                {activeSurveys}
-              </p>
-              <p className="text-[8px] sm:text-[9px] font-black text-gray-400 uppercase tracking-wider sm:tracking-widest mt-1.5 sm:mt-3 truncate">Currently Live</p>
-           </div>
-        </div>
-
-        {/* Total Surveys */}
-        <div className="min-w-0 bg-white border-[3px] sm:border-4 border-gray-100 rounded-2xl sm:rounded-[32px] p-3 sm:p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.02)] sm:shadow-[8px_8px_0px_0px_rgba(0,0,0,0.02)] group hover:border-orange-100 transition-all overflow-hidden">
-           <div className="flex items-center justify-between mb-3 sm:mb-8">
-              <div className="p-1.5 sm:p-3 rounded-xl sm:rounded-2xl bg-orange-50 text-orange-600 border-2 border-orange-100 flex-shrink-0">
-                <Clock className="w-4 h-4 sm:w-6 sm:h-6" />
-              </div>
-              <span className="text-[8px] sm:text-[9px] font-black text-orange-300 uppercase tracking-wider sm:tracking-widest hidden sm:block truncate ml-2">Mission History</span>
-           </div>
-           <div>
-              <p className="text-2xl sm:text-5xl font-black text-gray-900 tabular-nums leading-none truncate">
-                {surveys.length}
-              </p>
-              <p className="text-[8px] sm:text-[9px] font-black text-gray-400 uppercase tracking-wider sm:tracking-widest mt-1.5 sm:mt-3 truncate">Total Created</p>
-           </div>
-        </div>
-
-        {/* XP Card */}
-        <div
-          className="min-w-0 rounded-2xl sm:rounded-[32px] p-3 sm:p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.08)] sm:shadow-[8px_8px_0px_0px_rgba(0,0,0,0.08)] flex flex-col justify-between relative overflow-hidden border-[3px] sm:border-4"
-          style={{ background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)', borderColor: '#1a1a2e' }}
+      <div className="flex items-center justify-between gap-4">
+        <h1 className="text-lg font-bold text-[#3c3c3c] font-outfit tracking-tight">
+          Your surveys
+        </h1>
+        <Link
+          href="/dashboard/create?new=true"
+          className="flex items-center gap-2 px-4 py-2.5 bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-bold font-outfit text-sm shadow-[0_3px_0_#c2410c] active:translate-y-[2px] active:shadow-none transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 flex-shrink-0"
         >
-          {/* Glow blob */}
-          <div
-            className="absolute -top-6 -right-6 w-20 h-20 sm:w-28 sm:h-28 rounded-full blur-2xl opacity-40 pointer-events-none"
-            style={{ background: currentLevel.color }}
-          />
+          <PlusCircle className="w-4 h-4" />
+          <span className="hidden sm:inline">New survey</span>
+          <span className="sm:hidden">New</span>
+        </Link>
+      </div>
 
-          <div className="relative z-10">
-            {/* Level badge */}
-            <div className="flex items-center justify-between mb-2 sm:mb-5">
-              <span
-                className="text-[8px] sm:text-[10px] font-black uppercase tracking-wider sm:tracking-widest px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full truncate mr-1"
-                style={{ background: `${currentLevel.color}22`, color: currentLevel.color, border: `1.5px solid ${currentLevel.color}44` }}
+      {/* Stats grid — hero + 3 supports */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        {/* Hero: total responses */}
+        <div className="bg-orange-50 border border-orange-100 rounded-2xl p-4 flex flex-col gap-3 col-span-2 lg:col-span-1">
+          <div className="flex items-center justify-between">
+            <div className="w-8 h-8 rounded-xl bg-orange-100 flex items-center justify-center">
+              <BarChart3 className="w-4 h-4 text-orange-500" />
+            </div>
+          </div>
+          <div>
+            <p className="text-3xl font-bold text-orange-600 font-outfit tabular-nums leading-none tracking-tight">{totalResponses}</p>
+            <p className="text-[11px] font-outfit text-orange-400 mt-1">Total responses</p>
+          </div>
+        </div>
+
+        {/* Live surveys */}
+        <div className="bg-white border border-[#e5e5e5] rounded-2xl p-4 flex flex-col gap-3">
+          <div className="w-8 h-8 rounded-xl bg-green-50 border border-green-100 flex items-center justify-center">
+            <CheckCircle2 className="w-4 h-4 text-green-500" />
+          </div>
+          <div>
+            <p className="text-2xl font-bold text-[#3c3c3c] font-outfit tabular-nums leading-none">{activeSurveys}</p>
+            <p className="text-[11px] font-outfit text-[#afafaf] mt-1">Live surveys</p>
+          </div>
+        </div>
+
+        {/* Total surveys */}
+        <div className="bg-white border border-[#e5e5e5] rounded-2xl p-4 flex flex-col gap-3">
+          <div className="w-8 h-8 rounded-xl bg-[#f5f5f5] border border-[#e5e5e5] flex items-center justify-center">
+            <FileText className="w-4 h-4 text-[#777777]" />
+          </div>
+          <div>
+            <p className="text-2xl font-bold text-[#3c3c3c] font-outfit tabular-nums leading-none">{surveys.length}</p>
+            <p className="text-[11px] font-outfit text-[#afafaf] mt-1">Total surveys</p>
+          </div>
+        </div>
+
+        {/* Avg completion */}
+        <div className="bg-white border border-[#e5e5e5] rounded-2xl p-4 flex flex-col gap-3">
+          <div className="w-8 h-8 rounded-xl bg-orange-50 border border-orange-100 flex items-center justify-center">
+            <TrendingUp className="w-4 h-4 text-orange-500" />
+          </div>
+          <div>
+            <p className="text-2xl font-bold text-[#3c3c3c] font-outfit tabular-nums leading-none">{avgCompletionRate}%</p>
+            <p className="text-[11px] font-outfit text-[#afafaf] mt-1">Avg. completion</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Filter tabs + survey list */}
+      <div className="space-y-3">
+        {/* Filter row */}
+        <div className="flex items-center gap-1.5">
+          {FILTER_TABS.map((tab) => {
+            const count = tab.value === 'all' ? surveys.length : surveys.filter(s => s.status === tab.value).length;
+            const isActive = filter === tab.value;
+            return (
+              <button
+                key={tab.value}
+                onClick={() => setFilter(tab.value)}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12px] font-bold font-outfit transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1 cursor-pointer ${
+                  isActive
+                    ? 'bg-[#3c3c3c] text-white'
+                    : 'bg-white border border-[#e5e5e5] text-[#777777] hover:border-[#c8c8c8] hover:text-[#3c3c3c]'
+                }`}
               >
-                {currentLevel.name}
-              </span>
-              <span className="text-white/30 text-[8px] sm:text-[10px] font-black uppercase tracking-wider sm:tracking-widest flex-shrink-0">⭐ XP</span>
-            </div>
-
-            {/* XP number */}
-            <p className="text-2xl sm:text-5xl font-black text-white tabular-nums leading-none truncate mt-1">
-              <AnimatedXP target={totalXp} />
-            </p>
-            <p className="text-[8px] sm:text-[9px] font-black uppercase tracking-wider sm:tracking-widest mt-1 sm:mt-2 truncate" style={{ color: currentLevel.color }}>
-              Total XP Earned
-            </p>
-          </div>
-
-          {/* Progress bar */}
-          <div className="relative z-10 mt-3 sm:mt-4">
-            <div className="flex justify-between text-[8px] sm:text-[9px] font-black uppercase tracking-wider mb-1 sm:mb-1.5" style={{ color: 'rgba(255,255,255,0.3)' }}>
-              <span className="truncate mr-1">{currentLevel.name}</span>
-              {currentLevel.nextLabel && <span className="truncate">{currentLevel.nextLabel}</span>}
-            </div>
-            <div className="w-full h-1.5 sm:h-2 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.08)' }}>
-              <motion.div
-                className="h-full rounded-full"
-                style={{ background: currentLevel.color }}
-                initial={{ width: 0 }}
-                animate={{ width: `${levelProgress}%` }}
-                transition={{ duration: 1.2, ease: [0.34, 1.56, 0.64, 1], delay: 0.3 }}
-              />
-            </div>
-            {currentLevel.max !== Infinity && (
-              <p className="text-[8px] sm:text-[9px] font-bold mt-1 sm:mt-1.5 text-right truncate" style={{ color: 'rgba(255,255,255,0.25)' }}>
-                {totalXp} / {currentLevel.max} XP
-              </p>
-            )}
-          </div>
+                {tab.label}
+                <span className={`text-[10px] font-bold tabular-nums ${isActive ? 'text-white/60' : 'text-[#afafaf]'}`}>
+                  {count}
+                </span>
+              </button>
+            );
+          })}
         </div>
+
+        {/* Survey list */}
+        <AnimatePresence mode="popLayout">
+          {filteredSurveys.length === 0 ? (
+            <motion.div
+              key="empty"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="py-12 text-center"
+            >
+              <p className="text-[#afafaf] font-outfit text-sm">No {filter === 'all' ? '' : filter} surveys yet.</p>
+            </motion.div>
+          ) : (
+            <div className="space-y-2">
+              {filteredSurveys.map((survey, index) => (
+                <SurveyItem
+                  key={survey.id}
+                  survey={survey}
+                  index={index}
+                  onDelete={handleDeleteClick}
+                />
+              ))}
+            </div>
+          )}
+        </AnimatePresence>
       </div>
 
-      {/* Surveys List */}
-      <div className="space-y-6">
-        <div className="flex items-center justify-between px-2">
-          <h2 className="text-[12px] font-black uppercase tracking-[0.2em] text-duo-graphite">Daily Challenges</h2>
-          <div className="flex items-center gap-2 text-[10px] font-black text-duo-silver uppercase tracking-wider">
-             <RefreshCcw className="w-3 h-3" />
-             Synced
-          </div>
-        </div>
-        <div className="space-y-4">
-          {surveys.map((survey, index) => (
-            <SurveyItem 
-              key={survey.id} 
-              survey={survey} 
-              index={index} 
-              onDelete={handleDeleteClick} 
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* Delete Confirmation Modal */}
+      {/* Delete modal */}
       <AnimatePresence>
         {deleteModalOpen && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-neutral-900/60 backdrop-blur-md flex items-center justify-center p-6 z-[100]"
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-6 z-[100]"
             onClick={() => setDeleteModalOpen(false)}
           >
             <motion.div
-              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              initial={{ scale: 0.95, opacity: 0, y: 12 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              className="bg-white rounded-[3rem] p-10 max-w-md w-full shadow-2xl relative overflow-hidden"
+              exit={{ scale: 0.95, opacity: 0, y: 12 }}
+              transition={{ duration: 0.15 }}
+              className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="w-16 h-16 bg-red-50 rounded-3xl flex items-center justify-center mb-6">
-                <Trash2 className="text-red-500 w-8 h-8" />
+              <div className="w-10 h-10 bg-red-50 border border-red-100 rounded-xl flex items-center justify-center mb-4">
+                <Trash2 className="text-red-500 w-5 h-5" />
               </div>
-              <h3 className="text-2xl font-bold text-neutral-900 mb-2 tracking-tight">Delete adventure?</h3>
-              <p className="text-neutral-500 mb-8 font-medium">
-                Are you sure you want to delete <span className="text-neutral-900 font-bold">&quot;{surveyToDelete?.title}&quot;</span>? This action is permanent.
+              <h3 className="text-base font-bold text-[#3c3c3c] font-outfit mb-1">Delete survey?</h3>
+              <p className="text-[#777777] font-outfit text-sm mb-6">
+                <span className="text-[#3c3c3c] font-bold">&quot;{surveyToDelete?.title}&quot;</span> and all its responses will be permanently deleted.
               </p>
-              <div className="flex gap-4">
+              <div className="flex gap-3">
                 <button
                   onClick={() => setDeleteModalOpen(false)}
-                  className="flex-1 py-4 bg-neutral-100 hover:bg-neutral-200 text-neutral-600 font-bold rounded-2xl transition-colors"
+                  className="flex-1 py-2.5 bg-[#f5f5f5] hover:bg-[#e5e5e5] text-[#777777] font-bold font-outfit text-sm rounded-xl transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#afafaf] focus-visible:ring-offset-1"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleDeleteConfirm}
                   disabled={isDeleting}
-                  className="flex-1 py-4 bg-red-600 hover:bg-red-700 text-white font-bold rounded-2xl transition-colors disabled:opacity-50"
+                  className="flex-1 py-2.5 bg-red-500 hover:bg-red-600 text-white font-bold font-outfit text-sm rounded-xl shadow-[0_3px_0_#b91c1c] active:translate-y-[2px] active:shadow-none transition-all disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-1"
                 >
-                  {isDeleting ? 'Deleting...' : 'Confirm'}
+                  {isDeleting ? 'Deleting…' : 'Delete'}
                 </button>
               </div>
             </motion.div>

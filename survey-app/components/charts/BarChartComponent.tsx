@@ -39,6 +39,37 @@ interface BarChartComponentProps {
   ariaLabel?: string;
 }
 
+function isEmojiOnly(str: string): boolean {
+  const trimmed = str.trim();
+  if (!trimmed) return false;
+  // No ASCII letters or digits — treat as emoji-only
+  return !/[a-zA-Z0-9]/.test(trimmed);
+}
+
+interface CustomYAxisTickProps {
+  x?: number;
+  y?: number;
+  payload?: { value: string };
+}
+
+function CustomYAxisTick({ x = 0, y = 0, payload }: CustomYAxisTickProps) {
+  if (!payload) return null;
+  const value = payload.value;
+  if (isEmojiOnly(value)) {
+    return (
+      <text x={x} y={y} textAnchor="end" dominantBaseline="middle" fontSize={20} dy={0}>
+        {value}
+      </text>
+    );
+  }
+  const display = value.length > 20 ? `${value.slice(0, 20)}…` : value;
+  return (
+    <text x={x} y={y} textAnchor="end" dominantBaseline="middle" fontSize={12} fill={CHART_COLORS.text}>
+      {display}
+    </text>
+  );
+}
+
 interface CustomTooltipProps {
   active?: boolean;
   payload?: Array<{ payload: BarChartData; color: string }>;
@@ -148,6 +179,8 @@ export default function BarChartComponent({
     const barHeight = Math.max(36, Math.min(50, 280 / data.length));
     const dynamicHeight = Math.max(height, data.length * barHeight + 40);
 
+    const allEmoji = dataWithPercentages.every((d) => isEmojiOnly(d.name));
+
     return (
       <motion.div
         className="w-full"
@@ -166,7 +199,7 @@ export default function BarChartComponent({
             <BarChart
               data={dataWithPercentages}
               layout="vertical"
-              margin={{ top: 5, right: 85, left: 5, bottom: 5 }}
+              margin={{ top: 5, right: 85, left: allEmoji ? 15 : 5, bottom: 5 }}
             >
               {showGrid && (
                 <CartesianGrid
@@ -186,11 +219,10 @@ export default function BarChartComponent({
               <YAxis
                 type="category"
                 dataKey="name"
-                tick={{ fontSize: 12, fill: CHART_COLORS.text }}
+                tick={allEmoji ? <CustomYAxisTick /> : { fontSize: 12, fill: CHART_COLORS.text }}
                 tickLine={false}
                 axisLine={false}
-                width={130}
-                tickFormatter={(value) => value.length > 20 ? `${value.slice(0, 20)}...` : value}
+                width={allEmoji ? 40 : 130}
               />
               <Tooltip
                 content={<CustomTooltip showPercentages={showPercentages} />}

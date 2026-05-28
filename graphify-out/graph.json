@@ -169,76 +169,6 @@
       "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/[surveyId]/page.tsx:394"
     },
     {
-      "id": "file::layout",
-      "label": "layout.tsx",
-      "fileType": "code",
-      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/layout.tsx",
-      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/layout.tsx:1"
-    },
-    {
-      "id": "page::generateid",
-      "label": "generateId",
-      "fileType": "code",
-      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx",
-      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx:109"
-    },
-    {
-      "id": "page::checkfreetierusage",
-      "label": "checkFreeTierUsage",
-      "fileType": "code",
-      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx",
-      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx:133"
-    },
-    {
-      "id": "page::generateslug",
-      "label": "generateSlug",
-      "fileType": "code",
-      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx",
-      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx:183"
-    },
-    {
-      "id": "page::generatequestionswithai",
-      "label": "generateQuestionsWithAI",
-      "fileType": "code",
-      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx",
-      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx:211"
-    },
-    {
-      "id": "page::handlecreatesurvey",
-      "label": "handleCreateSurvey",
-      "fileType": "code",
-      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx",
-      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx:246"
-    },
-    {
-      "id": "page::handlecreateanother",
-      "label": "handleCreateAnother",
-      "fileType": "code",
-      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx",
-      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx:278"
-    },
-    {
-      "id": "page::handlegotodashboard",
-      "label": "handleGoToDashboard",
-      "fileType": "code",
-      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx",
-      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx:283"
-    },
-    {
-      "id": "page::handlecontinuemanually",
-      "label": "handleContinueManually",
-      "fileType": "code",
-      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx",
-      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx:287"
-    },
-    {
-      "id": "layout::rootlayout",
-      "label": "RootLayout",
-      "fileType": "code",
-      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/layout.tsx",
-      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/layout.tsx:41"
-    },
-    {
       "id": "file::route",
       "label": "route.ts",
       "fileType": "code",
@@ -272,13 +202,6 @@
       "fileType": "code",
       "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/api/stripe/create-ai-upgrade/route.ts",
       "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/api/stripe/create-ai-upgrade/route.ts:9"
-    },
-    {
-      "id": "page::testimonialcard",
-      "label": "TestimonialCard",
-      "fileType": "code",
-      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/page.tsx",
-      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/page.tsx:93"
     },
     {
       "id": "page::handletierselect",
@@ -400,13 +323,6 @@
       "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/next-env.d.ts:1"
     },
     {
-      "id": "file::tailwind_config",
-      "label": "tailwind.config.ts",
-      "fileType": "code",
-      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/tailwind.config.ts",
-      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/tailwind.config.ts:1"
-    },
-    {
       "id": "file::magneticbutton",
       "label": "MagneticButton.tsx",
       "fileType": "code",
@@ -456,53 +372,11 @@
       "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/BentoGrid.tsx:25"
     },
     {
-      "id": "file::navbar_1",
-      "label": "navbar-1.tsx",
-      "fileType": "code",
-      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/navbar-1.tsx",
-      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/navbar-1.tsx:1"
-    },
-    {
-      "id": "navbar-1::togglemenu",
-      "label": "toggleMenu",
-      "fileType": "code",
-      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/navbar-1.tsx",
-      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/navbar-1.tsx:11"
-    },
-    {
-      "id": "file::cta_3",
-      "label": "cta-3.tsx",
-      "fileType": "code",
-      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/cta-3.tsx",
-      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/cta-3.tsx:1"
-    },
-    {
-      "id": "cta_3::calltoaction",
-      "label": "CallToAction",
-      "fileType": "code",
-      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/cta-3.tsx",
-      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/cta-3.tsx:4"
-    },
-    {
       "id": "file::avatar",
       "label": "avatar.tsx",
       "fileType": "code",
       "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/avatar.tsx",
       "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/avatar.tsx:1"
-    },
-    {
-      "id": "file::hero_03",
-      "label": "hero-03.tsx",
-      "fileType": "code",
-      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/hero-03.tsx",
-      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/hero-03.tsx:1"
-    },
-    {
-      "id": "hero_03::herosection03",
-      "label": "HeroSection03",
-      "fileType": "code",
-      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/hero-03.tsx",
-      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/hero-03.tsx:6"
     },
     {
       "id": "file::3d_testimonials",
@@ -1849,20 +1723,6 @@
       "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/lib/types/index.ts:109"
     },
     {
-      "id": "file::utils",
-      "label": "utils.ts",
-      "fileType": "code",
-      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/lib/utils.ts",
-      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/lib/utils.ts:1"
-    },
-    {
-      "id": "utils::cn",
-      "label": "cn",
-      "fileType": "code",
-      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/lib/utils.ts",
-      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/lib/utils.ts:4"
-    },
-    {
       "id": "file::helpers",
       "label": "helpers.ts",
       "fileType": "code",
@@ -3053,34 +2913,6 @@
       "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/adventures/PizzaBuilder.tsx:408"
     },
     {
-      "id": "file::sw",
-      "label": "sw.js",
-      "fileType": "code",
-      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/sw.js",
-      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/sw.js:1"
-    },
-    {
-      "id": "sw::s",
-      "label": "s",
-      "fileType": "code",
-      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/sw.js",
-      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/sw.js:1"
-    },
-    {
-      "id": "sw::r",
-      "label": "r",
-      "fileType": "code",
-      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/sw.js",
-      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/sw.js:1"
-    },
-    {
-      "id": "file::page",
-      "label": "page.tsx",
-      "fileType": "code",
-      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/games/page.tsx",
-      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/games/page.tsx:1"
-    },
-    {
       "id": "file::dartthrow",
       "label": "DartThrow.tsx",
       "fileType": "code",
@@ -3198,6 +3030,433 @@
       "fileType": "code",
       "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx",
       "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx:311"
+    },
+    {
+      "id": "file::page",
+      "label": "page.tsx",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/page.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/page.tsx:1"
+    },
+    {
+      "id": "page::generateid",
+      "label": "generateId",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx:110"
+    },
+    {
+      "id": "page::checkfreetierusage",
+      "label": "checkFreeTierUsage",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx:144"
+    },
+    {
+      "id": "page::generateslug",
+      "label": "generateSlug",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx:194"
+    },
+    {
+      "id": "page::generatequestionswithai",
+      "label": "generateQuestionsWithAI",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx:222"
+    },
+    {
+      "id": "page::handlecreatesurvey",
+      "label": "handleCreateSurvey",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx:257"
+    },
+    {
+      "id": "page::handlecreateanother",
+      "label": "handleCreateAnother",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx:289"
+    },
+    {
+      "id": "page::handlegotodashboard",
+      "label": "handleGoToDashboard",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx:294"
+    },
+    {
+      "id": "page::handlecontinuemanually",
+      "label": "handleContinueManually",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx:298"
+    },
+    {
+      "id": "file::layout",
+      "label": "layout.tsx",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/layout.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/layout.tsx:1"
+    },
+    {
+      "id": "layout::rootlayout",
+      "label": "RootLayout",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/layout.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/layout.tsx:45"
+    },
+    {
+      "id": "file::cta_3",
+      "label": "cta-3.tsx",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/cta-3.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/cta-3.tsx:1"
+    },
+    {
+      "id": "file::hero_03",
+      "label": "hero-03.tsx",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/hero-03.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/hero-03.tsx:1"
+    },
+    {
+      "id": "hero-03::handleselectoption",
+      "label": "handleSelectOption",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/hero-03.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/hero-03.tsx:13"
+    },
+    {
+      "id": "hero-03::resetdemo",
+      "label": "resetDemo",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/hero-03.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/hero-03.tsx:20"
+    },
+    {
+      "id": "file::navbar_1",
+      "label": "navbar-1.tsx",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/navbar-1.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/navbar-1.tsx:1"
+    },
+    {
+      "id": "file::utils",
+      "label": "utils.ts",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/lib/utils.ts",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/lib/utils.ts:1"
+    },
+    {
+      "id": "utils::cn",
+      "label": "cn",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/lib/utils.ts",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/lib/utils.ts:4"
+    },
+    {
+      "id": "file::sw",
+      "label": "sw.js",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/sw.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/sw.js:1"
+    },
+    {
+      "id": "sw::a",
+      "label": "a",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/sw.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/sw.js:1"
+    },
+    {
+      "id": "sw::r",
+      "label": "r",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/sw.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/sw.js:1"
+    },
+    {
+      "id": "file::tailwind_config",
+      "label": "tailwind.config.ts",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/tailwind.config.ts",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/tailwind.config.ts:1"
+    },
+    {
+      "id": "file::multi_step_loader_demo",
+      "label": "multi-step-loader-demo.tsx",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/multi-step-loader-demo.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/multi-step-loader-demo.tsx:1"
+    },
+    {
+      "id": "multi_step_loader_demo::multisteploaderdemo",
+      "label": "MultiStepLoaderDemo",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/multi-step-loader-demo.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/multi-step-loader-demo.tsx:33"
+    },
+    {
+      "id": "file::pointer_highlight_demo",
+      "label": "pointer-highlight-demo.tsx",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/pointer-highlight-demo.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/pointer-highlight-demo.tsx:1"
+    },
+    {
+      "id": "pointer_highlight_demo::pointerhighlightdemo",
+      "label": "PointerHighlightDemo",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/pointer-highlight-demo.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/pointer-highlight-demo.tsx:3"
+    },
+    {
+      "id": "file::resizable_navbar_demo",
+      "label": "resizable-navbar-demo.tsx",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/resizable-navbar-demo.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/resizable-navbar-demo.tsx:1"
+    },
+    {
+      "id": "file::blurtext",
+      "label": "BlurText.tsx",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/BlurText.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/BlurText.tsx:1"
+    },
+    {
+      "id": "BlurText::buildkeyframes",
+      "label": "buildKeyframes",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/BlurText.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/BlurText.tsx:9"
+    },
+    {
+      "id": "BlurText::blurtext",
+      "label": "BlurText",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/BlurText.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/BlurText.tsx:33"
+    },
+    {
+      "id": "file::dotfield",
+      "label": "DotField.tsx",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/DotField.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/DotField.tsx:1"
+    },
+    {
+      "id": "dotfield::doresize",
+      "label": "doResize",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/DotField.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/DotField.tsx:61"
+    },
+    {
+      "id": "dotfield::builddots",
+      "label": "buildDots",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/DotField.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/DotField.tsx:74"
+    },
+    {
+      "id": "dotfield::onmousemove",
+      "label": "onMouseMove",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/DotField.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/DotField.tsx:93"
+    },
+    {
+      "id": "dotfield::updatemousespeed",
+      "label": "updateMouseSpeed",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/DotField.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/DotField.tsx:99"
+    },
+    {
+      "id": "dotfield::tick",
+      "label": "tick",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/DotField.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/DotField.tsx:113"
+    },
+    {
+      "id": "file::multi_step_loader",
+      "label": "multi-step-loader.tsx",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/multi-step-loader.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/multi-step-loader.tsx:1"
+    },
+    {
+      "id": "file::pointer_highlight",
+      "label": "pointer-highlight.tsx",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/pointer-highlight.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/pointer-highlight.tsx:1"
+    },
+    {
+      "id": "file::resizable_navbar",
+      "label": "resizable-navbar.tsx",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/resizable-navbar.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/resizable-navbar.tsx:1"
+    },
+    {
+      "id": "resizable-navbar::navbar",
+      "label": "Navbar",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/resizable-navbar.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/resizable-navbar.tsx:56"
+    },
+    {
+      "id": "resizable_navbar::cn",
+      "label": "cn",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/resizable-navbar.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/resizable-navbar.tsx:197"
+    },
+    {
+      "id": "file::skiper19",
+      "label": "skiper19.tsx",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper19.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper19.tsx:1"
+    },
+    {
+      "id": "skiper19::skiper19",
+      "label": "Skiper19",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper19.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper19.tsx:6"
+    },
+    {
+      "id": "file::skiper39",
+      "label": "skiper39.tsx",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx:1"
+    },
+    {
+      "id": "skiper39::randomrange",
+      "label": "randomRange",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx:29"
+    },
+    {
+      "id": "skiper39::randomindex",
+      "label": "randomIndex",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx:31"
+    },
+    {
+      "id": "skiper39::removefromarray",
+      "label": "removeFromArray",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx:32"
+    },
+    {
+      "id": "skiper39::removeitemfromarray",
+      "label": "removeItemFromArray",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx:33"
+    },
+    {
+      "id": "skiper39::removerandomfromarray",
+      "label": "removeRandomFromArray",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx:35"
+    },
+    {
+      "id": "skiper39::getrandomfromarray",
+      "label": "getRandomFromArray",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx:37"
+    },
+    {
+      "id": "skiper39::resetpeep",
+      "label": "resetPeep",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx:40"
+    },
+    {
+      "id": "skiper39::normalwalk",
+      "label": "normalWalk",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx:68"
+    },
+    {
+      "id": "skiper39::createpeep",
+      "label": "createPeep",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx:117"
+    },
+    {
+      "id": "skiper39::createpeeps",
+      "label": "createPeeps",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx:175"
+    },
+    {
+      "id": "skiper39::initcrowd",
+      "label": "initCrowd",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx:197"
+    },
+    {
+      "id": "skiper39::addpeeptocrowd",
+      "label": "addPeepToCrowd",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx:203"
+    },
+    {
+      "id": "skiper39::removepeepfromcrowd",
+      "label": "removePeepFromCrowd",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx:224"
+    },
+    {
+      "id": "skiper39::render",
+      "label": "render",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx:229"
+    },
+    {
+      "id": "skiper39::resize",
+      "label": "resize",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx:242"
+    },
+    {
+      "id": "skiper39::init",
+      "label": "init",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx:260"
+    },
+    {
+      "id": "skiper39::handleresize",
+      "label": "handleResize",
+      "fileType": "code",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx:269"
     }
   ],
   "edges": [
@@ -3409,87 +3668,6 @@
       "weight": 1
     },
     {
-      "source": "file::page",
-      "target": "page::generateid",
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx",
-      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx:109",
-      "weight": 1
-    },
-    {
-      "source": "file::page",
-      "target": "page::checkfreetierusage",
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx",
-      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx:133",
-      "weight": 1
-    },
-    {
-      "source": "file::page",
-      "target": "page::generateslug",
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx",
-      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx:183",
-      "weight": 1
-    },
-    {
-      "source": "file::page",
-      "target": "page::generatequestionswithai",
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx",
-      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx:211",
-      "weight": 1
-    },
-    {
-      "source": "file::page",
-      "target": "page::handlecreatesurvey",
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx",
-      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx:246",
-      "weight": 1
-    },
-    {
-      "source": "file::page",
-      "target": "page::handlecreateanother",
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx",
-      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx:278",
-      "weight": 1
-    },
-    {
-      "source": "file::page",
-      "target": "page::handlegotodashboard",
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx",
-      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx:283",
-      "weight": 1
-    },
-    {
-      "source": "file::page",
-      "target": "page::handlecontinuemanually",
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx",
-      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx:287",
-      "weight": 1
-    },
-    {
-      "source": "file::layout",
-      "target": "layout::rootlayout",
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/layout.tsx",
-      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/layout.tsx:41",
-      "weight": 1
-    },
-    {
       "source": "file::route",
       "target": "route::getfirebaseadmin",
       "relation": "contains",
@@ -3523,15 +3701,6 @@
       "confidence": "EXTRACTED",
       "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/api/generate-questions/route.ts",
       "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/api/generate-questions/route.ts:5",
-      "weight": 1
-    },
-    {
-      "source": "file::page",
-      "target": "page::testimonialcard",
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/page.tsx",
-      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/page.tsx:93",
       "weight": 1
     },
     {
@@ -3712,33 +3881,6 @@
       "confidence": "EXTRACTED",
       "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/BentoGrid.tsx",
       "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/BentoGrid.tsx:25",
-      "weight": 1
-    },
-    {
-      "source": "file::navbar_1",
-      "target": "navbar-1::togglemenu",
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/navbar-1.tsx",
-      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/navbar-1.tsx:11",
-      "weight": 1
-    },
-    {
-      "source": "file::cta_3",
-      "target": "cta_3::calltoaction",
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/cta-3.tsx",
-      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/cta-3.tsx:4",
-      "weight": 1
-    },
-    {
-      "source": "file::hero_03",
-      "target": "hero_03::herosection03",
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/hero-03.tsx",
-      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/hero-03.tsx:6",
       "weight": 1
     },
     {
@@ -5137,15 +5279,6 @@
       "weight": 1
     },
     {
-      "source": "file::utils",
-      "target": "utils::cn",
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/lib/utils.ts",
-      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/lib/utils.ts:4",
-      "weight": 1
-    },
-    {
       "source": "file::helpers",
       "target": "helpers::generateslug",
       "relation": "contains",
@@ -6523,24 +6656,6 @@
       "weight": 1
     },
     {
-      "source": "file::sw",
-      "target": "sw::s",
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/sw.js",
-      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/sw.js:1",
-      "weight": 1
-    },
-    {
-      "source": "file::sw",
-      "target": "sw::r",
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/sw.js",
-      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/sw.js:1",
-      "weight": 1
-    },
-    {
       "source": "file::dartthrow",
       "target": "dartthrow::polarscore",
       "relation": "contains",
@@ -6683,12 +6798,399 @@
       "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx",
       "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/games/DartThrow.tsx:311",
       "weight": 1
+    },
+    {
+      "source": "file::page",
+      "target": "page::generateid",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx:110",
+      "weight": 1
+    },
+    {
+      "source": "file::page",
+      "target": "page::checkfreetierusage",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx:144",
+      "weight": 1
+    },
+    {
+      "source": "file::page",
+      "target": "page::generateslug",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx:194",
+      "weight": 1
+    },
+    {
+      "source": "file::page",
+      "target": "page::generatequestionswithai",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx:222",
+      "weight": 1
+    },
+    {
+      "source": "file::page",
+      "target": "page::handlecreatesurvey",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx:257",
+      "weight": 1
+    },
+    {
+      "source": "file::page",
+      "target": "page::handlecreateanother",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx:289",
+      "weight": 1
+    },
+    {
+      "source": "file::page",
+      "target": "page::handlegotodashboard",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx:294",
+      "weight": 1
+    },
+    {
+      "source": "file::page",
+      "target": "page::handlecontinuemanually",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/dashboard/create/page.tsx:298",
+      "weight": 1
+    },
+    {
+      "source": "file::layout",
+      "target": "layout::rootlayout",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/layout.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/app/layout.tsx:45",
+      "weight": 1
+    },
+    {
+      "source": "file::hero_03",
+      "target": "hero-03::handleselectoption",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/hero-03.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/hero-03.tsx:13",
+      "weight": 1
+    },
+    {
+      "source": "file::hero_03",
+      "target": "hero-03::resetdemo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/hero-03.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/hero-03.tsx:20",
+      "weight": 1
+    },
+    {
+      "source": "file::utils",
+      "target": "utils::cn",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/lib/utils.ts",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/lib/utils.ts:4",
+      "weight": 1
+    },
+    {
+      "source": "file::sw",
+      "target": "sw::a",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/sw.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/sw.js:1",
+      "weight": 1
+    },
+    {
+      "source": "file::sw",
+      "target": "sw::r",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/sw.js",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/sw.js:1",
+      "weight": 1
+    },
+    {
+      "source": "file::multi_step_loader_demo",
+      "target": "multi_step_loader_demo::multisteploaderdemo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/multi-step-loader-demo.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/multi-step-loader-demo.tsx:33",
+      "weight": 1
+    },
+    {
+      "source": "file::pointer_highlight_demo",
+      "target": "pointer_highlight_demo::pointerhighlightdemo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/pointer-highlight-demo.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/pointer-highlight-demo.tsx:3",
+      "weight": 1
+    },
+    {
+      "source": "file::blurtext",
+      "target": "BlurText::buildkeyframes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/BlurText.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/BlurText.tsx:9",
+      "weight": 1
+    },
+    {
+      "source": "file::blurtext",
+      "target": "BlurText::blurtext",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/BlurText.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/BlurText.tsx:33",
+      "weight": 1
+    },
+    {
+      "source": "file::dotfield",
+      "target": "dotfield::doresize",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/DotField.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/DotField.tsx:61",
+      "weight": 1
+    },
+    {
+      "source": "file::dotfield",
+      "target": "dotfield::builddots",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/DotField.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/DotField.tsx:74",
+      "weight": 1
+    },
+    {
+      "source": "file::dotfield",
+      "target": "dotfield::onmousemove",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/DotField.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/DotField.tsx:93",
+      "weight": 1
+    },
+    {
+      "source": "file::dotfield",
+      "target": "dotfield::updatemousespeed",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/DotField.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/DotField.tsx:99",
+      "weight": 1
+    },
+    {
+      "source": "file::dotfield",
+      "target": "dotfield::tick",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/DotField.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/DotField.tsx:113",
+      "weight": 1
+    },
+    {
+      "source": "file::resizable_navbar",
+      "target": "resizable-navbar::navbar",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/resizable-navbar.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/resizable-navbar.tsx:56",
+      "weight": 1
+    },
+    {
+      "source": "file::resizable_navbar",
+      "target": "resizable_navbar::cn",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/resizable-navbar.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/resizable-navbar.tsx:197",
+      "weight": 1
+    },
+    {
+      "source": "file::skiper19",
+      "target": "skiper19::skiper19",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper19.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper19.tsx:6",
+      "weight": 1
+    },
+    {
+      "source": "file::skiper39",
+      "target": "skiper39::randomrange",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx:29",
+      "weight": 1
+    },
+    {
+      "source": "file::skiper39",
+      "target": "skiper39::randomindex",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx:31",
+      "weight": 1
+    },
+    {
+      "source": "file::skiper39",
+      "target": "skiper39::removefromarray",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx:32",
+      "weight": 1
+    },
+    {
+      "source": "file::skiper39",
+      "target": "skiper39::removeitemfromarray",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx:33",
+      "weight": 1
+    },
+    {
+      "source": "file::skiper39",
+      "target": "skiper39::removerandomfromarray",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx:35",
+      "weight": 1
+    },
+    {
+      "source": "file::skiper39",
+      "target": "skiper39::getrandomfromarray",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx:37",
+      "weight": 1
+    },
+    {
+      "source": "file::skiper39",
+      "target": "skiper39::resetpeep",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx:40",
+      "weight": 1
+    },
+    {
+      "source": "file::skiper39",
+      "target": "skiper39::normalwalk",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx:68",
+      "weight": 1
+    },
+    {
+      "source": "file::skiper39",
+      "target": "skiper39::createpeep",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx:117",
+      "weight": 1
+    },
+    {
+      "source": "file::skiper39",
+      "target": "skiper39::createpeeps",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx:175",
+      "weight": 1
+    },
+    {
+      "source": "file::skiper39",
+      "target": "skiper39::initcrowd",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx:197",
+      "weight": 1
+    },
+    {
+      "source": "file::skiper39",
+      "target": "skiper39::addpeeptocrowd",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx:203",
+      "weight": 1
+    },
+    {
+      "source": "file::skiper39",
+      "target": "skiper39::removepeepfromcrowd",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx:224",
+      "weight": 1
+    },
+    {
+      "source": "file::skiper39",
+      "target": "skiper39::render",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx:229",
+      "weight": 1
+    },
+    {
+      "source": "file::skiper39",
+      "target": "skiper39::resize",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx:242",
+      "weight": 1
+    },
+    {
+      "source": "file::skiper39",
+      "target": "skiper39::init",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx:260",
+      "weight": 1
+    },
+    {
+      "source": "file::skiper39",
+      "target": "skiper39::handleresize",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "sourceFile": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx",
+      "sourceLocation": "/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/components/ui/skiper-ui/skiper39.tsx:269",
+      "weight": 1
     }
   ],
   "metadata": {
-    "files": 84,
-    "nodes": 457,
-    "edges": 387,
-    "builtAt": "2026-05-06T10:39:45.903Z"
+    "files": 93,
+    "nodes": 494,
+    "edges": 414,
+    "builtAt": "2026-05-25T18:49:12.937Z"
   }
 }

@@ -2,9 +2,9 @@
 
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { LogOut, Settings, Menu, User, ChevronDown, Sparkles } from 'lucide-react';
+import { LogOut, Settings, Menu, User, ChevronDown } from 'lucide-react';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { signOut } from '@/lib/firebase/auth';
 
@@ -12,9 +12,22 @@ interface DashboardHeaderProps {
   onMenuClick: () => void;
 }
 
+const PAGE_TITLES: Record<string, string> = {
+  '/dashboard': 'Surveys',
+  '/dashboard/create': 'New survey',
+  '/dashboard/settings': 'Settings',
+};
+
+function getPageTitle(pathname: string): string {
+  if (PAGE_TITLES[pathname]) return PAGE_TITLES[pathname];
+  if (pathname.startsWith('/dashboard/') && pathname !== '/dashboard/create') return 'Survey details';
+  return 'Dashboard';
+}
+
 export default function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
   const { firebaseUser, user } = useAuthContext();
   const router = useRouter();
+  const pathname = usePathname();
   const [isSigningOut, setIsSigningOut] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -36,105 +49,99 @@ export default function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
     try {
       await signOut();
       router.push('/login');
-    } catch (error) {
-      console.error('Error signing out:', error);
+    } catch {
       setIsSigningOut(false);
     }
   };
 
-  const displayName = user?.displayName || firebaseUser?.displayName || firebaseUser?.email?.split('@')[0] || 'Friend';
-  
-  // Pixel-art is way more fun!
+  const displayName =
+    user?.displayName ||
+    firebaseUser?.displayName ||
+    firebaseUser?.email?.split('@')[0] ||
+    'Account';
+
   const avatarUrl = `https://api.dicebear.com/7.x/pixel-art/svg?seed=${encodeURIComponent(displayName)}&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf`;
 
+  const pageTitle = getPageTitle(pathname);
+
   return (
-    <header className="sticky top-0 z-40 w-full bg-white border-b-2 border-duo-gray">
-      <div className="mx-auto flex h-20 max-w-[1400px] items-center justify-between px-4 md:px-8">
-        {/* Left: Mobile Menu & Clean Logo */}
-        <div className="flex items-center gap-2 sm:gap-6">
+    <header className="sticky top-0 z-40 w-full bg-white border-b border-[#e5e5e5]">
+      <div className="mx-auto flex h-14 max-w-[1400px] items-center justify-between px-4 md:px-6 gap-4">
+
+        {/* Left: hamburger (mobile) + page title */}
+        <div className="flex items-center gap-3 min-w-0">
           <button
             onClick={onMenuClick}
-            className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-2xl bg-white border-2 border-duo-gray shadow-[0_4px_0_#e5e5e5] text-duo-graphite transition-all active:translate-y-[2px] active:shadow-none lg:hidden"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-[#777777] hover:bg-gray-100 hover:text-[#3c3c3c] transition-colors lg:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1 cursor-pointer"
+            aria-label="Open navigation"
           >
-            <Menu className="h-5 w-5 sm:h-6 sm:w-6" />
+            <Menu className="h-4 w-4" />
           </button>
-          
-          <Link href="/dashboard" className="group">
-             <span className="font-fredoka text-xl sm:text-3xl font-bold tracking-tight text-duo-black">
-                Unboring<span className="text-duo-green">.</span>
-             </span>
-          </Link>
+
+          <h1 className="text-sm font-bold text-[#3c3c3c] font-outfit truncate">{pageTitle}</h1>
         </div>
 
-        {/* Right: Tactile Actions & Profile */}
-        <div className="flex items-center gap-4">
-          <motion.button 
-            whileTap={{ scale: 0.95 }}
-            className="hidden h-12 w-12 items-center justify-center rounded-2xl bg-white border-2 border-duo-yellow shadow-[0_4px_0_#ffc700] text-duo-yellow transition-all active:translate-y-[2px] active:shadow-none sm:flex"
-          >
-            <Sparkles className="h-6 w-6" fill="currentColor" fillOpacity={0.2} />
-          </motion.button>
-
+        {/* Right: user menu */}
+        <div className="flex items-center gap-3 flex-shrink-0">
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className="flex items-center gap-1.5 sm:gap-3 rounded-2xl border-2 border-duo-gray p-1.5 sm:pr-4 transition-all hover:bg-duo-gray/10 active:translate-y-[2px]"
+              className="flex items-center gap-2 rounded-lg border border-[#e5e5e5] py-1.5 pl-1.5 pr-3 hover:bg-gray-50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1 cursor-pointer"
             >
-              <div className="h-9 w-9 overflow-hidden rounded-xl border-2 border-duo-gray flex-shrink-0">
-                <img
-                  src={avatarUrl}
-                  alt={displayName}
-                  className="h-full w-full object-cover bg-white"
-                />
+              <div className="h-6 w-6 overflow-hidden rounded-full border border-[#e5e5e5] flex-shrink-0 bg-white">
+                <img src={avatarUrl} alt={displayName} className="h-full w-full object-cover" />
               </div>
-              <div className="hidden flex-col items-start text-left md:flex">
-                <span className="text-[11px] font-black text-duo-black leading-none uppercase">{displayName}</span>
-                <span className="text-[9px] font-black text-duo-green mt-1 uppercase tracking-wider">Superstar</span>
-              </div>
-              <ChevronDown className={`h-4 w-4 text-duo-silver transition-transform duration-300 hidden sm:block ${isDropdownOpen ? 'rotate-180' : ''}`} />
+              <span className="hidden text-xs font-bold text-[#3c3c3c] font-outfit sm:block max-w-[120px] truncate">
+                {displayName}
+              </span>
+              <ChevronDown
+                className={`h-3.5 w-3.5 text-[#afafaf] transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`}
+              />
             </button>
 
             <AnimatePresence>
               {isDropdownOpen && (
                 <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 10 }}
-                  className="absolute right-0 mt-4 w-60 origin-top-right overflow-hidden rounded-[2rem] border-2 border-duo-gray bg-white shadow-2xl"
+                  initial={{ opacity: 0, y: 6, scale: 0.97 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 6, scale: 0.97 }}
+                  transition={{ duration: 0.15 }}
+                  className="absolute right-0 mt-2 w-52 origin-top-right rounded-xl border border-[#e5e5e5] bg-white shadow-lg shadow-black/5 overflow-hidden"
                 >
-                  <div className="bg-duo-gray/20 p-5 text-center border-b-2 border-duo-gray">
-                     <p className="text-[10px] font-black uppercase tracking-[0.2em] text-duo-graphite">Hey Superstar!</p>
-                     <p className="text-sm font-black text-duo-black mt-1 uppercase">{displayName} ✨</p>
+                  {/* User info */}
+                  <div className="px-3 py-3 border-b border-[#e5e5e5]">
+                    <p className="text-xs font-bold text-[#3c3c3c] font-outfit truncate">{displayName}</p>
+                    <p className="text-[11px] text-[#afafaf] font-outfit mt-0.5 truncate">{firebaseUser?.email}</p>
                   </div>
 
-                  <div className="p-3 space-y-2">
+                  {/* Links */}
+                  <div className="p-1">
                     <Link
                       href="/dashboard/settings"
                       onClick={() => setIsDropdownOpen(false)}
-                      className="flex items-center gap-3 rounded-xl px-4 py-3 text-[11px] font-black uppercase tracking-wider text-duo-graphite hover:bg-duo-gray/30 transition-all"
+                      className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-semibold text-[#3c3c3c] font-outfit hover:bg-gray-50 transition-colors"
                     >
-                      <Settings className="h-4 w-4" />
+                      <Settings className="h-3.5 w-3.5 text-[#afafaf]" />
                       Settings
                     </Link>
-                    
                     <Link
                       href="/dashboard/profile"
                       onClick={() => setIsDropdownOpen(false)}
-                      className="flex items-center gap-3 rounded-xl px-4 py-3 text-[11px] font-black uppercase tracking-wider text-duo-graphite hover:bg-duo-gray/30 transition-all"
+                      className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-semibold text-[#3c3c3c] font-outfit hover:bg-gray-50 transition-colors"
                     >
-                      <User className="h-4 w-4" />
-                      My Profile
+                      <User className="h-3.5 w-3.5 text-[#afafaf]" />
+                      Profile
                     </Link>
+                  </div>
 
-                    <div className="my-2 h-[2px] bg-duo-gray mx-2" />
-
+                  <div className="border-t border-[#e5e5e5] p-1">
                     <button
                       onClick={handleSignOut}
                       disabled={isSigningOut}
-                      className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-[11px] font-black uppercase tracking-wider text-red-500 hover:bg-red-50 transition-all"
+                      className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-semibold text-red-500 font-outfit hover:bg-red-50 transition-colors disabled:opacity-50 cursor-pointer"
                     >
-                      <LogOut className="h-4 w-4" />
-                      {isSigningOut ? 'Bye bye...' : 'Log Out'}
+                      <LogOut className="h-3.5 w-3.5" />
+                      {isSigningOut ? 'Signing out…' : 'Sign out'}
                     </button>
                   </div>
                 </motion.div>

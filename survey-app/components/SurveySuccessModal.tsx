@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Check, Copy, ExternalLink, LayoutDashboard } from 'lucide-react';
 
 interface SurveySuccessModalProps {
   isOpen: boolean;
@@ -11,6 +12,16 @@ interface SurveySuccessModalProps {
   onCreateAnother: () => void;
   onGoToDashboard: () => void;
 }
+
+const CONFETTI_DOTS = [
+  { x: -60, y: -50, color: '#f97316', size: 6, delay: 0 },
+  { x: 60,  y: -60, color: '#fb923c', size: 5, delay: 0.05 },
+  { x: -80, y: -20, color: '#fdba74', size: 4, delay: 0.08 },
+  { x: 80,  y: -30, color: '#f97316', size: 7, delay: 0.03 },
+  { x: -40, y: -80, color: '#fb923c', size: 5, delay: 0.1 },
+  { x: 40,  y: -75, color: '#fdba74', size: 4, delay: 0.06 },
+  { x: 0,   y: -90, color: '#f97316', size: 6, delay: 0.02 },
+];
 
 export default function SurveySuccessModal({
   isOpen,
@@ -22,31 +33,25 @@ export default function SurveySuccessModal({
 }: SurveySuccessModalProps) {
   void _surveyId;
   void _onCreateAnother;
+
   const [copied, setCopied] = useState(false);
 
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://unboringsurveys.com';
+  const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || 'https://unboringsurveys.com').replace(/\/$/, '');
   const fullUrl = `${baseUrl}/${surveyUrl}`;
 
   const copyToClipboard = async () => {
     try {
       await navigator.clipboard.writeText(fullUrl);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
     } catch {
-      // Fallback for older browsers
-      const textArea = document.createElement('textarea');
-      textArea.value = fullUrl;
-      document.body.appendChild(textArea);
-      textArea.select();
+      const el = document.createElement('textarea');
+      el.value = fullUrl;
+      document.body.appendChild(el);
+      el.select();
       document.execCommand('copy');
-      document.body.removeChild(textArea);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      document.body.removeChild(el);
     }
-  };
-
-  const openSurvey = () => {
-    window.open(fullUrl, '_blank');
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
@@ -59,92 +64,100 @@ export default function SurveySuccessModal({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-duo-black/40 backdrop-blur-sm z-[100]"
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100]"
           />
 
           {/* Modal */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            initial={{ opacity: 0, scale: 0.95, y: 16 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            exit={{ opacity: 0, scale: 0.95, y: 16 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
             className="fixed inset-0 z-[110] flex items-center justify-center p-6"
           >
-            <div className="bg-white rounded-[3rem] border-4 border-duo-gray shadow-2xl max-w-lg w-full overflow-hidden flex flex-col">
-              {/* Success animation header */}
-              <div className="bg-white px-10 pt-12 pb-8 text-center relative overflow-hidden">
-                {/* Celebratory Mascot */}
-                <motion.div
-                  initial={{ y: 20, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.2 }}
-                  className="w-48 h-48 mx-auto mb-6"
-                >
-                  <img 
-                    src="/orange-kea-mascot-success.png"
-                    alt="Celebration!" 
-                    className="w-full h-full object-contain"
-                  />
-                </motion.div>
+            <div className="bg-white rounded-2xl border border-[#e5e5e5] shadow-xl max-w-md w-full overflow-hidden">
+
+              {/* Header */}
+              <div className="px-6 pt-8 pb-6 text-center">
+                {/* Success icon + confetti burst */}
+                <div className="relative flex items-center justify-center mb-5">
+                  {CONFETTI_DOTS.map((dot, i) => (
+                    <motion.div
+                      key={i}
+                      className="absolute rounded-full pointer-events-none"
+                      style={{ width: dot.size, height: dot.size, backgroundColor: dot.color }}
+                      initial={{ x: 0, y: 0, opacity: 1, scale: 0 }}
+                      animate={{ x: dot.x, y: dot.y, opacity: 0, scale: 1 }}
+                      transition={{ duration: 0.6, delay: dot.delay, ease: 'easeOut' }}
+                    />
+                  ))}
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: 'spring', stiffness: 300, damping: 18, delay: 0.05 }}
+                    className="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center shadow-[0_4px_0_#c2410c]"
+                  >
+                    <Check className="w-8 h-8 text-white" strokeWidth={3} />
+                  </motion.div>
+                </div>
 
                 <motion.h2
-                  initial={{ opacity: 0, y: 10 }}
+                  initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
-                  className="text-4xl font-fredoka font-bold text-duo-black"
+                  transition={{ delay: 0.18 }}
+                  className="text-xl font-bold font-outfit text-[#3c3c3c] tracking-tight"
                 >
-                  Quest <span className="text-duo-green">Launched!</span>
+                  Survey published!
                 </motion.h2>
                 <motion.p
-                  initial={{ opacity: 0, y: 10 }}
+                  initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4 }}
-                  className="text-duo-silver text-sm font-black uppercase tracking-widest mt-2"
+                  transition={{ delay: 0.24 }}
+                  className="text-[13px] font-outfit text-[#777777] mt-1"
                 >
-                  Your adventure is now live
+                  Your survey is live and ready to share.
                 </motion.p>
               </div>
 
-              {/* Content */}
-              <div className="px-10 pb-12 space-y-8">
-                {/* Survey URL */}
-                <div className="space-y-3">
-                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-duo-silver ml-4">
-                    Share your quest link
-                  </label>
-                  <div className="flex items-center gap-3">
-                    <div className="flex-1 px-5 py-4 bg-duo-gray/20 rounded-2xl border-2 border-transparent text-duo-graphite font-fredoka font-bold text-sm truncate">
+              {/* URL section */}
+              <div className="px-6 pb-6 space-y-5">
+                <div className="space-y-1.5">
+                  <p className="text-[11px] font-bold font-outfit text-[#afafaf] uppercase tracking-widest">
+                    Share link
+                  </p>
+                  <div className="flex items-center gap-2 p-1 bg-[#f5f5f5] border border-[#e5e5e5] rounded-xl">
+                    <p className="flex-1 px-3 py-2 text-[13px] font-outfit text-[#3c3c3c] truncate min-w-0">
                       {fullUrl}
-                    </div>
+                    </p>
                     <button
                       onClick={copyToClipboard}
-                      className={`
-                        px-6 py-4 rounded-2xl font-fredoka font-bold uppercase tracking-widest text-[10px] transition-all
-                        ${copied
-                          ? 'bg-duo-green text-white border-b-4 border-[#46a302]'
-                          : 'bg-white border-2 border-duo-gray text-duo-graphite shadow-[0_4px_0_#e5e5e5] hover:bg-duo-gray/10 active:translate-y-[2px] active:shadow-none'
-                        }
-                      `}
+                      className={`flex items-center gap-1.5 px-3 py-2 rounded-lg font-bold font-outfit text-[12px] transition-all flex-shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1 cursor-pointer ${
+                        copied
+                          ? 'bg-green-500 text-white'
+                          : 'bg-white border border-[#e5e5e5] text-[#777777] hover:border-orange-300 hover:text-orange-500 hover:bg-orange-50 shadow-sm'
+                      }`}
                     >
+                      <Check className={`w-3.5 h-3.5 ${copied ? 'block' : 'hidden'}`} strokeWidth={2.5} />
+                      <Copy className={`w-3.5 h-3.5 ${copied ? 'hidden' : 'block'}`} strokeWidth={2} />
                       {copied ? 'Copied!' : 'Copy'}
                     </button>
                   </div>
                 </div>
 
                 {/* Action buttons */}
-                <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                <div className="flex gap-3">
                   <button
-                    onClick={openSurvey}
-                    className="flex-1 py-5 rounded-2xl bg-white border-2 border-duo-gray text-duo-graphite font-fredoka font-bold uppercase tracking-widest text-xs shadow-[0_4px_0_#e5e5e5] hover:bg-duo-gray/5 transition-all active:translate-y-[2px] active:shadow-none flex items-center justify-center gap-2"
+                    onClick={() => window.open(fullUrl, '_blank')}
+                    className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-white border border-[#e5e5e5] hover:border-[#c8c8c8] text-[#777777] hover:text-[#3c3c3c] rounded-xl font-bold font-outfit text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1 cursor-pointer"
                   >
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                    </svg>
-                    <span>View Quest</span>
+                    <ExternalLink className="w-4 h-4" strokeWidth={2} />
+                    View survey
                   </button>
                   <button
                     onClick={onGoToDashboard}
-                    className="flex-1 py-5 rounded-2xl bg-duo-green text-white font-fredoka font-bold uppercase tracking-widest text-xs border-b-4 border-[#46a302] transition-all hover:translate-y-[-2px] hover:shadow-[0_4px_0_#46a302] active:translate-y-[2px] active:border-b-0 flex items-center justify-center"
+                    className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-bold font-outfit text-sm shadow-[0_3px_0_#c2410c] active:translate-y-[2px] active:shadow-none transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1 cursor-pointer"
                   >
+                    <LayoutDashboard className="w-4 h-4" strokeWidth={2} />
                     Dashboard
                   </button>
                 </div>

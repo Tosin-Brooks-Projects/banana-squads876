@@ -3,19 +3,29 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
+import { MultiStepLoader } from '@/components/ui/multi-step-loader';
 import {
   Sparkles,
   ChevronLeft,
-  Zap,
-  Layout,
   Check,
-  Rocket
+  Rocket,
+  Lock,
+  Zap,
+  Target,
+  Database,
+  BarChart3,
+  List,
+  GitBranch,
+  MessageSquare,
+  EyeOff,
+  User,
+  Globe,
 } from 'lucide-react';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { Spinner } from '@/components/ui/LoadingStates';
 import SurveySuccessModal from '@/components/SurveySuccessModal';
 import { AdventureType, Question, PricingTier, FREE_TIER_THEMES } from '@/lib/types';
-import { getAdventureLabel } from '@/lib/utils/helpers';
+import { getAdventureLabel, getAdventureImage } from '@/lib/utils/helpers';
 import {
   createFreeSurveyAtomic,
   checkSlugExists,
@@ -31,7 +41,6 @@ import {
   formatResetTime,
 } from '@/lib/utils/rateLimit';
 
-// Survey preferences types
 type QuestionCountRange = '3-5' | '5-10' | '10-15' | '15+';
 type QuestionStyle = 'mostly-options' | 'balanced' | 'mostly-open';
 type AnonymityPreference = 'anonymous' | 'collect-info';
@@ -42,32 +51,26 @@ interface SurveyPreferences {
   anonymity: AnonymityPreference;
 }
 
-// Types for form state
 interface FormData {
-  // Step 1
   context: string;
   theme: AdventureType;
-  // Step 1.5 - Survey Preferences
   preferences: SurveyPreferences;
-  // Step 2
   questions: Question[];
-  // Step 3
   title: string;
   slug: string;
   thankYouMessage: string;
-  // Pricing
   pricingTier: PricingTier | null;
 }
 
 const STORAGE_KEY = 'survey-draft';
 
-const THEMES: { value: AdventureType; label: string; description: string; image: string; color: string; isPremium?: boolean }[] = [
-  { value: 'classic', label: 'Classic', description: 'Clean and minimal for any goal.', image: '/theme-classic.png', color: 'bg-neutral-100' },
-  { value: 'ice-cream-sundae', label: 'Sundae', description: 'Build a delicious reward.', image: '/theme-sundae.png', color: 'bg-pink-50' },
-  { value: 'pizza-builder', label: 'Pizza', description: 'Craft the perfect slice.', image: '/theme-pizza-2d.svg', color: 'bg-orange-50', isPremium: true },
-  { value: 'garden-grower', label: 'Garden', description: 'Watch your responses bloom.', image: '/theme-garden.png', color: 'bg-green-50', isPremium: true },
-  { value: 'dream-home', label: 'Home', description: 'Design a home of feedback.', image: '/theme-home.png', color: 'bg-blue-50', isPremium: true },
-  { value: 'coffee-brewer', label: 'Coffee', image: '/theme-coffee.png', description: 'Brew deep insights.', color: 'bg-amber-50', isPremium: true },
+const THEMES: { value: AdventureType; label: string; description: string; image: string; isPremium?: boolean }[] = [
+  { value: 'classic',          label: 'Classic',  description: 'Clean and minimal for any goal.',   image: '/theme-classic.png' },
+  { value: 'ice-cream-sundae', label: 'Sundae',   description: 'Build a delicious reward.',         image: '/theme-sundae.png' },
+  { value: 'pizza-builder',    label: 'Pizza',    description: 'Craft the perfect slice.',           image: '/theme-pizza-2d.svg', isPremium: true },
+  { value: 'garden-grower',    label: 'Garden',   description: 'Watch your responses bloom.',        image: '/theme-garden.png',   isPremium: true },
+  { value: 'dream-home',       label: 'Home',     description: 'Design a home of feedback.',         image: '/theme-home.png',     isPremium: true },
+  { value: 'coffee-brewer',    label: 'Coffee',   description: 'Brew deep insights.',               image: '/theme-coffee.png',   isPremium: true },
 ];
 
 const DEFAULT_PREFERENCES: SurveyPreferences = {
@@ -87,26 +90,87 @@ const DEFAULT_FORM_DATA: FormData = {
   pricingTier: null,
 };
 
-const QUESTION_COUNT_OPTIONS: { value: QuestionCountRange; label: string; description: string }[] = [
-  { value: '3-5', label: 'Quick Sprint', description: '3-5 questions. High speed, high completion.' },
-  { value: '5-10', label: 'Balanced Journey', description: '5-10 questions. Perfect for most needs.' },
-  { value: '10-15', label: 'Deep Expedition', description: '10-15 questions. Detailed data points.' },
-  { value: '15+', label: 'Grand Odyssey', description: '15+ questions. Comprehensive research.' },
+const EXAMPLE_PROMPTS = [
+  { label: 'Product feedback', text: 'I want to collect feedback on my product from existing customers to understand what features to build next.' },
+  { label: 'Employee satisfaction', text: 'I want to run an employee satisfaction survey to understand team morale and identify areas for improvement.' },
+  { label: 'Event feedback', text: 'I want to collect feedback after our event to understand what went well and what to improve for next time.' },
+  { label: 'NPS survey', text: 'I want to measure customer loyalty and likelihood to recommend our product to others.' },
 ];
 
-const QUESTION_STYLE_OPTIONS: { value: QuestionStyle; label: string; description: string }[] = [
-  { value: 'mostly-options', label: 'Point & Click', description: 'Mostly multiple choice. Low friction.' },
-  { value: 'balanced', label: 'Hybrid Mix', description: 'Equal choice and open feedback.' },
-  { value: 'mostly-open', label: 'Voice of User', description: 'Mostly open-ended text questions.' },
+const QUESTION_COUNT_OPTIONS: { value: QuestionCountRange; label: string; description: string; icon: React.ElementType }[] = [
+  { value: '3-5',   label: '3–5 questions',   description: 'Quick, high completion rate.',   icon: Zap },
+  { value: '5-10',  label: '5–10 questions',  description: 'Balanced for most surveys.',     icon: Target },
+  { value: '10-15', label: '10–15 questions', description: 'Detailed data collection.',      icon: BarChart3 },
+  { value: '15+',   label: '15+ questions',   description: 'Comprehensive research.',         icon: Database },
 ];
 
-const ANONYMITY_OPTIONS: { value: AnonymityPreference; label: string; description: string }[] = [
-  { value: 'anonymous', label: 'Stealth Mode', description: '100% anonymous responses.' },
-  { value: 'collect-info', label: 'Lead Generation', description: 'Collect names and emails.' },
+const QUESTION_STYLE_OPTIONS: { value: QuestionStyle; label: string; description: string; icon: React.ElementType }[] = [
+  { value: 'mostly-options', label: 'Multiple choice', description: 'Mostly choice questions. Low friction.',    icon: List },
+  { value: 'balanced',       label: 'Mixed',           description: 'Mix of choice and open-ended questions.',   icon: GitBranch },
+  { value: 'mostly-open',    label: 'Open-ended',      description: 'Mostly free-text responses.',               icon: MessageSquare },
 ];
 
-// Generate a unique ID
+const ANONYMITY_OPTIONS: { value: AnonymityPreference; label: string; description: string; icon: React.ElementType }[] = [
+  { value: 'anonymous',    label: 'Anonymous',        description: '100% anonymous. No personal data collected.',  icon: EyeOff },
+  { value: 'collect-info', label: 'Collect contact',  description: 'Capture respondent names and email addresses.', icon: User },
+];
+
 const generateId = () => Math.random().toString(36).substring(2, 9);
+
+const AI_GENERATION_STATES = [
+  { text: 'Analyzing your survey context…' },
+  { text: 'Structuring question flow…' },
+  { text: 'Generating question options…' },
+  { text: 'Validating question logic…' },
+  { text: 'Finalizing your survey…' },
+];
+
+const STEPS = [
+  { id: 1, label: 'Context' },
+  { id: 2, label: 'Theme' },
+  { id: 3, label: 'Settings' },
+  { id: 4, label: 'Review' },
+];
+
+// ── Reusable option row ──────────────────────────────────────────────────────
+function OptionRow<T extends string>({
+  option,
+  selected,
+  onSelect,
+}: {
+  option: { value: T; label: string; description: string; icon: React.ElementType };
+  selected: boolean;
+  onSelect: (v: T) => void;
+}) {
+  const Icon = option.icon;
+  return (
+    <button
+      onClick={() => onSelect(option.value)}
+      className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border text-left transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1 cursor-pointer ${
+        selected
+          ? 'bg-orange-50 border-orange-400'
+          : 'bg-white border-[#e5e5e5] hover:border-[#c8c8c8]'
+      }`}
+    >
+      <div className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors ${
+        selected ? 'bg-orange-100' : 'bg-[#f5f5f5]'
+      }`}>
+        <Icon className={`w-4 h-4 ${selected ? 'text-orange-500' : 'text-[#afafaf]'}`} strokeWidth={1.8} />
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className={`text-sm font-bold font-outfit ${selected ? 'text-orange-600' : 'text-[#3c3c3c]'}`}>
+          {option.label}
+        </p>
+        <p className="text-[11px] font-outfit text-[#afafaf] leading-tight mt-0.5">{option.description}</p>
+      </div>
+      <div className={`w-4 h-4 rounded-full border-2 flex-shrink-0 flex items-center justify-center transition-colors ${
+        selected ? 'border-orange-500 bg-orange-500' : 'border-[#e5e5e5]'
+      }`}>
+        {selected && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
+      </div>
+    </button>
+  );
+}
 
 export default function CreateSurveyPage() {
   const router = useRouter();
@@ -149,15 +213,12 @@ export default function CreateSurveyPage() {
       setPaidForAI(true);
       setPaidTier(tier);
       setShouldAutoGenerate(true);
-      const newUrl = window.location.pathname;
-      window.history.replaceState({}, '', newUrl);
+      window.history.replaceState({}, '', window.location.pathname);
     }
   }, [searchParams]);
 
   useEffect(() => {
-    if (paidForAI && paidTier) {
-      setFormData(prev => ({ ...prev, pricingTier: paidTier }));
-    }
+    if (paidForAI && paidTier) setFormData(prev => ({ ...prev, pricingTier: paidTier }));
   }, [paidForAI, paidTier]);
 
   useEffect(() => {
@@ -167,22 +228,17 @@ export default function CreateSurveyPage() {
         const parsed = JSON.parse(saved);
         setFormData(parsed.formData || DEFAULT_FORM_DATA);
         setCurrentStep(parsed.currentStep || 1);
-        if (parsed.paidForAI) {
-          setPaidForAI(true);
-          setPaidTier(parsed.paidTier);
-        }
+        if (parsed.paidForAI) { setPaidForAI(true); setPaidTier(parsed.paidTier); }
       } catch {}
     }
   }, []);
 
   useEffect(() => {
-    const draft = { formData, currentStep, paidForAI, paidTier };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(draft));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ formData, currentStep, paidForAI, paidTier }));
   }, [formData, currentStep, paidForAI, paidTier]);
 
-  const generateSlug = (title: string) => {
-    return title.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').substring(0, 50);
-  };
+  const generateSlug = (title: string) =>
+    title.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').substring(0, 50);
 
   const checkSlugAvailability = useCallback(async (slug: string) => {
     if (!slug || !firebaseUser) return;
@@ -194,53 +250,36 @@ export default function CreateSurveyPage() {
         const suggestions = await getSuggestedSlugs(firebaseUser.uid, slug);
         setSlugSuggestions(suggestions);
       }
-    } catch {
-      setSlugAvailable(true);
-    } finally {
-      setIsCheckingSlug(false);
-    }
+    } catch { setSlugAvailable(true); }
+    finally { setIsCheckingSlug(false); }
   }, [firebaseUser]);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      if (formData.slug) checkSlugAvailability(formData.slug);
-    }, 500);
-    return () => clearTimeout(timer);
+    const t = setTimeout(() => { if (formData.slug) checkSlugAvailability(formData.slug); }, 500);
+    return () => clearTimeout(t);
   }, [formData.slug, checkSlugAvailability]);
 
   const generateQuestionsWithAI = async () => {
-    const rateLimitResult = checkRateLimit(RATE_LIMITS.questionGeneration);
-    if (!rateLimitResult.allowed) {
-      setErrors({ general: `Rate limited. Try in ${formatResetTime(rateLimitResult.resetIn)}.` });
-      return;
-    }
+    const result = checkRateLimit(RATE_LIMITS.questionGeneration);
+    if (!result.allowed) { setErrors({ general: `Rate limited. Try in ${formatResetTime(result.resetIn)}.` }); return; }
     setErrors({});
     setIsGenerating(true);
     try {
-      const response = await fetch('/api/generate-questions', {
+      const res = await fetch('/api/generate-questions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          context: formData.context, 
-          theme: formData.theme, 
-          preferences: formData.preferences 
-        }),
+        body: JSON.stringify({ context: formData.context, theme: formData.theme, preferences: formData.preferences }),
       });
-      if (!response.ok) throw new Error('Generation failed');
-      const data = await response.json();
+      if (!res.ok) throw new Error();
+      const data = await res.json();
       recordRequest(RATE_LIMITS.questionGeneration);
-      const generatedQuestions: Question[] = data.questions.map((q: Question, index: number) => ({
-        ...q,
-        id: generateId(),
-        order: index,
+      setFormData(prev => ({
+        ...prev,
+        questions: data.questions.map((q: Question, i: number) => ({ ...q, id: generateId(), order: i })),
       }));
-      setFormData(prev => ({ ...prev, questions: generatedQuestions }));
-      setCurrentStep(4); // Go to launch/review
-    } catch {
-      setErrors({ general: 'Failed to generate questions.' });
-    } finally {
-      setIsGenerating(false);
-    }
+      setCurrentStep(4);
+    } catch { setErrors({ general: 'Failed to generate questions. Please try again.' }); }
+    finally { setIsGenerating(false); }
   };
 
   const handleCreateSurvey = async () => {
@@ -270,450 +309,461 @@ export default function CreateSurveyPage() {
     } catch (e) {
       console.error(e);
       setErrors({ general: 'Failed to create survey. Please try again.' });
-    } finally {
-      setIsCreating(false);
-    }
+    } finally { setIsCreating(false); }
   };
 
-  const handleCreateAnother = () => {
-    localStorage.removeItem(STORAGE_KEY);
-    window.location.reload();
-  };
+  const handleCreateAnother = () => { localStorage.removeItem(STORAGE_KEY); window.location.reload(); };
+  const handleGoToDashboard = () => router.push('/dashboard');
+  const handleContinueManually = () => { setShowAIUpgradeModal(false); setCurrentStep(4); };
 
-  const handleGoToDashboard = () => {
-    router.push('/dashboard');
-  };
-
-  const handleContinueManually = () => {
-    setShowAIUpgradeModal(false);
-    setCurrentStep(4);
-  };
-
-  // Step Indicators
-  const steps = [
-    { id: 1, name: 'Concept', icon: Sparkles },
-    { id: 2, name: 'Adventure', icon: Zap },
-    { id: 3, name: 'Quest', icon: Layout },
-    { id: 4, name: 'Launch', icon: Rocket },
-  ];
+  const selectedTheme = THEMES.find(t => t.value === formData.theme) ?? THEMES[0];
 
   return (
-    <div className="max-w-4xl mx-auto py-4 sm:py-12">
-      {/* Header / Progress */}
-      <div className="flex items-center gap-4 sm:gap-6 mb-8 sm:mb-16">
+    <div className="max-w-3xl mx-auto py-4 sm:py-10">
+
+      {/* ── Step indicator ── */}
+      <div className="flex items-center gap-3 mb-10">
         <button
           onClick={() => currentStep > 1 ? setCurrentStep(currentStep - 1) : router.push('/dashboard')}
-          className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white border-2 border-duo-gray shadow-[0_4px_0_#e5e5e5] text-duo-graphite transition-all active:translate-y-[2px] active:shadow-none"
+          aria-label="Go back"
+          className="flex h-9 w-9 items-center justify-center rounded-xl bg-white border border-[#e5e5e5] text-[#777777] hover:text-[#3c3c3c] hover:border-[#c8c8c8] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1 cursor-pointer flex-shrink-0"
         >
-          <ChevronLeft className="w-6 h-6" strokeWidth={3} />
+          <ChevronLeft className="w-4 h-4" strokeWidth={2} />
         </button>
-        
-        <div className="flex-1 h-4 bg-duo-gray rounded-full overflow-hidden border-2 border-duo-gray">
-           <motion.div 
-             initial={{ width: 0 }}
-             animate={{ width: `${(currentStep / steps.length) * 100}%` }}
-             className="h-full bg-duo-green"
-           />
-        </div>
 
-        <div className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl bg-white border-2 border-duo-gray text-duo-black font-fredoka font-bold text-xs uppercase tracking-wider">
-           Step {currentStep} of 4
+        <div className="flex items-center flex-1 gap-0">
+          {STEPS.map((step, i) => {
+            const isDone    = currentStep > step.id;
+            const isCurrent = currentStep === step.id;
+            return (
+              <div key={step.id} className="flex items-center flex-1 last:flex-none">
+                <div className="flex flex-col items-center gap-1">
+                  <div className={`w-7 h-7 rounded-full flex items-center justify-center transition-all ${
+                    isCurrent ? 'bg-[#3c3c3c] text-white shadow-[0_2px_0_#1a1a1a]' :
+                    isDone    ? 'bg-orange-500 text-white' :
+                                'bg-white border border-[#e5e5e5] text-[#afafaf]'
+                  }`}>
+                    {isDone
+                      ? <Check className="w-3.5 h-3.5" strokeWidth={3} />
+                      : <span className="text-[11px] font-bold font-outfit">{step.id}</span>
+                    }
+                  </div>
+                  <span className={`text-[10px] font-outfit font-bold hidden sm:block transition-colors ${
+                    isCurrent ? 'text-[#3c3c3c]' : isDone ? 'text-orange-500' : 'text-[#c8c8c8]'
+                  }`}>
+                    {step.label}
+                  </span>
+                </div>
+                {i < STEPS.length - 1 && (
+                  <div className={`flex-1 h-px mx-2 mb-4 transition-colors ${isDone ? 'bg-orange-300' : 'bg-[#e5e5e5]'}`} />
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
 
+      {/* ── Steps ── */}
       <AnimatePresence mode="wait">
-        {/* Step 1: Concept & Context */}
+
+        {/* ── Step 1: Context ── */}
         {currentStep === 1 && (
           <motion.div
             key="step1"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            className="space-y-12 relative"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+            className="space-y-6"
           >
-            {/* Mascot Peeking */}
-            <div className="absolute -top-12 -left-16 w-32 h-32 opacity-30 pointer-events-none transform rotate-[-15deg] hidden lg:block">
-               <img src="/orange-kea-mascot.png" alt="" className="w-full h-full object-contain" />
-            </div>
-
-            <div className="space-y-4">
-              <h1 className="text-2xl sm:text-4xl font-fredoka font-bold tracking-tight text-duo-black text-center md:text-left">
-                What&apos;s the goal of this <span className="text-duo-green">Quest?</span>
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight text-[#3c3c3c] font-outfit mb-1.5">
+                What is this survey about?
               </h1>
-              <p className="text-duo-graphite text-base sm:text-lg font-fredoka font-medium text-center md:text-left">
-                Describe your project. Our AI will build the entire adventure for you.
+              <p className="text-[#777777] font-outfit text-sm">
+                Describe your goal and audience — AI will generate tailored questions.
               </p>
             </div>
 
-            <div className="relative group">
+            <div className="relative">
               <textarea
                 value={formData.context}
                 onChange={(e) => setFormData(prev => ({ ...prev, context: e.target.value }))}
-                placeholder="e.g. I want to collect feedback on our new ice cream flavors from kids aged 5-12..."
-                className="w-full h-48 sm:h-64 p-5 sm:p-8 bg-white rounded-[2rem] border-2 border-duo-gray focus:border-duo-blue focus:ring-0 text-base sm:text-xl font-fredoka font-medium placeholder:text-duo-silver resize-none shadow-[0_6px_0_#e5e5e5] transition-all outline-none"
+                placeholder="e.g. I want to collect feedback on our new ice cream flavors from kids aged 5–12, focusing on taste, texture, and packaging preferences…"
+                className="w-full h-44 px-4 py-3.5 bg-white border border-[#e5e5e5] rounded-2xl focus:border-orange-400 focus:outline-none text-sm font-outfit text-[#3c3c3c] placeholder:text-[#c8c8c8] resize-none transition-colors leading-relaxed"
               />
+              {formData.context.length > 0 && (
+                <span className="absolute bottom-3 right-4 text-[10px] font-outfit text-[#c8c8c8] tabular-nums">
+                  {formData.context.length} chars
+                </span>
+              )}
             </div>
 
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
-              <div className="flex items-center gap-3">
-                 <div className="w-10 h-10 rounded-xl bg-duo-blue/10 flex items-center justify-center text-duo-blue">
-                    <Sparkles className="w-5 h-5" />
-                 </div>
-                 <p className="text-[10px] font-black uppercase tracking-wider text-duo-silver max-w-[160px] leading-tight">AI will generate questions based on this prompt</p>
+            {/* Example prompts */}
+            <div className="space-y-2">
+              <p className="text-[11px] font-outfit text-[#afafaf] uppercase tracking-widest font-bold">Try an example</p>
+              <div className="flex flex-wrap gap-2">
+                {EXAMPLE_PROMPTS.map((p) => (
+                  <button
+                    key={p.label}
+                    onClick={() => setFormData(prev => ({ ...prev, context: p.text }))}
+                    className="px-3 py-1.5 bg-white border border-[#e5e5e5] rounded-xl text-[12px] font-outfit font-bold text-[#777777] hover:border-orange-300 hover:text-orange-500 hover:bg-orange-50 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1 cursor-pointer"
+                  >
+                    {p.label}
+                  </button>
+                ))}
               </div>
+            </div>
 
-              <button 
+            <div className="flex items-center justify-between gap-4 pt-2">
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-3.5 h-3.5 text-orange-400 flex-shrink-0" />
+                <p className="text-[11px] font-outfit text-[#afafaf]">AI generates questions from your description</p>
+              </div>
+              <button
                 onClick={() => formData.context.trim() && setCurrentStep(2)}
                 disabled={!formData.context.trim()}
-                className={`
-                  px-12 py-5 rounded-2xl font-fredoka font-bold text-lg uppercase tracking-widest transition-all
-                  ${formData.context.trim() 
-                    ? 'bg-duo-green text-white border-b-4 border-[#46a302] active:translate-y-[2px] active:border-b-0' 
-                    : 'bg-duo-gray text-duo-silver cursor-not-allowed'}
-                `}
+                className={`px-6 py-2.5 rounded-xl font-bold font-outfit text-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 ${
+                  formData.context.trim()
+                    ? 'bg-orange-500 hover:bg-orange-600 text-white shadow-[0_3px_0_#c2410c] active:translate-y-[2px] active:shadow-none cursor-pointer'
+                    : 'bg-[#f5f5f5] text-[#c8c8c8] cursor-not-allowed'
+                }`}
               >
-                Choose Adventure
+                Continue
               </button>
             </div>
           </motion.div>
         )}
 
-        {/* Step 2: Theme Selection */}
+        {/* ── Step 2: Theme ── */}
         {currentStep === 2 && (
           <motion.div
             key="step2"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            className="space-y-12"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+            className="space-y-6"
           >
-            <div className="space-y-4">
-              <h1 className="text-2xl sm:text-4xl font-fredoka font-bold tracking-tight text-duo-black text-center md:text-left">
-                Select your <span className="text-duo-blue">World</span>
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight text-[#3c3c3c] font-outfit mb-1.5">
+                Choose a theme
               </h1>
-              <p className="text-duo-graphite text-lg font-fredoka font-medium text-center md:text-left">
-                Each world has unique visuals and rewards for your respondents.
+              <p className="text-[#777777] font-outfit text-sm">
+                Each theme gives respondents a unique interactive experience.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {THEMES.map((theme) => (
-                <button
-                  key={theme.value}
-                  onClick={() => setFormData(prev => ({ ...prev, theme: theme.value }))}
-                  className={`
-                    group relative p-6 text-left transition-all rounded-[2.5rem] border-2 flex flex-col items-start
-                    ${formData.theme === theme.value 
-                      ? 'bg-white border-duo-blue shadow-[0_8px_0_#1cb0f6]' 
-                      : 'bg-white border-duo-gray shadow-[0_6px_0_#e5e5e5] hover:bg-duo-gray/10 hover:translate-y-[2px] hover:shadow-[0_4px_0_#e5e5e5]'}
-                  `}
-                >
-                  {theme.isPremium && (
-                    <div className="absolute top-4 right-4 px-2.5 py-1 bg-duo-yellow text-[8px] text-white font-black rounded-lg tracking-widest uppercase shadow-[0_2px_0_#cca000]">
-                      Premium
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+              {/* Theme list */}
+              <div className="md:col-span-2 space-y-1.5">
+                {THEMES.map((theme) => {
+                  const isSelected = formData.theme === theme.value;
+                  return (
+                    <button
+                      key={theme.value}
+                      onClick={() => setFormData(prev => ({ ...prev, theme: theme.value }))}
+                      className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-xl border text-left transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1 cursor-pointer ${
+                        isSelected
+                          ? 'bg-orange-50 border-orange-400'
+                          : 'bg-white border-[#e5e5e5] hover:border-[#c8c8c8]'
+                      }`}
+                    >
+                      <div className="w-9 h-9 bg-[#f5f5f5] border border-[#e5e5e5] rounded-xl flex items-center justify-center p-1.5 flex-shrink-0">
+                        <img src={theme.image} alt={theme.label} className="w-full h-full object-contain" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className={`text-sm font-bold font-outfit ${isSelected ? 'text-orange-600' : 'text-[#3c3c3c]'}`}>
+                          {theme.label}
+                        </p>
+                        <p className="text-[11px] font-outfit text-[#afafaf] truncate leading-tight">{theme.description}</p>
+                      </div>
+                      {theme.isPremium ? (
+                        <span className="flex items-center gap-0.5 px-1.5 py-0.5 bg-[#3c3c3c] text-white rounded-md text-[9px] font-bold font-outfit tracking-wide flex-shrink-0">
+                          <Lock className="w-2.5 h-2.5" strokeWidth={2.5} />Pro
+                        </span>
+                      ) : (
+                        <div className={`w-4 h-4 rounded-full border-2 flex-shrink-0 flex items-center justify-center transition-colors ${
+                          isSelected ? 'border-orange-500 bg-orange-500' : 'border-[#e5e5e5]'
+                        }`}>
+                          {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
+                        </div>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Preview panel */}
+              <div className="md:col-span-3 bg-white border border-[#e5e5e5] rounded-2xl flex flex-col items-center justify-center p-8 gap-5 min-h-[280px]">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={formData.theme}
+                    initial={{ opacity: 0, scale: 0.92 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.92 }}
+                    transition={{ duration: 0.18, ease: 'easeOut' }}
+                    className="flex flex-col items-center gap-4 text-center"
+                  >
+                    <div className="w-24 h-24 bg-[#f5f5f5] border border-[#e5e5e5] rounded-2xl flex items-center justify-center p-3">
+                      <img
+                        src={selectedTheme.image}
+                        alt={selectedTheme.label}
+                        className="w-full h-full object-contain"
+                      />
                     </div>
-                  )}
-                  <div className={`w-16 h-16 bg-white border-2 border-duo-gray rounded-2xl flex items-center justify-center mb-6 shadow-[0_4px_0_#e5e5e5] group-hover:scale-105 transition-all p-2`}>
-                    <img src={theme.image} alt={theme.label} className="w-full h-full object-contain" />
-                  </div>
-                  <h3 className="text-lg font-fredoka font-bold text-duo-black mb-1">{theme.label}</h3>
-                  <p className="text-duo-graphite text-[10px] font-black uppercase tracking-wider leading-tight">{theme.description}</p>
-                </button>
-              ))}
+                    <div>
+                      <p className="text-lg font-bold font-outfit text-[#3c3c3c] tracking-tight">{selectedTheme.label}</p>
+                      <p className="text-sm font-outfit text-[#777777] mt-0.5">{selectedTheme.description}</p>
+                    </div>
+                    <div className="flex items-center gap-2 flex-wrap justify-center">
+                      <span className="px-2.5 py-1 bg-[#f5f5f5] border border-[#e5e5e5] rounded-full text-[11px] font-outfit font-bold text-[#777777]">
+                        Interactive
+                      </span>
+                      {selectedTheme.isPremium && (
+                        <span className="flex items-center gap-1 px-2.5 py-1 bg-orange-50 border border-orange-100 rounded-full text-[11px] font-outfit font-bold text-orange-600">
+                          <Lock className="w-2.5 h-2.5" strokeWidth={2.5} /> Pro theme
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-[11px] font-outfit text-[#afafaf]">This is what respondents will experience</p>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
             </div>
 
-            <div className="flex items-center justify-center gap-6 pt-6">
-              <button 
+            <div className="flex justify-end">
+              <button
                 onClick={() => setCurrentStep(3)}
-                className="w-full max-w-sm py-5 bg-duo-blue text-white rounded-2xl font-fredoka font-bold text-lg uppercase tracking-widest border-b-4 border-[#1890cc] transition-all active:translate-y-[2px] active:border-b-0 shadow-[0_6px_0_#1890cc]"
+                className="px-6 py-2.5 bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-bold font-outfit text-sm shadow-[0_3px_0_#c2410c] active:translate-y-[2px] active:shadow-none transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 cursor-pointer"
               >
-                Confirm Adventure
+                Continue
               </button>
             </div>
           </motion.div>
         )}
 
-        {/* Step 3: Preferences & Magic Generation */}
+        {/* ── Step 3: Settings ── */}
         {currentStep === 3 && (
           <motion.div
             key="step3"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            className="space-y-12"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+            className="space-y-7"
           >
-            <div className="space-y-4">
-              <h1 className="text-2xl sm:text-4xl font-fredoka font-bold tracking-tight text-duo-black text-center md:text-left">
-                Configure your <span className="text-duo-purple">Quest</span>
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight text-[#3c3c3c] font-outfit mb-1.5">
+                Configure your survey
               </h1>
-              <p className="text-duo-graphite text-lg font-fredoka font-medium text-center md:text-left">
-                Fine-tune the complexity and privacy of your adventure.
+              <p className="text-[#777777] font-outfit text-sm">
+                Set the length, format, and privacy before generating questions.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {/* Question Count */}
-              <div className="space-y-4">
-                <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-duo-silver">Quest Length</h3>
-                <div className="space-y-3">
-                  {QUESTION_COUNT_OPTIONS.map((opt) => (
-                    <button
-                      key={opt.value}
-                      onClick={() => setFormData(prev => ({ ...prev, preferences: { ...prev.preferences, questionCount: opt.value } }))}
-                      className={`
-                        w-full p-4 rounded-2xl text-left transition-all border-2
-                        ${formData.preferences.questionCount === opt.value 
-                          ? 'bg-white border-duo-purple shadow-[0_4px_0_#a570ff]' 
-                          : 'bg-white border-duo-gray shadow-[0_4px_0_#e5e5e5] hover:bg-duo-gray/10 hover:translate-y-[2px] hover:shadow-[0_2px_0_#e5e5e5]'}
-                      `}
-                    >
-                      <p className="font-fredoka font-bold text-duo-black text-sm">{opt.label}</p>
-                      <p className="text-[9px] text-duo-graphite font-black uppercase tracking-wider leading-tight mt-1">{opt.description}</p>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Style */}
-              <div className="space-y-4">
-                <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-duo-silver">Difficulty</h3>
-                <div className="space-y-3">
-                  {QUESTION_STYLE_OPTIONS.map((opt) => (
-                    <button
-                      key={opt.value}
-                      onClick={() => setFormData(prev => ({ ...prev, preferences: { ...prev.preferences, questionStyle: opt.value } }))}
-                      className={`
-                        w-full p-4 rounded-2xl text-left transition-all border-2
-                        ${formData.preferences.questionStyle === opt.value 
-                          ? 'bg-white border-duo-green shadow-[0_4px_0_#58cc02]' 
-                          : 'bg-white border-duo-gray shadow-[0_4px_0_#e5e5e5] hover:bg-duo-gray/10 hover:translate-y-[2px] hover:shadow-[0_2px_0_#e5e5e5]'}
-                      `}
-                    >
-                      <p className="font-fredoka font-bold text-duo-black text-sm">{opt.label}</p>
-                      <p className="text-[9px] text-duo-graphite font-black uppercase tracking-wider leading-tight mt-1">{opt.description}</p>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Anonymity */}
-              <div className="space-y-4">
-                <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-duo-silver">Identity</h3>
-                <div className="space-y-3">
-                  {ANONYMITY_OPTIONS.map((opt) => (
-                    <button
-                      key={opt.value}
-                      onClick={() => setFormData(prev => ({ ...prev, preferences: { ...prev.preferences, anonymity: opt.value } }))}
-                      className={`
-                        w-full p-4 rounded-2xl text-left transition-all border-2
-                        ${formData.preferences.anonymity === opt.value 
-                          ? 'bg-white border-duo-blue shadow-[0_4px_0_#1cb0f6]' 
-                          : 'bg-white border-duo-gray shadow-[0_4px_0_#e5e5e5] hover:bg-duo-gray/10 hover:translate-y-[2px] hover:shadow-[0_2px_0_#e5e5e5]'}
-                      `}
-                    >
-                      <p className="font-fredoka font-bold text-duo-black text-sm">{opt.label}</p>
-                      <p className="text-[9px] text-duo-graphite font-black uppercase tracking-wider leading-tight mt-1">{opt.description}</p>
-                    </button>
-                  ))}
-                </div>
+            {/* Length */}
+            <div className="space-y-2">
+              <p className="text-[11px] font-bold font-outfit text-[#afafaf] uppercase tracking-widest">Length</p>
+              <div className="space-y-1.5">
+                {QUESTION_COUNT_OPTIONS.map((opt) => (
+                  <OptionRow
+                    key={opt.value}
+                    option={opt}
+                    selected={formData.preferences.questionCount === opt.value}
+                    onSelect={(v) => setFormData(prev => ({ ...prev, preferences: { ...prev.preferences, questionCount: v } }))}
+                  />
+                ))}
               </div>
             </div>
 
-            {/* AI Generation State */}
-            <div className="flex flex-col items-center justify-center pt-8">
-              {isGenerating ? (
-                <div className="text-center space-y-6">
-                  <motion.div
-                      animate={{ 
-                        y: [0, -20, 0],
-                        rotate: [0, 5, -5, 0]
-                      }}
-                      transition={{ 
-                        duration: 2,
-                        repeat: Infinity,
-                        ease: "easeInOut"
-                      }}
-                      className="w-32 h-32 mx-auto relative mb-8"
-                    >
-                      <div className="absolute inset-0 bg-orange-200 blur-3xl opacity-30 rounded-full" />
-                      <img src="/orange-kea-mascot.png" alt="Brewing..." className="w-full h-full object-contain relative z-10" />
-                    </motion.div>
-                  <h3 className="text-2xl font-fredoka font-bold text-duo-black animate-pulse uppercase tracking-tight">Brewing your quest...</h3>
-                  <p className="text-duo-graphite text-xs font-black uppercase tracking-wider">Our AI is crafting custom challenges for your audience.</p>
-                </div>
-              ) : (
-                <div className="flex flex-col sm:flex-row items-center gap-6 w-full">
-                  <button 
-                    onClick={() => setCurrentStep(4)}
-                    className="flex-1 px-8 py-5 bg-white text-duo-graphite rounded-2xl font-fredoka font-bold text-lg uppercase tracking-widest border-2 border-duo-gray shadow-[0_4px_0_#e5e5e5] transition-all active:translate-y-[2px] active:border-b-0"
-                  >
-                    Skip to Review
-                  </button>
-                  <button 
-                    onClick={generateQuestionsWithAI}
-                    className="flex-[2] px-12 py-5 bg-duo-green text-white rounded-2xl font-fredoka font-bold text-lg uppercase tracking-widest border-b-4 border-[#46a302] transition-all active:translate-y-[2px] active:border-b-0 shadow-xl shadow-duo-green/20 flex items-center justify-center gap-3"
-                  >
-                    <Sparkles className="w-6 h-6" />
-                    Generate Questions
-                  </button>
-                </div>
-              )}
+            {/* Format */}
+            <div className="space-y-2">
+              <p className="text-[11px] font-bold font-outfit text-[#afafaf] uppercase tracking-widest">Format</p>
+              <div className="space-y-1.5">
+                {QUESTION_STYLE_OPTIONS.map((opt) => (
+                  <OptionRow
+                    key={opt.value}
+                    option={opt}
+                    selected={formData.preferences.questionStyle === opt.value}
+                    onSelect={(v) => setFormData(prev => ({ ...prev, preferences: { ...prev.preferences, questionStyle: v } }))}
+                  />
+                ))}
+              </div>
             </div>
+
+            {/* Privacy */}
+            <div className="space-y-2">
+              <p className="text-[11px] font-bold font-outfit text-[#afafaf] uppercase tracking-widest">Privacy</p>
+              <div className="space-y-1.5">
+                {ANONYMITY_OPTIONS.map((opt) => (
+                  <OptionRow
+                    key={opt.value}
+                    option={opt}
+                    selected={formData.preferences.anonymity === opt.value}
+                    onSelect={(v) => setFormData(prev => ({ ...prev, preferences: { ...prev.preferences, anonymity: v } }))}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {errors.general && (
+              <p className="text-red-500 text-sm font-outfit bg-red-50 border border-red-100 rounded-xl p-3">{errors.general}</p>
+            )}
+
+            {isGenerating ? (
+              <div className="flex flex-col items-center py-8 gap-3">
+                <div className="w-9 h-9 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
+                <p className="text-sm font-outfit text-[#777777]">Generating questions…</p>
+              </div>
+            ) : (
+              <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                <button
+                  onClick={() => setCurrentStep(4)}
+                  className="flex-1 py-2.5 bg-white border border-[#e5e5e5] hover:border-[#c8c8c8] text-[#777777] hover:text-[#3c3c3c] rounded-xl font-bold font-outfit text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1 cursor-pointer"
+                >
+                  Skip — add manually
+                </button>
+                <button
+                  onClick={generateQuestionsWithAI}
+                  className="flex-[2] flex items-center justify-center gap-2 py-2.5 bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-bold font-outfit text-sm shadow-[0_3px_0_#c2410c] active:translate-y-[2px] active:shadow-none transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 cursor-pointer"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  Generate with AI
+                </button>
+              </div>
+            )}
           </motion.div>
         )}
 
-        {/* Step 4: Review & Launch */}
+        {/* ── Step 4: Review & Publish ── */}
         {currentStep === 4 && (
           <motion.div
             key="step4"
-            initial={{ opacity: 0, scale: 0.98 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.98 }}
-            className="space-y-16 pb-24 max-w-4xl mx-auto"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+            className="space-y-6 pb-12"
           >
-            <div className="text-center space-y-4">
-              <h1 className="text-2xl sm:text-5xl font-fredoka font-bold tracking-tight text-duo-black">
-                Your Quest is <span className="text-duo-green">Ready!</span>
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight text-[#3c3c3c] font-outfit mb-1.5">
+                Review &amp; publish
               </h1>
-              <p className="text-duo-graphite text-lg font-fredoka font-medium">
-                Double check the details and choose your publishing plan.
+              <p className="text-[#777777] font-outfit text-sm">
+                Add a title and URL, then choose a plan to publish.
               </p>
             </div>
 
-            {/* Integrated Review Card */}
-            <div className="bg-white border-2 border-duo-gray rounded-[3rem] shadow-[0_8px_0_#e5e5e5] overflow-hidden">
-               <div className="grid grid-cols-1 md:grid-cols-2">
-                  {/* Left: Identity */}
-                  <div className="p-10 border-b-2 md:border-b-0 md:border-r-2 border-duo-gray space-y-8">
-                     <div className="space-y-2">
-                        <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-duo-silver ml-2">Quest Identity</h3>
-                        <div className="space-y-4">
-                           <div className="space-y-1.5">
-                              <label className="text-[10px] font-black uppercase tracking-widest text-duo-silver ml-4">Title</label>
-                              <input
-                                value={formData.title}
-                                onChange={(e) => {
-                                  const title = e.target.value;
-                                  setFormData(prev => ({
-                                    ...prev,
-                                    title,
-                                    slug: slugManuallyEdited ? prev.slug : generateSlug(title),
-                                  }));
-                                }}
-                                placeholder="Enter a catchy title..."
-                                className="w-full p-4 bg-duo-gray/20 rounded-2xl border-2 border-transparent focus:border-duo-blue focus:bg-white focus:ring-0 text-lg font-fredoka font-bold text-duo-black transition-all outline-none"
-                              />
-                           </div>
-                           <div className="space-y-1.5">
-                              <label className="text-[10px] font-black uppercase tracking-widest text-duo-silver ml-4">URL Path</label>
-                              <div className="flex items-center gap-2 p-4 bg-duo-gray/20 rounded-2xl border-2 border-transparent focus-within:border-duo-blue focus-within:bg-white transition-all">
-                                 <span className="text-duo-silver font-fredoka font-bold text-sm">{user?.username}/</span>
-                                 <input
-                                   value={formData.slug}
-                                   onChange={(e) => {
-                                     setFormData(prev => ({ ...prev, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '') }));
-                                     setSlugManuallyEdited(true);
-                                   }}
-                                   className="flex-1 bg-transparent border-none focus:ring-0 p-0 font-fredoka font-bold text-duo-black text-sm"
-                                 />
-                                 {isCheckingSlug ? <Spinner size="sm" /> : slugAvailable ? <Check className="text-duo-green w-4 h-4" strokeWidth={4} /> : null}
-                              </div>
-                           </div>
-                        </div>
-                     </div>
+            {/* Survey preview card */}
+            <div className="bg-white border border-[#e5e5e5] rounded-2xl overflow-hidden">
+              {/* Banner */}
+              <div className="bg-orange-50 border-b border-orange-100 p-5 flex items-center gap-4">
+                <div className="w-14 h-14 bg-white border border-orange-100 rounded-2xl flex items-center justify-center p-2 flex-shrink-0 shadow-sm">
+                  <img
+                    src={getAdventureImage(formData.theme)}
+                    alt={getAdventureLabel(formData.theme)}
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[11px] font-bold font-outfit text-orange-400 uppercase tracking-widest mb-1">
+                    {getAdventureLabel(formData.theme)} theme
+                  </p>
+                  <p className="text-base font-bold font-outfit text-[#3c3c3c] truncate">
+                    {formData.title || <span className="text-[#c8c8c8] font-normal">Untitled survey</span>}
+                  </p>
+                </div>
+                <div className="flex flex-col items-end gap-1 flex-shrink-0">
+                  <span className="px-2 py-0.5 bg-white border border-orange-100 rounded-full text-[10px] font-outfit font-bold text-[#777777] tabular-nums">
+                    {formData.questions.length} question{formData.questions.length !== 1 ? 's' : ''}
+                  </span>
+                  <span className="px-2 py-0.5 bg-white border border-[#e5e5e5] rounded-full text-[10px] font-outfit text-[#afafaf]">
+                    {formData.preferences.anonymity === 'anonymous' ? 'Anonymous' : 'Collects contact'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Fields */}
+              <div className="p-5 space-y-4">
+                {/* Title */}
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-bold font-outfit text-[#afafaf] uppercase tracking-widest">
+                    Survey title
+                  </label>
+                  <input
+                    value={formData.title}
+                    onChange={(e) => {
+                      const title = e.target.value;
+                      setFormData(prev => ({
+                        ...prev,
+                        title,
+                        slug: slugManuallyEdited ? prev.slug : generateSlug(title),
+                      }));
+                    }}
+                    placeholder="Enter a title…"
+                    className="w-full px-4 py-2.5 bg-[#f5f5f5] border border-transparent rounded-xl focus:bg-white focus:border-orange-400 focus:outline-none text-sm font-outfit font-bold text-[#3c3c3c] placeholder:text-[#c8c8c8] transition-colors"
+                  />
+                </div>
+
+                {/* URL */}
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-bold font-outfit text-[#afafaf] uppercase tracking-widest">
+                    Public URL
+                  </label>
+                  <div className="flex items-center bg-[#f5f5f5] border border-transparent rounded-xl focus-within:bg-white focus-within:border-orange-400 transition-colors overflow-hidden">
+                    <div className="flex items-center gap-1.5 px-3 py-2.5 border-r border-[#e5e5e5] flex-shrink-0">
+                      <Globe className="w-3.5 h-3.5 text-[#afafaf]" />
+                      <span className="text-sm font-outfit text-[#afafaf]">{user?.username}/</span>
+                    </div>
+                    <input
+                      value={formData.slug}
+                      onChange={(e) => {
+                        setFormData(prev => ({ ...prev, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '') }));
+                        setSlugManuallyEdited(true);
+                      }}
+                      className="flex-1 px-3 py-2.5 bg-transparent focus:outline-none text-sm font-outfit text-[#3c3c3c] min-w-0"
+                    />
+                    <div className="px-3 flex-shrink-0">
+                      {isCheckingSlug ? (
+                        <Spinner size="sm" />
+                      ) : slugAvailable === true ? (
+                        <Check className="w-4 h-4 text-green-500" strokeWidth={2.5} />
+                      ) : slugAvailable === false ? (
+                        <span className="text-[10px] font-outfit text-red-400 font-bold">Taken</span>
+                      ) : null}
+                    </div>
                   </div>
-
-                  {/* Right: Visual Preview */}
-                  <div className="p-10 bg-duo-gray/5 flex flex-col justify-center relative overflow-hidden group">
-                     {/* Mascot Illustration */}
-                     <div className="absolute -bottom-4 -right-4 w-48 h-48 opacity-20 pointer-events-none group-hover:opacity-40 transition-opacity z-0">
-                        <img 
-                          src="/orange-kea-mascot.png" 
-                          alt={getAdventureLabel(formData.theme)}
-                          className="w-full h-full object-contain relative z-10 drop-shadow-xl"
-                        />
-                     </div>
-
-                     {/* Decorative Mesh Background */}
-                     <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
-                        <div className="absolute -top-10 -right-10 w-40 h-40 bg-duo-green rounded-full blur-3xl" />
-                        <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-duo-blue rounded-full blur-3xl" />
-                     </div>
-
-                     <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-duo-silver mb-6 ml-2 relative z-10">Quest Preview</h3>
-                     
-                     <div className="bg-white border-2 border-duo-gray p-8 rounded-[2.5rem] shadow-[0_4px_0_#e5e5e5] relative overflow-hidden transition-all hover:translate-y-[-2px] hover:shadow-[0_8px_0_#e5e5e5] z-10">
-                        {/* World Icon Floating */}
-                        <div className="absolute -top-4 -right-4 w-20 h-20 bg-white border-2 border-duo-gray rounded-full shadow-[0_4px_0_#e5e5e5] flex items-center justify-center text-4xl animate-float">
-                           {{'classic':'📋','ice-cream-sundae':'🍨','pizza-builder':'🍕','garden-grower':'🌱','dream-home':'🏠','coffee-brewer':'☕'}[formData.theme] || '📋'}
-                        </div>
-
-                        <div className="flex items-center gap-2 mb-4">
-                           <div className="w-2.5 h-2.5 rounded-full bg-duo-green shadow-[0_0_10px_rgba(88,204,2,0.4)]" />
-                           <p className="text-duo-green font-black uppercase tracking-widest text-[9px]">Active World: {formData.theme}</p>
-                        </div>
-
-                        <h4 className="text-2xl font-fredoka font-bold text-duo-black mb-6 leading-tight max-w-[80%]">
-                           {formData.title || "Untiled Quest"}
-                        </h4>
-                        
-                        <div className="flex flex-wrap gap-3">
-                           <div className="px-4 py-2 bg-duo-gray/30 border-b-2 border-duo-gray/50 rounded-xl text-[10px] font-black uppercase text-duo-graphite flex items-center gap-2">
-                              <span className="w-1.5 h-1.5 rounded-full bg-duo-blue" />
-                              {formData.questions.length} Steps
-                           </div>
-                           <div className="px-4 py-2 bg-duo-gray/30 border-b-2 border-duo-gray/50 rounded-xl text-[10px] font-black uppercase text-duo-graphite flex items-center gap-2">
-                              <span className="w-1.5 h-1.5 rounded-full bg-duo-purple" />
-                              {formData.preferences.anonymity}
-                           </div>
-                        </div>
-
-                        {/* Quest Badge Accent */}
-                        <div className="absolute bottom-0 right-0 p-4 opacity-10">
-                           <div className="w-12 h-12 border-4 border-duo-blue rounded-full flex items-center justify-center font-fredoka font-bold text-duo-blue text-xs rotate-12">
-                              QS
-                           </div>
-                        </div>
-                     </div>
-
-                     {/* Encouragement Text */}
-                     <p className="mt-6 text-center text-[10px] font-black text-duo-silver uppercase tracking-[0.2em] animate-pulse relative z-10">
-                        Respondents will love this adventure!
-                     </p>
-                  </div>
-               </div>
+                </div>
+              </div>
             </div>
 
-            {/* Pricing Section */}
-            <div className="space-y-8">
-               <div className="text-center">
-                  <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-duo-silver">Choose your publishing plan</h3>
-               </div>
-               <TierSelector
-                 selectedTier={formData.pricingTier}
-                 onTierSelect={(tier) => setFormData(prev => ({ ...prev, pricingTier: tier }))}
-               />
+            {/* Pricing */}
+            <div className="space-y-3">
+              <p className="text-[11px] font-bold font-outfit text-[#afafaf] uppercase tracking-widest">Publishing plan</p>
+              <TierSelector
+                selectedTier={formData.pricingTier}
+                onTierSelect={(tier) => setFormData(prev => ({ ...prev, pricingTier: tier }))}
+              />
             </div>
-            
+
             {errors.general && (
-              <p className="text-red-500 text-center text-[10px] font-black uppercase tracking-wider bg-red-50 p-4 rounded-2xl border-2 border-red-100 max-w-md mx-auto">{errors.general}</p>
+              <p className="text-red-500 text-sm font-outfit bg-red-50 border border-red-100 rounded-xl p-3">{errors.general}</p>
             )}
 
-            {/* Final Launch Button */}
-            <div className="flex justify-center pt-8">
-               <button 
-                 onClick={handleCreateSurvey}
-                 disabled={isCreating || !formData.pricingTier}
-                 className={`
-                   w-full max-w-md py-6 rounded-2xl font-fredoka font-bold text-2xl uppercase tracking-widest transition-all
-                   ${isCreating || !formData.pricingTier 
-                     ? 'bg-duo-gray text-duo-silver cursor-not-allowed border-b-4 border-duo-gray' 
-                     : 'bg-duo-green text-white border-b-4 border-[#46a302] shadow-[0_8px_0_#46a302] hover:translate-y-[-2px] hover:shadow-[0_10px_0_#46a302] active:translate-y-[2px] active:shadow-none'}
-                 `}
-               >
-                 {isCreating ? 'Launching Quest...' : 'Launch Quest!'}
-               </button>
-            </div>
+            {/* Publish */}
+            <button
+              onClick={handleCreateSurvey}
+              disabled={isCreating || !formData.pricingTier}
+              className={`w-full py-3 rounded-xl font-bold font-outfit text-sm flex items-center justify-center gap-2 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 ${
+                isCreating || !formData.pricingTier
+                  ? 'bg-[#f5f5f5] text-[#c8c8c8] cursor-not-allowed'
+                  : 'bg-orange-500 hover:bg-orange-600 text-white shadow-[0_3px_0_#c2410c] active:translate-y-[2px] active:shadow-none cursor-pointer'
+              }`}
+            >
+              <Rocket className="w-4 h-4" />
+              {isCreating ? 'Publishing…' : 'Publish survey'}
+            </button>
           </motion.div>
         )}
       </AnimatePresence>
@@ -736,6 +786,13 @@ export default function CreateSurveyPage() {
           setFormData(prev => ({ ...prev, theme: 'classic' as AdventureType }));
           setShowAIUpgradeModal(false);
         }}
+      />
+
+      <MultiStepLoader
+        loadingStates={AI_GENERATION_STATES}
+        loading={isGenerating}
+        duration={1500}
+        loop={true}
       />
     </div>
   );

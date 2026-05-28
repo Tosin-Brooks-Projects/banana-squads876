@@ -2,7 +2,8 @@
 
 import { useEffect, useState, useMemo, useRef, useCallback } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import { Check, Copy, Trophy, Lock, Mail, RefreshCw, Trash2, Frown, CreditCard, Rocket, CircleStop, Timer, CalendarDays, User, Dice5 } from 'lucide-react';
 import Link from 'next/link';
 import { CSVLink } from 'react-csv';
 import { useAuthContext } from '@/contexts/AuthContext';
@@ -64,27 +65,32 @@ function Toast({ message, show, onClose }: { message: string; show: boolean; onC
   }, [show, onClose]);
 
   return (
-    <AnimatePresence>
-      {show && (
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 40 }}
-          className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 bg-gray-900 text-white text-sm font-bold px-4 py-3 rounded-2xl shadow-xl"
-        >
-          <span className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center text-xs">✓</span>
-          {message}
-        </motion.div>
-      )}
-    </AnimatePresence>
+    <div aria-live="polite" aria-atomic="true" className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 pointer-events-none">
+      <AnimatePresence>
+        {show && (
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 40 }}
+            className="flex items-center gap-2 bg-gray-900 text-white text-sm font-bold px-4 py-3 rounded-2xl shadow-xl pointer-events-auto"
+          >
+            <span className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
+              <Check className="w-3 h-3 text-white" strokeWidth={3} />
+            </span>
+            {message}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }
 
 function LoadingSkeleton() {
+  const reducedMotion = useReducedMotion();
   return (
     <div className="flex flex-col items-center justify-center py-24 gap-6">
       <motion.div
-        animate={{ y: [0, -16, 0], rotate: [0, 5, -5, 0] }}
+        animate={reducedMotion ? {} : { y: [0, -16, 0], rotate: [0, 5, -5, 0] }}
         transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
       >
         <img src="/orange-kea-mascot.png" alt="Loading" className="w-24 h-24 drop-shadow-xl" />
@@ -127,10 +133,14 @@ function CopyButton({ text }: { text: string }) {
     setTimeout(() => setCopied(false), 2000);
   };
   return (
-    <button onClick={copy} className="flex-shrink-0 w-8 h-8 rounded-lg bg-white border-2 border-gray-200 flex items-center justify-center text-gray-400 hover:text-orange-500 hover:border-orange-300 transition-all">
+    <button
+      onClick={copy}
+      aria-label={copied ? 'Copied!' : 'Copy link'}
+      className="flex-shrink-0 w-8 h-8 rounded-lg bg-white border-2 border-gray-200 flex items-center justify-center text-gray-400 hover:text-orange-500 hover:border-orange-300 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1"
+    >
       {copied
-        ? <svg className="w-3.5 h-3.5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
-        : <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+        ? <Check className="w-3.5 h-3.5 text-green-500" strokeWidth={3} />
+        : <Copy className="w-3.5 h-3.5" />
       }
     </button>
   );
@@ -142,11 +152,12 @@ function IconButton({ onClick, title, children, danger }: {
   return (
     <button
       onClick={onClick}
+      aria-label={title}
       title={title}
-      className={`w-10 h-10 flex items-center justify-center rounded-xl border-2 transition-all active:translate-y-0.5 ${
+      className={`w-10 h-10 flex items-center justify-center rounded-xl border-2 transition-all active:translate-y-0.5 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 ${
         danger
-          ? 'bg-red-50 border-red-100 text-red-400 hover:bg-red-500 hover:text-white hover:border-red-500'
-          : 'bg-white border-gray-200 text-gray-500 hover:border-orange-300 hover:text-orange-500'
+          ? 'bg-red-50 border-red-100 text-red-400 hover:bg-red-500 hover:text-white hover:border-red-500 focus-visible:ring-red-500'
+          : 'bg-white border-gray-200 text-gray-500 hover:border-orange-300 hover:text-orange-500 focus-visible:ring-orange-500'
       }`}
     >
       {children}
@@ -157,6 +168,7 @@ function IconButton({ onClick, title, children, danger }: {
 // ─── Main Page ───────────────────────────────────────────────────────────────
 
 export default function SurveyDetailPage() {
+  const reducedMotion = useReducedMotion();
   const params = useParams();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -445,7 +457,7 @@ export default function SurveyDetailPage() {
   if (error || !survey) {
     return (
       <div className="flex flex-col items-center justify-center py-24 text-center gap-4">
-        <div className="text-5xl">😕</div>
+        <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto"><Frown className="w-8 h-8 text-gray-400" /></div>
         <h2 className="text-xl font-black text-gray-900">{error || 'Survey not found'}</h2>
         <p className="text-gray-500 text-sm">This survey doesn&apos;t exist or you don&apos;t have access.</p>
         <Link href="/dashboard" className="mt-2 px-6 py-3 bg-orange-500 text-white font-black rounded-xl border-b-4 border-orange-700 active:border-b-0 active:translate-y-1 transition-all text-sm">
@@ -465,7 +477,7 @@ export default function SurveyDetailPage() {
 
         {/* Top row: back + status + actions */}
         <div className="flex items-center gap-2 mb-4">
-          <Link href="/dashboard" className="flex items-center gap-1 text-gray-500 font-bold text-sm mr-auto min-w-0">
+          <Link href="/dashboard" className="flex items-center gap-1 text-gray-500 font-bold text-sm mr-auto min-w-0 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1">
             <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
             </svg>
@@ -473,14 +485,10 @@ export default function SurveyDetailPage() {
           </Link>
           <StatusBadge status={survey.status} />
           <IconButton onClick={handleRefresh} title="Refresh">
-            <svg className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-            </svg>
+            <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
           </IconButton>
           <IconButton onClick={() => setShowDeleteModal(true)} title="Delete survey" danger>
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-            </svg>
+            <Trash2 className="w-4 h-4" />
           </IconButton>
         </div>
 
@@ -514,7 +522,7 @@ export default function SurveyDetailPage() {
           ) : (
             <button
               onClick={() => { setEditedTitle(survey.title); setIsEditingTitle(true); }}
-              className="group flex items-center gap-2"
+              className="group flex items-center gap-2 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1"
             >
               <h1 className="text-xl font-black text-gray-900 group-hover:text-orange-600 transition-colors">
                 {survey.title || 'Untitled Survey'}
@@ -533,18 +541,18 @@ export default function SurveyDetailPage() {
           {/* Action pills */}
           <div className="flex flex-wrap justify-center gap-2 pt-1">
             {responses.length > 0 && (
-              <button onClick={handlePickWinner} className="flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 border-2 border-orange-200 text-orange-600 font-black text-xs rounded-xl hover:bg-orange-100 transition-all">
-                🏆 Pick Winner
+              <button onClick={handlePickWinner} className="flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 border-2 border-orange-200 text-orange-600 font-black text-xs rounded-xl hover:bg-orange-100 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1">
+                <Trophy className="w-3.5 h-3.5" /> Pick Winner
               </button>
             )}
             {responses.length > 0 && (
               CSV_EXPORT_TIERS.includes(survey.pricingTier || 'free') ? (
-                <CSVLink data={csvData} filename={csvFilename} className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 border-2 border-indigo-200 text-indigo-600 font-black text-xs rounded-xl hover:bg-indigo-100 transition-all">
+                <CSVLink data={csvData} filename={csvFilename} className="flex items-center gap-1.5 px-3 py-1.5 bg-[#fafafa] border-2 border-[#e5e5e5] text-[#777777] font-black text-xs rounded-xl hover:border-orange-300 hover:text-orange-600 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1">
                   ↓ Export CSV
                 </CSVLink>
               ) : (
                 <button disabled className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 border-2 border-gray-200 text-gray-400 font-black text-xs rounded-xl opacity-60 cursor-not-allowed">
-                  🔒 CSV
+                  <Lock className="w-3.5 h-3.5" /> CSV
                 </button>
               )
             )}
@@ -562,17 +570,15 @@ export default function SurveyDetailPage() {
           <CopyButton text={surveyUrl} />
         </div>
         <div className="flex gap-2">
-          <Link href={surveyUrl} target="_blank" className="flex-1">
-            <button className="w-full py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-black text-sm rounded-xl border-b-4 border-amber-800 active:border-b-0 active:translate-y-1 transition-all">
-              Open Survey
-            </button>
+          <Link href={surveyUrl} target="_blank" className="flex-1 py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-black text-sm rounded-xl border-b-4 border-amber-800 active:border-b-0 active:translate-y-1 transition-all text-center block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-1">
+            Open Survey
           </Link>
           <button
             onClick={() => {
               if (navigator.share) navigator.share({ title: survey.title, url: surveyUrl });
               else { navigator.clipboard.writeText(surveyUrl); showToast('Link copied!'); }
             }}
-            className="flex-1 py-2.5 bg-white border-2 border-amber-200 text-amber-700 font-black text-sm rounded-xl hover:bg-amber-100 transition-all"
+            className="flex-1 py-2.5 bg-white border-2 border-amber-200 text-amber-700 font-black text-sm rounded-xl hover:bg-amber-100 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-1"
           >
             Share
           </button>
@@ -583,7 +589,7 @@ export default function SurveyDetailPage() {
       {survey.paymentStatus === 'unpaid' && survey.pricingTier && survey.pricingTier !== 'free' && (
         <div className="bg-white rounded-2xl border-2 border-amber-200 p-4">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center flex-shrink-0">💳</div>
+            <div className="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center flex-shrink-0"><CreditCard className="w-5 h-5 text-amber-600" /></div>
             <div className="min-w-0">
               <p className="font-black text-gray-900 text-sm">Payment Required</p>
               <p className="text-xs text-gray-500">Complete payment to publish this survey.</p>
@@ -599,7 +605,7 @@ export default function SurveyDetailPage() {
                     key={tier.id}
                     onClick={() => setSelectedPaymentTier(tier.id)}
                     disabled={processingPayment}
-                    className={`p-3 rounded-xl border-2 text-left transition-all ${selected ? 'border-orange-400 bg-orange-50' : 'border-gray-200 bg-gray-50 hover:border-gray-300'}`}
+                    className={`p-3 rounded-xl border-2 text-left transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1 ${selected ? 'border-orange-400 bg-orange-50' : 'border-gray-200 bg-gray-50 hover:border-gray-300'}`}
                   >
                     <div className="font-black text-gray-900">${tier.price}</div>
                     <div className="text-xs text-gray-500">{tier.name}</div>
@@ -633,20 +639,20 @@ export default function SurveyDetailPage() {
       {/* ── Stats row ─────────────────────────────────────────────────────── */}
       <div className="grid grid-cols-2 gap-3">
         {/* Responses */}
-        <div className="bg-indigo-600 rounded-2xl p-4 text-white overflow-hidden relative">
+        <div className="bg-orange-500 rounded-2xl p-4 text-white overflow-hidden relative">
           <div className="absolute -top-4 -right-4 w-20 h-20 bg-white/10 rounded-full blur-xl" />
-          <p className="text-indigo-200 text-[10px] font-black uppercase tracking-wide mb-1 relative z-10">Responses</p>
+          <p className="text-orange-100 text-[10px] font-black uppercase tracking-wide mb-1 relative z-10">Responses</p>
           <p className="text-4xl font-black relative z-10">{responses.length}</p>
           {survey.responseLimit && (
             <>
-              <div className="mt-2 h-1.5 w-full bg-indigo-800 rounded-full overflow-hidden relative z-10">
+              <div className="mt-2 h-1.5 w-full bg-orange-700 rounded-full overflow-hidden relative z-10">
                 <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${Math.min((responses.length / survey.responseLimit) * 100, 100)}%` }}
                   className="h-full bg-white rounded-full"
                 />
               </div>
-              <p className="text-[9px] text-indigo-300 mt-1 font-bold relative z-10">{survey.responseLimit - responses.length} left</p>
+              <p className="text-[9px] text-orange-200 mt-1 font-bold relative z-10">{survey.responseLimit - responses.length} left</p>
             </>
           )}
         </div>
@@ -655,7 +661,7 @@ export default function SurveyDetailPage() {
         <div className="bg-white rounded-2xl border-2 border-gray-100 p-4">
           <p className="text-gray-400 text-[10px] font-black uppercase tracking-wide mb-2">Launch Date</p>
           <div className="flex items-center gap-2">
-            <span className="text-2xl">📅</span>
+            <CalendarDays className="w-6 h-6 text-gray-400 flex-shrink-0" />
             <div className="min-w-0">
               <p className="font-black text-gray-900 text-sm leading-tight truncate">{formatDate(survey.createdAt)}</p>
               <p className="text-[9px] text-gray-400 font-bold uppercase">Mission Start</p>
@@ -668,17 +674,22 @@ export default function SurveyDetailPage() {
       <div className="bg-white rounded-2xl border-2 border-gray-100 divide-y-2 divide-gray-100">
         {/* Status toggle */}
         <div className="flex items-center gap-3 p-4">
-          <div className={`w-10 h-10 flex-shrink-0 rounded-xl flex items-center justify-center text-lg ${survey.status === 'published' ? 'bg-green-100' : 'bg-gray-100'}`}>
-            {survey.status === 'published' ? '🚀' : '🛑'}
+          <div className={`w-10 h-10 flex-shrink-0 rounded-xl flex items-center justify-center ${survey.status === 'published' ? 'bg-green-100' : 'bg-gray-100'}`}>
+            {survey.status === 'published'
+              ? <Rocket className="w-5 h-5 text-green-600" />
+              : <CircleStop className="w-5 h-5 text-gray-400" />}
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-black text-gray-900">Survey Status</p>
             <p className="text-xs text-gray-400 truncate">{survey.status === 'published' ? 'Live — accepting responses' : 'Inactive'}</p>
           </div>
           <button
+            role="switch"
+            aria-checked={survey.status === 'published'}
+            aria-label="Survey active status"
             onClick={handleStatusToggle}
             disabled={updatingStatus || survey.status === 'draft'}
-            className={`flex-shrink-0 relative h-7 w-12 rounded-full border-2 transition-all ${
+            className={`flex-shrink-0 relative h-7 w-12 rounded-full border-2 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1 ${
               survey.status === 'published' ? 'bg-orange-500 border-orange-600' : 'bg-gray-200 border-gray-300'
             } ${updatingStatus || survey.status === 'draft' ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
           >
@@ -688,7 +699,9 @@ export default function SurveyDetailPage() {
 
         {/* Expiration */}
         <div className="flex items-center gap-3 p-4">
-          <div className={`w-10 h-10 flex-shrink-0 rounded-xl flex items-center justify-center text-lg ${survey.settings?.expiresAt ? 'bg-indigo-100' : 'bg-gray-100'}`}>⌛</div>
+          <div className={`w-10 h-10 flex-shrink-0 rounded-xl flex items-center justify-center ${survey.settings?.expiresAt ? 'bg-orange-50' : 'bg-gray-100'}`}>
+            <Timer className={`w-5 h-5 ${survey.settings?.expiresAt ? 'text-orange-500' : 'text-gray-400'}`} />
+          </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-black text-gray-900">Expiration</p>
             <p className="text-xs text-gray-400 truncate">
@@ -775,32 +788,36 @@ export default function SurveyDetailPage() {
       {responses.length > 0 ? (
         <>
           {/* Overview metrics */}
-          <div className="bg-white rounded-2xl border-2 border-gray-100 p-4">
-            <h2 className="text-base font-black text-gray-900 mb-4">Response Overview</h2>
+          <div className="bg-white rounded-2xl border-2 border-[#e5e5e5] p-4 shadow-[0_3px_0_#e5e5e5]">
+            <h2 className="text-base font-black text-[#3c3c3c] mb-4">Response Overview</h2>
             <div className="grid grid-cols-2 gap-3 mb-4">
-              <div className="bg-gray-50 rounded-xl p-3 text-center border-2 border-gray-100">
-                <CompletionRateChart completedCount={responses.length} totalCount={responses.length} size={72} />
-                <p className="text-[10px] font-black text-gray-400 uppercase tracking-wide mt-2">Completion</p>
-                <p className="font-black text-gray-900">100%</p>
+              {/* Completion rate */}
+              <div className="bg-[#fafafa] rounded-xl p-4 border-2 border-[#e5e5e5] flex flex-col items-center gap-2">
+                <CompletionRateChart completedCount={responses.length} totalCount={responses.length} size={80} />
+                <div className="text-center">
+                  <p className="text-[10px] font-black text-[#afafaf] uppercase tracking-widest font-outfit">Completion</p>
+                  <p className="font-black text-[#3c3c3c] text-base leading-tight">100%</p>
+                </div>
               </div>
-              <div className="bg-gray-50 rounded-xl p-3 text-center border-2 border-gray-100">
-                <p className="text-3xl font-black text-purple-600">{formatDuration(avgCompletionTime)}</p>
-                <p className="text-[10px] font-black text-gray-400 uppercase tracking-wide mt-2">Avg. Time</p>
-                <p className="text-xs text-gray-400">per respondent</p>
+              {/* Avg time */}
+              <div className="bg-[#fafafa] rounded-xl p-4 border-2 border-[#e5e5e5] flex flex-col items-center justify-center gap-1 text-center">
+                <p className="text-3xl font-black text-orange-500 leading-none tabular-nums">{formatDuration(avgCompletionTime)}</p>
+                <p className="text-[10px] font-black text-[#afafaf] uppercase tracking-widest font-outfit mt-1">Avg. Time</p>
+                <p className="text-xs text-[#afafaf] font-outfit">per respondent</p>
               </div>
             </div>
 
             {responsesOverTime.length > 1 && (
-              <div className="bg-gray-50 rounded-xl p-3 border-2 border-gray-100">
-                <p className="text-[10px] font-black text-gray-500 uppercase tracking-wide mb-3">Response Velocity</p>
+              <div className="bg-[#fafafa] rounded-xl p-3 border-2 border-[#e5e5e5]">
+                <p className="text-[10px] font-black text-[#afafaf] uppercase tracking-widest font-outfit mb-3">Response Velocity</p>
                 <LineChartComponent data={responsesOverTime.map(({ name, value }) => ({ name, value }))} height={160} />
               </div>
             )}
           </div>
 
           {/* Question analysis */}
-          <div className="bg-white rounded-2xl border-2 border-gray-100 p-4">
-            <h2 className="text-base font-black text-gray-900 mb-4">Question Analysis</h2>
+          <div className="bg-white rounded-2xl border-2 border-[#e5e5e5] p-4 shadow-[0_3px_0_#e5e5e5]">
+            <h2 className="text-base font-black text-[#3c3c3c] mb-4">Question Analysis</h2>
             <div className="space-y-4">
               {questionAggregations.map((agg: QuestionAggregation, i: number) => (
                 <motion.div
@@ -808,20 +825,20 @@ export default function SurveyDetailPage() {
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.05 }}
-                  className="bg-gray-50 rounded-xl p-4 border-2 border-gray-100"
+                  className="bg-[#fafafa] rounded-xl p-4 border-2 border-[#e5e5e5]"
                 >
                   <div className="flex items-start gap-2 mb-3">
-                    <span className="w-5 h-5 flex-shrink-0 rounded-md bg-white border border-gray-200 flex items-center justify-center text-[10px] font-black text-gray-400">{i + 1}</span>
+                    <span className="w-5 h-5 flex-shrink-0 rounded-md bg-white border border-[#e5e5e5] flex items-center justify-center text-[10px] font-black text-[#afafaf]">{i + 1}</span>
                     <div className="min-w-0 flex-1">
-                      <span className={`text-[9px] font-black uppercase tracking-wide px-1.5 py-0.5 rounded-full border ${
-                        agg.type === 'rating' ? 'bg-amber-50 text-amber-600 border-amber-200' :
-                        agg.type === 'text' ? 'bg-indigo-50 text-indigo-600 border-indigo-200' :
-                        'bg-green-50 text-green-600 border-green-200'
+                      <span className={`text-[9px] font-black uppercase tracking-wide px-1.5 py-0.5 rounded-full border font-outfit ${
+                        agg.type === 'rating'          ? 'bg-amber-50 text-amber-600 border-amber-200' :
+                        agg.type === 'text'            ? 'bg-orange-50 text-orange-600 border-orange-200' :
+                                                         'bg-orange-50 text-orange-500 border-orange-100'
                       }`}>{agg.type.replace('_', ' ')}</span>
-                      <h3 className="font-black text-gray-900 text-sm leading-tight mt-1">{agg.questionText}</h3>
+                      <h3 className="font-black text-[#3c3c3c] text-sm leading-tight mt-1">{agg.questionText}</h3>
                     </div>
                   </div>
-                  <div className="bg-white rounded-lg p-3 border border-gray-100">
+                  <div className="bg-white rounded-lg p-3 border border-[#e5e5e5]">
                     {agg.type === 'rating' && agg.average !== undefined && (
                       <RatingDisplay average={agg.average} data={agg.data} totalResponses={agg.totalResponses} maxRating={agg.maxRating || 5} />
                     )}
@@ -841,7 +858,7 @@ export default function SurveyDetailPage() {
         /* Empty state */
         <div className="bg-white rounded-2xl border-2 border-gray-100 p-8 text-center">
           <motion.div
-            animate={{ y: [0, -10, 0] }}
+            animate={reducedMotion ? {} : { y: [0, -10, 0] }}
             transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
             className="w-24 h-24 mx-auto mb-4 bg-orange-50 rounded-3xl border-4 border-orange-100 flex items-center justify-center"
           >
@@ -856,10 +873,8 @@ export default function SurveyDetailPage() {
             >
               Copy Survey Link
             </button>
-            <Link href={surveyUrl} target="_blank">
-              <button className="w-full py-3 bg-white border-2 border-gray-200 text-gray-600 font-black text-sm rounded-xl hover:border-orange-300 transition-all">
-                Preview Survey
-              </button>
+            <Link href={surveyUrl} target="_blank" className="w-full py-3 bg-white border-2 border-gray-200 text-gray-600 font-black text-sm rounded-xl hover:border-orange-300 transition-all text-center block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1">
+              Preview Survey
             </Link>
           </div>
         </div>
@@ -875,9 +890,9 @@ export default function SurveyDetailPage() {
             </p>
           </div>
           {responses.length > 0 && (
-            <span className="flex items-center gap-1.5 px-2.5 py-1 bg-indigo-50 border-2 border-indigo-100 rounded-xl flex-shrink-0">
-              <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" />
-              <span className="text-[9px] font-black text-indigo-600 uppercase tracking-wide">Live</span>
+            <span className="flex items-center gap-1.5 px-2.5 py-1 bg-orange-50 border-2 border-orange-100 rounded-xl flex-shrink-0">
+              <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
+              <span className="text-[9px] font-black text-orange-600 uppercase tracking-wide">Live</span>
             </span>
           )}
         </div>
@@ -896,7 +911,7 @@ export default function SurveyDetailPage() {
                     return next;
                   })}
                 >
-                  <div className="w-8 h-8 flex-shrink-0 rounded-full bg-gray-100 border-2 border-gray-200 flex items-center justify-center text-sm">👤</div>
+                  <div className="w-8 h-8 flex-shrink-0 rounded-full bg-gray-100 border-2 border-gray-200 flex items-center justify-center"><User className="w-4 h-4 text-gray-400" /></div>
                   <div className="flex-1 min-w-0">
                     <p className="font-bold text-sm text-gray-900 truncate">{response.respondentName || 'Anonymous'}</p>
                     <p className="text-xs text-gray-400 truncate">{formatDateTime(response.completedAt)}</p>
@@ -920,7 +935,7 @@ export default function SurveyDetailPage() {
                     >
                       <div className="bg-gray-50 px-4 py-4 border-t-2 border-gray-100">
                         {response.respondentEmail && (
-                          <p className="text-xs text-gray-500 mb-3 font-medium">✉ {response.respondentEmail}</p>
+                          <p className="text-xs text-gray-500 mb-3 font-medium flex items-center gap-1.5"><Mail className="w-3.5 h-3.5 flex-shrink-0" />{response.respondentEmail}</p>
                         )}
                         <div className="grid grid-cols-1 gap-2">
                           {survey.questions.map((q, qi) => (
@@ -948,15 +963,15 @@ export default function SurveyDetailPage() {
             <button
               onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
               disabled={currentPage === 1}
-              className="px-4 py-2 text-sm font-black bg-white border-2 border-gray-200 rounded-xl disabled:opacity-30 hover:border-orange-300 transition-all"
+              className="px-4 py-2 text-sm font-black bg-white border-2 border-gray-200 rounded-xl disabled:opacity-30 hover:border-orange-300 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1"
             >
               ← Prev
             </button>
-            <span className="text-xs font-black text-gray-400">{currentPage} / {totalPages}</span>
+            <span className="text-xs font-black text-gray-400 tabular-nums">{currentPage} / {totalPages}</span>
             <button
               onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages}
-              className="px-4 py-2 text-sm font-black bg-white border-2 border-gray-200 rounded-xl disabled:opacity-30 hover:border-orange-300 transition-all"
+              className="px-4 py-2 text-sm font-black bg-white border-2 border-gray-200 rounded-xl disabled:opacity-30 hover:border-orange-300 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1"
             >
               Next →
             </button>
@@ -977,7 +992,7 @@ export default function SurveyDetailPage() {
               className="bg-white rounded-3xl border-2 border-red-100 max-w-sm w-full p-6 text-center"
               onClick={e => e.stopPropagation()}
             >
-              <div className="w-16 h-16 bg-red-50 rounded-2xl border-2 border-red-100 flex items-center justify-center mx-auto mb-4 text-3xl">🗑</div>
+              <div className="w-16 h-16 bg-red-50 rounded-2xl border-2 border-red-100 flex items-center justify-center mx-auto mb-4"><Trash2 className="w-8 h-8 text-red-400" /></div>
               <h3 className="text-xl font-black text-gray-900 mb-2">Delete Survey?</h3>
               <p className="text-gray-500 text-sm mb-6">
                 Delete <span className="font-bold text-gray-900">&quot;{survey.title}&quot;</span>? This is permanent — all responses will be lost.
@@ -1000,24 +1015,24 @@ export default function SurveyDetailPage() {
         {showWinnerModal && (
           <motion.div
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-indigo-900/50 backdrop-blur-md flex items-center justify-center p-4 z-50"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50"
             onClick={() => !isPickingWinner && setShowWinnerModal(false)}
           >
             <motion.div
               initial={{ scale: 0.85, rotate: -4 }} animate={{ scale: 1, rotate: 0 }} exit={{ scale: 0.85 }}
-              className="bg-white rounded-3xl border-2 border-indigo-100 max-w-sm w-full p-6 text-center"
+              className="bg-white rounded-3xl border-2 border-orange-100 max-w-sm w-full p-6 text-center"
               onClick={e => e.stopPropagation()}
             >
               {isPickingWinner ? (
                 <div className="py-8">
-                  <motion.div animate={{ rotate: 360 }} transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }} className="text-5xl mb-4">🎲</motion.div>
+                  <motion.div animate={{ rotate: 360 }} transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }} className="w-16 h-16 bg-orange-50 rounded-2xl flex items-center justify-center mx-auto mb-4"><Dice5 className="w-8 h-8 text-orange-500" /></motion.div>
                   <p className="font-black text-gray-900 text-xl">{selectedWinner?.respondentName || '…'}</p>
                   <p className="text-gray-400 text-sm mt-1">Picking winner…</p>
                 </div>
               ) : selectedWinner ? (
                 <div ref={winnerCardRef} className="py-4">
-                  <div className="text-5xl mb-4">🏆</div>
-                  <p className="text-[10px] font-black text-indigo-500 uppercase tracking-wide mb-2">Winner!</p>
+                  <div className="w-16 h-16 bg-orange-50 rounded-2xl flex items-center justify-center mx-auto mb-4"><Trophy className="w-8 h-8 text-orange-500" /></div>
+                  <p className="text-[10px] font-black text-orange-500 uppercase tracking-wide mb-2">Winner!</p>
                   <p className="text-2xl font-black text-gray-900 mb-1">{selectedWinner.respondentName || 'Anonymous'}</p>
                   {selectedWinner.respondentEmail && <p className="text-sm text-gray-500 mb-4">{selectedWinner.respondentEmail}</p>}
                   <p className="text-xs text-gray-400">Responded {formatDateTime(selectedWinner.completedAt)}</p>
@@ -1026,13 +1041,13 @@ export default function SurveyDetailPage() {
 
               {!isPickingWinner && selectedWinner && (
                 <div className="flex flex-col gap-2 mt-4">
-                  <button onClick={handleDownloadWinnerImage} disabled={isSavingWinnerImage} className="w-full py-2.5 bg-indigo-600 text-white font-black text-sm rounded-xl border-b-4 border-indigo-800 active:border-b-0 active:translate-y-1 transition-all">
+                  <button onClick={handleDownloadWinnerImage} disabled={isSavingWinnerImage} className="w-full py-2.5 bg-orange-500 text-white font-black text-sm rounded-xl border-b-4 border-orange-700 active:border-b-0 active:translate-y-1 transition-all">
                     {isSavingWinnerImage ? 'Saving…' : 'Download Image'}
                   </button>
-                  <button onClick={handlePickWinner} className="w-full py-2.5 bg-orange-50 border-2 border-orange-200 text-orange-600 font-black text-sm rounded-xl hover:bg-orange-100 transition-all">
+                  <button onClick={handlePickWinner} className="w-full py-2.5 bg-orange-50 border-2 border-orange-200 text-orange-600 font-black text-sm rounded-xl hover:bg-orange-100 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1">
                     Pick Again
                   </button>
-                  <button onClick={() => setShowWinnerModal(false)} className="w-full py-2.5 bg-gray-100 text-gray-500 font-bold text-sm rounded-xl">
+                  <button onClick={() => setShowWinnerModal(false)} className="w-full py-2.5 bg-gray-100 text-gray-500 font-bold text-sm rounded-xl hover:bg-gray-200 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-1">
                     Close
                   </button>
                 </div>

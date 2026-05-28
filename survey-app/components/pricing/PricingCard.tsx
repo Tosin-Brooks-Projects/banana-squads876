@@ -1,6 +1,7 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import React from 'react';
+import { Check, Leaf, Rocket, Gem, Flame, Crown } from 'lucide-react';
 import { PricingTierConfig } from '@/lib/types';
 
 interface PricingCardProps {
@@ -14,107 +15,132 @@ interface PricingCardProps {
   isLoading?: boolean;
 }
 
+const TIER_ICON: Record<string, React.ReactNode> = {
+  free:       <Leaf   className="w-4 h-4" />,
+  starter:    <Rocket className="w-4 h-4" />,
+  pro:        <Gem    className="w-4 h-4" />,
+  business:   <Flame  className="w-4 h-4" />,
+  enterprise: <Crown  className="w-4 h-4" />,
+};
+
 export default function PricingCard({
   tier,
   isPopular = false,
   isSelected = false,
   onSelect,
   disabled = false,
-  disabledReason: _disabledReason, // eslint-disable-line @typescript-eslint/no-unused-vars
-  compact = false,
   isLoading = false,
 }: PricingCardProps) {
   const isFree = tier.price === 0;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      whileHover={{ scale: disabled ? 1 : 1.02 }}
-      className={`relative flex flex-col h-full rounded-[40px] border-4 transition-all ${
-        compact ? 'p-6' : 'p-10'
-      } ${
-        isSelected
-          ? 'border-orange-500 bg-white shadow-[12px_12px_0px_0px_rgba(249,115,22,0.1)]'
-          : isPopular
-          ? 'border-indigo-500 bg-white shadow-[12px_12px_0px_0px_rgba(79,70,229,0.1)]'
-          : 'border-gray-100 bg-white shadow-[12px_12px_0px_0px_rgba(0,0,0,0.02)]'
-      } ${disabled ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'} ${!isSelected && !disabled ? 'active:translate-y-1 active:shadow-none' : ''}`}
-      onClick={() => !disabled && onSelect(tier)}
-    >
+    <div className="relative flex flex-col h-full">
+      {/* Popular badge — sits above the card */}
       {isPopular && (
-        <div className="absolute -top-5 left-1/2 -translate-x-1/2 z-10">
-          <span className="bg-orange-500 text-white text-[10px] font-black px-6 py-2.5 rounded-2xl whitespace-nowrap uppercase tracking-[0.2em] shadow-[4px_4px_0px_0px_rgba(194,65,12,1)] border-2 border-orange-600">
-            Most Popular
+        <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-10">
+          <span className="bg-orange-500 text-white text-[10px] font-bold font-outfit px-3 py-1 rounded-full shadow-[0_2px_0_#c2410c] whitespace-nowrap tracking-wide">
+            Most popular
           </span>
         </div>
       )}
 
-      <div className={compact ? 'mb-6' : 'mb-8'}>
-        <div className="flex items-center gap-3 mb-4">
-           <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-2xl border-2 ${
-             isSelected ? 'bg-orange-50 border-orange-100' : 'bg-gray-50 border-gray-100'
-           }`}>
-              {isFree ? '🌱' : tier.id === 'starter' ? '🚀' : tier.id === 'pro' ? '💎' : '🔥'}
-           </div>
-           <h3 className={`font-black text-gray-900 uppercase tracking-tight ${compact ? 'text-xl' : 'text-3xl'}`}>{tier.name}</h3>
-        </div>
+      <div
+        role="button"
+        tabIndex={disabled ? -1 : 0}
+        aria-disabled={disabled}
+        aria-pressed={isSelected}
+        onKeyDown={(e) => { if (!disabled && (e.key === 'Enter' || e.key === ' ')) onSelect(tier); }}
+        onClick={() => !disabled && onSelect(tier)}
+        className={`relative flex flex-col h-full rounded-2xl border bg-white transition-all duration-150 outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 p-5
+          ${isSelected
+            ? 'border-orange-500 bg-orange-50/40 shadow-[0_4px_0_#c2410c]'
+            : isPopular
+            ? 'border-orange-200 hover:border-orange-300'
+            : 'border-[#e5e5e5] hover:border-[#c8c8c8]'}
+          ${disabled ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'}
+        `}
+      >
+        {/* Header */}
+        <div className="mb-4">
+          <div className="flex items-center gap-2.5 mb-4">
+            <div className={`w-9 h-9 rounded-xl flex items-center justify-center border transition-colors
+              ${isSelected || isPopular
+                ? 'bg-orange-50 border-orange-100 text-orange-500'
+                : 'bg-[#f5f5f5] border-[#e5e5e5] text-[#777777]'}`}>
+              {TIER_ICON[tier.id] ?? <Gem className="w-4 h-4" />}
+            </div>
+            <h3 className="text-sm font-bold font-outfit text-[#3c3c3c] uppercase tracking-widest">
+              {tier.name}
+            </h3>
+          </div>
 
-        <div className="mt-6 flex items-baseline gap-1">
+          {/* Price */}
           {isFree ? (
-            <span className={`font-black text-gray-900 ${compact ? 'text-4xl' : 'text-6xl'}`}>Free</span>
-          ) : (
-            <div className="flex flex-col">
-              <span className={`font-black text-gray-900 ${compact ? 'text-4xl' : 'text-6xl'}`}>${tier.price}</span>
-              <span className={`mt-1 font-black text-gray-400 uppercase tracking-widest ${compact ? 'text-[8px]' : 'text-[10px]'}`}>
-                One-time Payment
+            <div className="flex items-baseline gap-2.5 flex-wrap">
+              <span className="text-4xl font-bold font-outfit tabular-nums text-[#3c3c3c] tracking-tight">
+                Free
               </span>
+              <span className="px-2.5 py-1 bg-[#f5f5f5] border border-[#e5e5e5] rounded-full text-[10px] font-bold font-outfit text-[#777777] tracking-wide whitespace-nowrap">
+                {tier.responseLimit.toLocaleString()} responses
+              </span>
+            </div>
+          ) : (
+            <div>
+              <div className="flex items-baseline gap-1">
+                <span className="text-4xl font-bold font-outfit tabular-nums text-[#3c3c3c] tracking-tight">
+                  ${tier.price}
+                </span>
+              </div>
+              <p className="text-[11px] font-outfit text-[#afafaf] mt-0.5 uppercase tracking-widest">
+                One-time payment
+              </p>
+              <div className={`mt-3 inline-flex items-center px-2.5 py-1 rounded-full border text-[10px] font-bold font-outfit tracking-wide whitespace-nowrap
+                ${isSelected || isPopular
+                  ? 'bg-orange-50 border-orange-100 text-orange-600'
+                  : 'bg-[#f5f5f5] border-[#e5e5e5] text-[#777777]'}`}>
+                {tier.responseLimit.toLocaleString()} responses
+              </div>
             </div>
           )}
         </div>
-        
-        <div className={`mt-6 inline-flex items-center px-4 py-2 bg-gray-50 rounded-2xl border-2 border-gray-100`}>
-           <p className="text-gray-500 text-[10px] font-black uppercase tracking-widest leading-none">
-              {tier.responseLimit.toLocaleString()} Mission Capacity
-           </p>
-        </div>
-      </div>
 
-      <ul className={`flex-grow ${compact ? 'mb-6 space-y-3' : 'mb-10 space-y-5'}`}>
-        {tier.features.map((feature, index) => (
-          <li key={index} className="flex items-start group">
-            <div className={`flex-shrink-0 mt-1 transition-transform group-hover:scale-125 ${isSelected ? 'text-orange-500' : 'text-gray-300'}`}>
-               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-               </svg>
-            </div>
-            <span className={`ml-3 text-gray-600 font-bold leading-tight ${compact ? 'text-xs' : 'text-base'}`}>{feature}</span>
-          </li>
-        ))}
-      </ul>
+        {/* Features */}
+        <ul className="flex-grow mb-5 space-y-2">
+          {tier.features.map((feature, i) => (
+            <li key={i} className="flex items-start gap-2.5">
+              <Check
+                className={`w-3.5 h-3.5 flex-shrink-0 mt-0.5 ${isSelected || isPopular ? 'text-orange-500' : 'text-[#c8c8c8]'}`}
+                strokeWidth={2.5}
+              />
+              <span className="text-[13px] font-outfit text-[#555] leading-snug">{feature}</span>
+            </li>
+          ))}
+        </ul>
 
-      <div className="mt-auto">
+        {/* CTA */}
         <button
           disabled={disabled || isLoading}
-          className={`w-full py-5 rounded-3xl font-black uppercase tracking-widest transition-all text-[11px] border-b-4 ${
-            isSelected
-              ? 'bg-orange-500 text-white border-orange-700'
-              : isFree
-              ? 'bg-white border-2 border-gray-100 text-gray-500 shadow-[0_4px_0_0_rgba(0,0,0,0.03)] hover:bg-orange-50 hover:border-orange-200 hover:text-orange-600'
+          onClick={(e) => { e.stopPropagation(); if (!disabled && !isLoading) onSelect(tier); }}
+          className={`w-full py-2.5 rounded-xl font-bold font-outfit text-sm transition-all
+            ${isSelected
+              ? 'bg-orange-500 text-white shadow-[0_3px_0_#c2410c] active:translate-y-[2px] active:shadow-none'
               : isPopular
-              ? 'bg-indigo-600 text-white border-indigo-800'
-              : 'bg-gray-900 text-white border-gray-950'
-          } ${disabled || isLoading ? 'cursor-not-allowed opacity-50' : 'active:border-b-0 active:translate-y-1'}`}
+              ? 'bg-orange-500 text-white shadow-[0_3px_0_#c2410c] hover:bg-orange-600 active:translate-y-[2px] active:shadow-none'
+              : isFree
+              ? 'bg-white border border-[#e5e5e5] text-[#777777] hover:border-orange-300 hover:text-orange-600 hover:bg-orange-50'
+              : 'bg-[#3c3c3c] text-white shadow-[0_3px_0_#1a1a1a] hover:bg-[#4b4b4b] active:translate-y-[2px] active:shadow-none'}
+            ${disabled || isLoading ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}
+          `}
         >
-          {isLoading ? (
-            'Gathering...'
-          ) : isSelected
-            ? 'Active Realm'
+          {isLoading
+            ? 'Loading…'
+            : isSelected
+            ? '✓ Selected'
             : isFree
-            ? 'Start Journey'
-            : `Unlock ${tier.name}`}
+            ? 'Start free'
+            : `Choose ${tier.name}`}
         </button>
       </div>
-    </motion.div>
+    </div>
   );
 }

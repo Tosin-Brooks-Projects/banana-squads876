@@ -11,53 +11,51 @@ interface CompletionRateChartProps {
 export default function CompletionRateChart({
   completedCount,
   totalCount,
-  size = 140,
+  size = 80,
 }: CompletionRateChartProps) {
   const completionRate = totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
   const incompleteCount = Math.max(0, totalCount - completedCount);
 
   const data = [
     { name: 'Completed', value: completedCount },
-    { name: 'Incomplete', value: incompleteCount },
+    { name: 'Incomplete', value: incompleteCount || (completedCount === 0 ? 1 : 0) },
   ];
 
-  // Don't show if no data
   if (totalCount === 0) {
     return (
       <div className="flex flex-col items-center justify-center" style={{ width: size, height: size }}>
-        <div className="text-2xl font-bold text-gray-300">--</div>
-        <div className="text-xs text-gray-400">No data</div>
+        <div className="text-xl font-bold text-[#c0c0c0]">--</div>
       </div>
     );
   }
 
   return (
-    <div className="relative" style={{ width: size, height: size }}>
+    <div className="relative mx-auto" style={{ width: size, height: size }}>
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
           <Pie
             data={data}
             cx="50%"
             cy="50%"
-            innerRadius={size * 0.32}
-            outerRadius={size * 0.45}
-            paddingAngle={2}
+            innerRadius={size * 0.33}
+            outerRadius={size * 0.46}
+            paddingAngle={completionRate < 100 ? 3 : 0}
             dataKey="value"
             startAngle={90}
             endAngle={-270}
+            strokeWidth={0}
           >
-            <Cell fill="#22c55e" /> {/* Green for completed */}
-            <Cell fill="#e5e7eb" /> {/* Gray for incomplete */}
+            <Cell fill="#f97316" />
+            <Cell fill="#e5e5e5" />
           </Pie>
         </PieChart>
       </ResponsiveContainer>
 
-      {/* Center text */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <div className="text-2xl font-bold text-gray-900">
+      {/* Center label */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <span className="text-sm font-black text-[#3c3c3c]" style={{ fontSize: size * 0.18 }}>
           {completionRate.toFixed(0)}%
-        </div>
-        <div className="text-xs text-gray-500">Complete</div>
+        </span>
       </div>
     </div>
   );

@@ -42,7 +42,11 @@
       "Bash(node -e:*)",
       "Bash(cmd /c \"taskkill /F /PID 21880\")",
       "Skill(graphify)",
-      "Bash(graphify query *)"
+      "Bash(graphify query *)",
+      "Bash(npx shadcn *)",
+      "Bash(python3 -c \"from PIL import Image; print\\('PIL ok'\\)\")",
+      "Bash(mkdir -p \"/Users/oluwatosinalli/Documents/Erase-friction/unboring surveys/survey-app/public/images/peeps\")",
+      "Bash(python3)"
     ]
   }
 }

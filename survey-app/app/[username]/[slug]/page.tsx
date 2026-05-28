@@ -5,7 +5,7 @@ import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import ClassicSurvey from '@/components/adventures/ClassicSurvey';
 import IceCreamSundae from '@/components/adventures/IceCreamSundae';
-import PizzaBuilder from '@/components/adventures/PizzaBuilder';
+import PizzaBuilderV3 from '@/components/adventures/PizzaBuilderV3';
 import GardenGrower from '@/components/adventures/GardenGrower';
 import DreamHome from '@/components/adventures/DreamHome';
 import CoffeeBrewer from '@/components/adventures/CoffeeBrewer';
@@ -779,11 +779,11 @@ export default function SurveyPage() {
         );
       case 'pizza-builder':
         return (
-          <PizzaBuilder
+          <PizzaBuilderV3
             questions={questions}
             onComplete={(responses: Answer[]) => handleComplete(responses)}
             onProgress={handleProgress}
-            initialState={adventureInitialState as Parameters<typeof PizzaBuilder>[0]['initialState']}
+            initialState={adventureInitialState as Record<string, unknown>}
             allowAnonymous={survey.settings?.allowAnonymous}
           />
         );

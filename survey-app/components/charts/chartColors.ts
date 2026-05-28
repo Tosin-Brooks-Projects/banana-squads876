@@ -30,8 +30,8 @@ export function getRatingColor(value: number, max: number = 5): string {
 
 // Brand colors
 export const BRAND_COLORS = {
-  primary: '#6366f1',    // Indigo
-  secondary: '#8b5cf6',  // Violet
+  primary: '#f97316',    // Orange (brand)
+  secondary: '#fb923c',  // Orange-400
   success: '#22c55e',    // Green
   warning: '#eab308',    // Yellow
   error: '#ef4444',      // Red
@@ -53,6 +53,6 @@ export const CHART_COLORS = {
 
 // Completion chart colors
 export const COMPLETION_COLORS = {
-  complete: '#22c55e',
-  incomplete: '#e5e7eb',
+  complete: '#f97316',   // Orange (brand)
+  incomplete: '#e5e5e5',
 };

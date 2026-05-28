@@ -1,118 +1,74 @@
 'use client';
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
-import Button from '@/components/ui/AnimatedButton';
+import { Menu, X } from 'lucide-react';
 
-interface PublicHeaderProps {
-  variant?: 'transparent' | 'solid';
-}
-
-export default function PublicHeader({ variant = 'solid' }: PublicHeaderProps) {
+export default function PublicHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const headerBg = variant === 'solid'
-    ? 'bg-white border-b border-neutral-200'
-    : '';
-
   return (
-    <header className={headerBg}>
-      <nav className="container mx-auto px-6 py-4">
-        <div className="flex items-center justify-between">
-          {/* Logo */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-          >
-            <Link href="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-brand-500 rounded-lg flex items-center justify-center">
-                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                </svg>
-              </div>
-              <span className="hidden sm:inline text-xl font-bold text-neutral-900">Unboring Surveys</span>
-            </Link>
-          </motion.div>
+    <header className="bg-white border-b-2 border-[#e5e5e5] sticky top-0 z-50">
+      <nav className="max-w-5xl mx-auto px-6 py-3 flex items-center justify-between">
 
-          {/* Desktop Navigation */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="hidden sm:flex items-center gap-4"
-          >
-            <Link href="/login">
-              <Button variant="outline" size="sm">
-                Log in
-              </Button>
-            </Link>
-          </motion.div>
+        {/* Brand */}
+        <Link href="/" className="font-fredoka font-black text-xl select-none">
+          <span className="text-[#3c3c3c]">Unboring </span>
+          <span className="text-orange-500">Surveys</span>
+        </Link>
 
-          {/* Mobile: Hamburger menu button */}
-          <motion.button
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="sm:hidden p-2 text-neutral-600 hover:text-neutral-900 transition-colors"
-            aria-label="Toggle menu"
-            aria-expanded={mobileMenuOpen}
-            aria-controls="mobile-menu"
-          >
-            {mobileMenuOpen ? (
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            ) : (
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            )}
-          </motion.button>
+        {/* Desktop nav */}
+        <div className="hidden sm:flex items-center gap-6">
+          {[['Pricing', '/pricing'], ['Docs', '#'], ['About', '/about']].map(([label, href]) => (
+            <Link
+              key={label}
+              href={href}
+              className="text-sm font-semibold text-[#777777] hover:text-[#3c3c3c] transition-colors font-outfit"
+            >
+              {label}
+            </Link>
+          ))}
+          <Link href="/login">
+            <button className="px-5 py-2.5 bg-orange-500 hover:bg-orange-600 text-white text-sm font-bold rounded-xl font-fredoka border-b-[3px] border-orange-700 shadow-[0_2px_0_#c2410c] active:translate-y-[2px] active:shadow-none transition-all">
+              Get started
+            </button>
+          </Link>
         </div>
 
-        {/* Mobile menu dropdown - right aligned */}
-        <motion.div
-          id="mobile-menu"
-          role="menu"
-          initial={false}
-          animate={{
-            opacity: mobileMenuOpen ? 1 : 0,
-            height: mobileMenuOpen ? 'auto' : 0
-          }}
-          className={`sm:hidden overflow-hidden ${!mobileMenuOpen ? 'pointer-events-none' : ''}`}
-          aria-hidden={!mobileMenuOpen}
+        {/* Mobile toggle */}
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="sm:hidden w-10 h-10 flex items-center justify-center rounded-xl text-[#3c3c3c] hover:bg-orange-50 transition-colors"
+          aria-label="Toggle menu"
         >
-          <div className="pt-4 pb-2 space-y-1 flex flex-col items-end">
-            <Link
-              href="/login"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block px-4 py-2 text-neutral-900 font-medium hover:bg-neutral-100 rounded-lg transition-colors"
-              role="menuitem"
-              tabIndex={mobileMenuOpen ? 0 : -1}
-            >
-              Log in
-            </Link>
-            <Link
-              href="/pricing"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block px-4 py-2 text-neutral-600 hover:bg-neutral-100 rounded-lg transition-colors"
-              role="menuitem"
-              tabIndex={mobileMenuOpen ? 0 : -1}
-            >
-              Pricing
-            </Link>
-            <Link
-              href="/about"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block px-4 py-2 text-neutral-600 hover:bg-neutral-100 rounded-lg transition-colors"
-              role="menuitem"
-              tabIndex={mobileMenuOpen ? 0 : -1}
-            >
-              About
-            </Link>
-          </div>
-        </motion.div>
+          {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        </button>
       </nav>
+
+      {/* Mobile dropdown */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.15 }}
+            className="sm:hidden border-t border-[#e5e5e5] bg-white px-6 py-4 space-y-1"
+          >
+            {[['Pricing', '/pricing'], ['Docs', '#'], ['About', '/about'], ['Log in', '/login']].map(([label, href]) => (
+              <Link
+                key={label}
+                href={href}
+                onClick={() => setMobileMenuOpen(false)}
+                className="block px-3 py-2.5 text-sm font-semibold text-[#3c3c3c] hover:bg-orange-50 hover:text-orange-600 rounded-xl transition-colors font-outfit"
+              >
+                {label}
+              </Link>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 }
